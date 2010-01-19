@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'heroku/vendor'
+
+command = ARGV.shift
+
+def resolve_manifest
+  if File.exists?("Vendorfile")
+    File.read("Vendorfile")
+  else
+    abort("fatal: Vendorfile not found")
+  end
+end
+
+def err(msg)
+  $stderr.puts "! #{msg}"
+end
+
+case command
+when "init"
+when "check"
+  man = Heroku::Vendor::Manifest.new(resolve_manifest)
+  man.check!
+  if errors = man.errors
+    errors.each do |error|
+      err error
+    end
+  end
+when "test"
+when "repl"
+when "push"
+else
+  abort DATA.read
+end
+
+__END__
+
+Usage: heroku-addon command [options]
+
+COMMANDS
+
+  init           # Creates a skeleton vendor manifest
+
+  check          # Checks vendor manifest for correctness
+
+  test           # Runs manifest against live server
+
+  repl command   # Creates addon and runs command in returned ENV
+
+  push           # Send manifest to Heroku
