@@ -1,7 +1,7 @@
 require 'contest'
 require 'heroku/vendor'
 
-class ManifestTest < Test::Unit::TestCase
+class CheckTest < Test::Unit::TestCase
 
   def assert_error(msg)
     errors = Array(@man.errors)
