@@ -1,7 +1,8 @@
 
 [ ] heroku-addon test -n delete  # run specific test [create | delete | sharing]
-[ ] heroku-addon init  # generate skeleton manifest
-[ ] heroku-addon push  # push manifest to heroku
-[X] heroku-addon check # check correctnes of JSON
 [ ] heroku-addon test  # run full test suite
 [ ] heroku-addon repl command # runs create, set ENVs, then delete on exit
+[ ] heroku-addon push  # push manifest to heroku
+
+[X] heroku-addon check # check correctnes of JSON
+[X] heroku-addon init  # generate skeleton manifest

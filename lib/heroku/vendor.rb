@@ -8,6 +8,28 @@ module Heroku
 
       class CheckFailure < StandardError ; end
 
+      def self.init(filename)
+        manifest = {
+          "name" => "youraddon",
+
+          "api" => {
+            "host" => "localhost",
+            "port" => "7774",
+          },
+
+          "plans" => [
+            {
+              "name" => "Basic",
+              "price" => "0",
+              "price_unit" => "month"
+            }
+          ]
+        }
+
+        json = Yajl::Encoder.encode(manifest, :pretty => true)
+        open(filename, 'w') {|f| f << json }
+      end
+
       def initialize(man)
         @man = man
       end
@@ -110,6 +132,11 @@ module Heroku
         @errors ||= [] if msg
         @errors << msg if msg
         @errors
+      end
+
+      def errors?
+        return false if errors.nil?
+        errors.empty?
       end
 
     end

@@ -3,12 +3,13 @@
 require 'heroku/vendor'
 
 command = ARGV.shift
+filename = "heroku-addon.manifest"
 
-def resolve_manifest
-  if File.exists?("Vendorfile")
-    File.read("Vendorfile")
+def resolve_manifest(fn=filename)
+  if File.exists?(fn)
+    File.read(fn)
   else
-    abort("fatal: Vendorfile not found")
+    abort("fatal: #{fn} not found")
   end
 end
 
@@ -18,6 +19,7 @@ end
 
 case command
 when "init"
+  Heroku::Vendor::Manifest.init(filename)
 when "check"
   man = Heroku::Vendor::Manifest.new(resolve_manifest)
   man.check!
