@@ -23,26 +23,26 @@ class CheckTest < Test::Unit::TestCase
   end
 
   test "has no errors if everything is valid" do
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
-    assert_nil @man.errors
+    assert_nil @data.errors
   end
 
   test "invalid json gives error" do
-    @man = Heroku::Vendor::Manifest.new("---")
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new("---")
+    @data.check!
 
-    assert_not_nil @man.errors
-    assert_equal 1, @man.errors.size
-    assert_match /^lexical error/, @man.errors.first
+    assert_not_nil @data.errors
+    assert_equal 1, @data.errors.size
+    assert_match /^lexical error/, @data.errors.first
   end
 
   test "requires an api key" do
     @manifest.delete("api")
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`api` must exist"
   end
@@ -50,8 +50,8 @@ class CheckTest < Test::Unit::TestCase
   test "requires api key to be a Hash" do
     @manifest["api"] = ""
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`api` must be a hash"
   end
@@ -59,8 +59,8 @@ class CheckTest < Test::Unit::TestCase
   test "requires api have a test url" do
     @manifest["api"].delete("test")
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`api` must have a url for `test`"
   end
@@ -68,8 +68,8 @@ class CheckTest < Test::Unit::TestCase
   test "requires api have a production url" do
     @manifest["api"].delete("production")
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`api` must have a url for `production`"
   end
@@ -77,8 +77,8 @@ class CheckTest < Test::Unit::TestCase
   test "requires the production url to be https" do
     @manifest["api"]["production"] = "http://foo.com"
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`api` must have a url for `production` that is https"
   end
@@ -86,8 +86,8 @@ class CheckTest < Test::Unit::TestCase
   test "requires an plan key" do
     @manifest.delete("plans")
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`plans` must exist"
   end
@@ -95,8 +95,8 @@ class CheckTest < Test::Unit::TestCase
   test "requires plan to be a array" do
     @manifest["plans"] = ""
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`plans` must be an array"
   end
@@ -104,8 +104,8 @@ class CheckTest < Test::Unit::TestCase
   test "requires at least 1 plan" do
     @manifest["plans"] = []
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`plans` must contain at least one plan"
   end
@@ -113,8 +113,8 @@ class CheckTest < Test::Unit::TestCase
   test "each plan must have a name" do
     @manifest["plans"][0].delete("name")
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`plans` at 0 - `name` must exist"
   end
@@ -122,8 +122,8 @@ class CheckTest < Test::Unit::TestCase
   test "each plan must have a price" do
     @manifest["plans"].first.delete("price")
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`plans` at 0 - `price` must exist"
   end
@@ -131,8 +131,8 @@ class CheckTest < Test::Unit::TestCase
   test "each price must be an Integer" do
     @manifest["plans"].first["price"] = "fiddy cent"
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`plans` at 0 - `price` must be an integer"
   end
@@ -140,8 +140,8 @@ class CheckTest < Test::Unit::TestCase
   test "each plan must have a price unit" do
     @manifest["plans"].first.delete("price_unit")
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`plans` at 0 - `price_unit` must exist"
   end
@@ -149,8 +149,8 @@ class CheckTest < Test::Unit::TestCase
   test "each plans can only be month or dyno_hour" do
     @manifest["plans"].first["price_unit"] = "first ov da munth"
 
-    @man = Heroku::Vendor::Manifest.new(@manifest)
-    @man.check!
+    @data = Heroku::Vendor::Manifest.new(@manifest)
+    @data.check!
 
     assert_error "`plans` at 0 - `price_unit` must be [month|dyno_hour]"
   end
