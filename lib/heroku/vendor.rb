@@ -4,9 +4,51 @@ module Heroku
 
   module Vendor
 
-    class Manifest
-
+    class Checkable
       class CheckFailure < StandardError ; end
+
+      def initialize(data)
+        @data = data
+      end
+
+      def check!
+        data = if @data.is_a? Hash
+          @data
+        else
+          Yajl::Parser.parse(@data)
+        end
+        validate(data)
+      rescue Yajl::ParseError => boom
+        errors boom.message
+      end
+
+      def desc(msg, o=nil, &blk)
+        temp, @desc = @desc, "#{@desc}#{msg} "
+        yield o
+      rescue CheckFailure => boom
+        errors boom.message
+      ensure
+        @desc = temp
+      end
+
+      def check(msg)
+        raise CheckFailure, "#{@desc}#{msg}" if !yield
+      end
+
+      def errors(msg=nil)
+        @errors ||= [] if msg
+        @errors << msg if msg
+        @errors
+      end
+
+      def errors?
+        return false if errors.nil?
+        errors.empty?
+      end
+
+    end
+
+    class Manifest < Checkable
 
       def self.init(filename)
         manifest = {
@@ -30,18 +72,7 @@ module Heroku
         open(filename, 'w') {|f| f << json }
       end
 
-      def initialize(man)
-        @man = man
-      end
-
-      def check!
-
-        data = if @man.is_a? Hash
-          @man
-        else
-          Yajl::Parser.parse(@man)
-        end
-
+      def validate(data)
 
         desc "`api`" do
 
@@ -128,34 +159,11 @@ module Heroku
 
         end
 
-      rescue Yajl::ParseError => boom
-        errors boom.message
       end
 
-      def desc(msg, o=nil, &blk)
-        temp, @desc = @desc, "#{@desc}#{msg} "
-        yield o
-      rescue CheckFailure => boom
-        errors boom.message
-      ensure
-        @desc = temp
-      end
+    end
 
-      def check(msg)
-        raise CheckFailure, "#{@desc}#{msg}" if !yield
-      end
-
-      def errors(msg=nil)
-        @errors ||= [] if msg
-        @errors << msg if msg
-        @errors
-      end
-
-      def errors?
-        return false if errors.nil?
-        errors.empty?
-      end
-
+    class CreateResponse
     end
 
   end
