@@ -53,6 +53,23 @@ module Heroku
             data["api"].is_a?(Hash)
           end
 
+          desc "must have a url for" do
+
+            check "`test`" do
+              data["api"].has_key?("test")
+            end
+
+            check "`production`" do
+              data["api"].has_key?("production")
+            end
+
+            check "`production` that is https" do
+              url = URI(data["api"]["production"])
+              url.scheme == "https"
+            end
+
+          end
+
         end
 
 

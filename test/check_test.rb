@@ -15,8 +15,8 @@ class CheckTest < Test::Unit::TestCase
       "name" => "cloudcalc",
 
       "api" => {
-        "host" => "localhost",
-        "port" => "7774",
+        "test" => "http://localhost:4567/",
+        "production" => "https://cloudcalc.com/"
       },
 
       "plans" => [
@@ -61,6 +61,33 @@ class CheckTest < Test::Unit::TestCase
     @man.check!
 
     assert_error "`api` must be a hash"
+  end
+
+  test "requires api have a test url" do
+    @manifest["api"].delete("test")
+
+    @man = Heroku::Vendor::Manifest.new(@manifest)
+    @man.check!
+
+    assert_error "`api` must have a url for `test`"
+  end
+
+  test "requires api have a production url" do
+    @manifest["api"].delete("production")
+
+    @man = Heroku::Vendor::Manifest.new(@manifest)
+    @man.check!
+
+    assert_error "`api` must have a url for `production`"
+  end
+
+  test "requires the production url to be https" do
+    @manifest["api"]["production"] = "http://foo.com"
+
+    @man = Heroku::Vendor::Manifest.new(@manifest)
+    @man.check!
+
+    assert_error "`api` must have a url for `production` that is https"
   end
 
   test "requires an plan key" do
