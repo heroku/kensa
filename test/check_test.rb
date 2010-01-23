@@ -4,22 +4,7 @@ require 'heroku/vendor'
 class CheckTest < Test::Unit::TestCase
 
   setup do
-    @manifest = {
-      "name" => "cloudcalc",
-
-      "api" => {
-        "test" => "http://localhost:4567/",
-        "production" => "https://cloudcalc.com/"
-      },
-
-      "plans" => [
-        {
-          "name" => "Basic",
-          "price" => "0",
-          "price_unit" => "month"
-        }
-      ]
-    }
+    @manifest = ValidManifest()
   end
 
   test "has no errors if everything is valid" do
