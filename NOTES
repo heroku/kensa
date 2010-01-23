@@ -1,0 +1,28 @@
+samorau
+  1. to wait for a chance
+  2. to serve by ones side
+
+check man
+  - invalid
+  - valid
+  - invalid price (show error)
+  - multiple plans
+
+check create
+  - server not running
+  - no config (no output)
+  - config
+
+check all
+  - uses id from response
+
+run
+  - ENV["FOO"]
+
+arch
+
+  - chain of responsiblity
+  - commands pass by data
+
+show contest
+show turn

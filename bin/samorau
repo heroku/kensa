@@ -1,0 +1,152 @@
+#!/usr/bin/env ruby
+
+require 'term/ansicolor'
+require 'heroku/vendor'
+
+fn="heroku-addon.manifest"
+async=false
+
+ARGV.options do |o|
+  o.on("-f file", "--file") {|filename| fn = filename }
+  o.on("-h", "--help") { command = "help" }
+  o.on("--async") { async = true }
+  o.parse!
+end
+
+command = ARGV.shift
+
+class Screen
+  include Term::ANSIColor
+
+  def test(msg)
+    $stdout.puts
+    $stdout.puts
+    $stdout.print "Testing #{msg}"
+  end
+
+  def check(msg)
+    $stdout.puts
+    $stdout.print "  Check #{msg}"
+  end
+
+  def error(msg)
+    $stdout.print "\n", magenta("    ! #{msg}")
+  end
+
+  def result(status)
+    msg = status ? bold("[PASS]") : red(bold("[FAIL]"))
+    $stdout.print " #{msg}"
+  end
+
+  def message(msg)
+    $stdout.puts msg
+  end
+
+  def finish
+    $stdout.puts
+    $stdout.puts
+    $stdout.puts "done."
+  end
+
+end
+
+def resolve_manifest(fn)
+  if File.exists?(fn)
+    File.read(fn)
+  else
+    abort("fatal: #{fn} not found")
+  end
+end
+
+def run(klass, fn, extras={})
+  screen = Screen.new
+  data = Yajl::Parser.parse(resolve_manifest(fn))
+  check = klass.new(data.merge(extras), screen)
+  check.call
+  screen.finish
+end
+
+include Heroku::Vendor
+
+case command
+when "init"
+  Manifest.init(fn)
+when "check"
+  case check = ARGV.shift
+  when nil, "manifest", "man"
+    run ManifestCheck, fn
+  when "create"
+    run ManifestCheck, fn
+    run CreateCheck, fn, :async => async
+  when "delete"
+    id = ARGV.shift || abort("! no id specified; see usage")
+    run ManifestCheck, fn
+    run DeleteCheck, fn, :id => id, :async => async
+  when "all"
+    run ManifestCheck, fn
+    run AllCheck, fn, :async => async
+  else
+    abort "! Unknown check '#{check}'; see usage"
+  end
+when "run"
+  abort "! missing command to run; see usage" if ARGV.empty?
+  run ManifestCheck, fn
+  run AllCheck, fn, :args => ARGV, :async => async
+else
+  abort DATA.read
+end
+
+__END__
+Usage: samorau [OPTIONS] command
+       samorau init
+       samorau check [name] [arg1 arg2 ...]
+       samorau run script/server [arg1 arg1 ...]
+       samorau push ...
+
+OPTIONS
+
+  -f, --filename path-to-file
+    Sets the manifest file to operate on.
+    The default is ./heroku-addon.manifest
+
+  -h, --help
+    Show this message
+
+  --async
+    Use this with the `create` check if your
+    resource creation happens asynchronously
+
+COMMANDS
+
+  init            Creates a skeleton manifest
+
+  check           Checks vendor manifest for correctness
+
+  run command     Creates addon and runs command in returned ENV
+
+  push            Send manifest to Heroku
+
+CHECK TYPES
+
+  all
+    Run all checks.  This is the default.
+
+  man, manifest
+    Check the manifest for correctness.
+    This is done automatically for all other
+    checks.
+
+  create
+    Check resource creation for correctness
+
+  delete <id>
+    Check resource deletion for correctness
+    This check requires the id of the resource.
+
+  add-collab
+    Check addition of a collaborator for correctness
+
+  remove-collab <id>
+    Check removal of a collaborator for correctness.
+    This check requires the id of the collaborator.
+
