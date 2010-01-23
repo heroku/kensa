@@ -163,7 +163,24 @@ module Heroku
 
     end
 
-    class CreateResponse
+    class CreateResponse < Checkable
+
+      def validate(data)
+        desc "`id`" do
+          check "must exist" do
+            data.has_key?("id")
+          end
+        end
+
+        if data.has_key?("config")
+          desc "`config`" do
+            check "must be a hash" do
+              data["config"].is_a?(Hash)
+            end
+          end
+        end
+      end
+
     end
 
   end
