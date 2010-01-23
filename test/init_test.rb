@@ -1,4 +1,4 @@
-require 'contest'
+require File.dirname(__FILE__) + '/helper'
 require 'heroku/vendor'
 require 'tempfile'
 
