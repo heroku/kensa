@@ -13,8 +13,8 @@ module Heroku
           "name" => "youraddon",
 
           "api" => {
-            "host" => "localhost",
-            "port" => "7774",
+            "test" => "http://localhost:4567/",
+            "production" => "https://yourapp.com/"
           },
 
           "plans" => [
