@@ -9,7 +9,7 @@ class InitTest < Test::Unit::TestCase
 
     Heroku::Vendor::Manifest.init(file.path)
 
-    man = Heroku::Vendor::Manifest.new(file.read)
+    man = Heroku::Vendor::ManifestCheck.new(file.read)
     man.check!
 
     assert !man.errors?

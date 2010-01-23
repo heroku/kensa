@@ -48,7 +48,7 @@ module Heroku
 
     end
 
-    class Manifest < Checkable
+    module Manifest
 
       def self.init(filename)
         manifest = {
@@ -71,6 +71,10 @@ module Heroku
         json = Yajl::Encoder.encode(manifest, :pretty => true)
         open(filename, 'w') {|f| f << json }
       end
+
+    end
+
+    class ManifestCheck < Checkable
 
       def validate(data)
 
@@ -163,7 +167,7 @@ module Heroku
 
     end
 
-    class CreateResponse < Checkable
+    class CreateResponseCheck < Checkable
 
       def validate(data)
         desc "`id`" do
