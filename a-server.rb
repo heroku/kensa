@@ -13,7 +13,7 @@ post "/heroku/apps" do
     p input
     RestClient.put(input["callback_url"], json)
   end
-  json
+  "{}"
 end
 
 delete "/heroku/apps/:id" do

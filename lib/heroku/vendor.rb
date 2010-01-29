@@ -1,6 +1,7 @@
 require 'yajl'
 require 'restclient'
 require 'socket'
+require 'timeout'
 
 module Heroku
 
@@ -272,14 +273,18 @@ module Heroku
         json = nil
         response = nil
 
-        test "POST /heroku/apps"
+        code = nil
+        json = nil
+        path = "/heroku/apps"
+        callback = "http://localhost:7779/callback/999"
+        reader, writer = nil
 
+        if data[:async]
+          reader, writer = IO.pipe
+        end
+
+        test "POST /heroku/apps"
         check "response" do
-          code = nil
-          json = nil
-          path = "/heroku/apps"
-          child = nil
-          callback = "http://localhost:7779/callback/999"
 
           payload = {
             :id => APPID,
@@ -288,21 +293,17 @@ module Heroku
           }
 
           if data[:async]
-            reader, writer = IO.pipe
             child = fork do
-              reader.close
-              server = TCPServer.open(7779)
-              client = server.accept
-              p :got_it
-              d = client.read(256)
-              writer.write(d)
-              client.write("Status: 200\r\n\r\n")
-              client.close
-              p [:d, d]
-              writer.close
+              Timeout.timeout(10) do
+                reader.close
+                server = TCPServer.open(7779)
+                client = server.accept
+                writer.write(client.readpartial(256))
+                client.write("Status: 200\r\n\r\n")
+                client.close
+                writer.close
+              end
             end
-            # give it a chance to listen
-            p :waiting_for_server
             sleep(1)
           end
 
@@ -311,26 +312,19 @@ module Heroku
           if code == 200
             # noop
           elsif code == -1
-            Process.kill(:INT, child) if child
             error("unable to connect to #{@url}")
           else
-            Process.kill(:INT, child) if child
             error("expected 200, got #{code}")
           end
 
-          if data[:async]
-            p :waiting_for_response
-            out = reader.read
-            p :got_response
-            if out =~ /^PUT \/callback\/999/
-              json = out.split("\r\n\r\n").last
-            else
-              error "callback received invalid request"
-            end
-          end
-
           true
+        end
 
+        if data[:async]
+          check "async response to PUT #{callback}" do
+            out = reader.readpartial(256)
+            _, json = out.split("\r\n\r\n")
+          end
         end
 
         check "valid JSON" do
