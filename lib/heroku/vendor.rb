@@ -396,14 +396,14 @@ module Heroku
         config = response["config"] || Hash.new
 
         if args
-          run_in_env(config) do
-            screen.message "\n\n"
-            screen.message "Starting #{args.first}..."
-            screen.message ""
-            system(*args)
-            screen.message ""
-            screen.message "End of #{args.first}"
-          end
+          screen.message "\n\n"
+          screen.message "Starting #{args.first}..."
+          screen.message ""
+
+          run_in_env(config) { system(*args) }
+
+          screen.message ""
+          screen.message "End of #{args.first}"
         end
 
         run DeleteCheck, data.merge(:id => id)
