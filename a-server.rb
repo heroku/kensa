@@ -2,7 +2,7 @@ require 'sinatra'
 require 'yajl'
 require 'restclient'
 
-post "/heroku/apps" do
+post "/heroku/resources" do
   request.body.rewind
   input = Yajl::Parser.parse(request.body.read)
   resp = { :id => 123, :config => { "FOO" => "bar" } }
@@ -16,6 +16,6 @@ post "/heroku/apps" do
   "{}"
 end
 
-delete "/heroku/apps/:id" do
+delete "/heroku/resources/:id" do
   "ok"
 end

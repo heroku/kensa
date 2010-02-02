@@ -276,7 +276,7 @@ module Heroku
 
         code = nil
         json = nil
-        path = "/heroku/apps"
+        path = "/heroku/resources"
         callback = "http://localhost:7779/callback/999"
         reader, writer = nil
 
@@ -284,7 +284,7 @@ module Heroku
           reader, writer = IO.pipe
         end
 
-        test "POST /heroku/apps"
+        test "POST /heroku/resources"
         check "response" do
 
           payload = {
@@ -355,7 +355,7 @@ module Heroku
         id = data[:id]
         raise ArgumentError, "No id specified" if id.nil?
 
-        path = "/heroku/apps/#{id}"
+        path = "/heroku/resources/#{id}"
 
         @url = data["api"]["test"].chomp("/")
 
