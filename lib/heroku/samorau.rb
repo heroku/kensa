@@ -342,6 +342,9 @@ module Heroku
         run CreateResponseCheck, response
       end
 
+    ensure
+      reader.close rescue nil
+      writer.close rescue nil
     end
 
 
