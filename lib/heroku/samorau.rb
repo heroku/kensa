@@ -300,7 +300,7 @@ module Heroku
                 server = TCPServer.open(7779)
                 client = server.accept
                 writer.write(client.readpartial(READLEN))
-                client.write("Status: 200\r\n\r\n")
+                client.write("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n")
                 client.close
                 writer.close
               end
