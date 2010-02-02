@@ -78,10 +78,10 @@ when "check"
   case check = ARGV.shift
   when nil, "manifest", "man"
     run ManifestCheck, fn
-  when "create"
+  when "provision"
     run ManifestCheck, fn
     run CreateCheck, fn, :async => async
-  when "delete"
+  when "deprovision"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn
     run DeleteCheck, fn, :id => id, :async => async
@@ -116,7 +116,7 @@ OPTIONS
     Show this message
 
   --async
-    Use this with the `create` check if your
+    Use this with the `provision` check if your
     resource creation happens asynchronously
 
 COMMANDS
@@ -139,11 +139,11 @@ CHECK TYPES
     This is done automatically for all other
     checks.
 
-  create
-    Check resource creation for correctness
+  provision
+    Check resource provisioning for correctness
 
-  delete <id>
-    Check resource deletion for correctness
+  deprovision <id>
+    Check resource deprovisioning for correctness
     This check requires the id of the resource.
 
   add-collab
