@@ -74,7 +74,7 @@ case command
 when "init"
   Manifest.init(fn)
   Screen.new.message "Initialized new addon manifest in #{fn}"
-when "check"
+when "test"
   case check = ARGV.shift
   when "manifest"
     run ManifestCheck, fn
@@ -86,7 +86,7 @@ when "check"
     run ManifestCheck, fn
     run DeleteCheck, fn, :id => id, :async => async
   else
-    abort "! Unknown check '#{check}'; see usage"
+    abort "! Unknown test '#{check}'; see usage"
   end
 when "run"
   abort "! missing command to run; see usage" if ARGV.empty?
@@ -99,8 +99,8 @@ end
 __END__
 Usage: samorau [OPTIONS] command
        samorau init
-       samorau check [type] [arg1 arg2 ...]
-       samorau run cmd [arg1 arg1 ...]
+       samorau test <type> [arg1 arg2 ...]
+       samorau run <command> [arg1 arg1 ...]
 
 OPTIONS
 
@@ -117,11 +117,11 @@ COMMANDS
 
   init            Creates a skeleton manifest
 
-  check           Simulate call from Heroku (provision or deprovision)
+  test <type>     Simulate call from Heroku (provision or deprovision)
 
-  run command     Provisions a resource and runs command in returned ENV
+  run <command>   Provisions a resource and runs command in returned ENV
 
-CHECK TYPES
+TEST TYPES
 
   provision
     Simulate a provision call from Heroku.
@@ -130,5 +130,5 @@ CHECK TYPES
     Simulate a deprovision call from Heroku.
 
   manifest
-    Confirm that the manifest is valid.  Run automatically before other checks
+    Confirm that the manifest is valid.  Automatically runs before all tests.
 
