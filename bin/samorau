@@ -76,7 +76,7 @@ when "init"
   Screen.new.message "Initialized new addon manifest in #{fn}"
 when "check"
   case check = ARGV.shift
-  when nil, "manifest", "man"
+  when "manifest"
     run ManifestCheck, fn
   when "provision"
     run ManifestCheck, fn
@@ -85,9 +85,6 @@ when "check"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn
     run DeleteCheck, fn, :id => id, :async => async
-  when "all"
-    run ManifestCheck, fn
-    run AllCheck, fn, :async => async
   else
     abort "! Unknown check '#{check}'; see usage"
   end
@@ -102,54 +99,36 @@ end
 __END__
 Usage: samorau [OPTIONS] command
        samorau init
-       samorau check [name] [arg1 arg2 ...]
-       samorau run script/server [arg1 arg1 ...]
-       samorau push ...
+       samorau check [type] [arg1 arg2 ...]
+       samorau run cmd [arg1 arg1 ...]
 
 OPTIONS
 
   -f, --filename path-to-file
-    Sets the manifest file to operate on.
-    The default is ./heroku-addon.manifest
+    Sets the manifest file to operate on, default is addon-manifest.json.
 
   -h, --help
     Show this message
 
   --async
-    Use this with the `provision` check if your
-    resource creation happens asynchronously
+    Check provision call with async response.
 
 COMMANDS
 
   init            Creates a skeleton manifest
 
-  check           Checks vendor manifest for correctness
+  check           Simulate call from Heroku (provision or deprovision)
 
-  run command     Creates addon and runs command in returned ENV
-
-  push            Send manifest to Heroku
+  run command     Provisions a resource and runs command in returned ENV
 
 CHECK TYPES
 
-  all
-    Run all checks.  This is the default.
-
-  man, manifest
-    Check the manifest for correctness.
-    This is done automatically for all other
-    checks.
-
   provision
-    Check resource provisioning for correctness
+    Simulate a provision call from Heroku.
 
   deprovision <id>
-    Check resource deprovisioning for correctness
-    This check requires the id of the resource.
+    Simulate a deprovision call from Heroku.
 
-  add-collab
-    Check addition of a collaborator for correctness
-
-  remove-collab <id>
-    Check removal of a collaborator for correctness.
-    This check requires the id of the collaborator.
+  manifest
+    Confirm that the manifest is valid.  Run automatically before other checks
 
