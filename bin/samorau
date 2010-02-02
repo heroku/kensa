@@ -73,6 +73,7 @@ include Heroku::Samorau
 case command
 when "init"
   Manifest.init(fn)
+  Screen.new.message "Initialized new addon manifest in #{fn}"
 when "check"
   case check = ARGV.shift
   when nil, "manifest", "man"
