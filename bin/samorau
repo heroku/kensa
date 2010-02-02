@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'term/ansicolor'
-require 'heroku/vendor'
+require 'heroku/samorau'
 
 fn="heroku-addon.manifest"
 async=false
@@ -68,7 +68,7 @@ def run(klass, fn, extras={})
   screen.finish
 end
 
-include Heroku::Vendor
+include Heroku::Samorau
 
 case command
 when "init"

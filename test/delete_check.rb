@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + "/helper"
-require "heroku/vendor"
+require "heroku/samorau"
 
 class DeleteCheckTest < Test::Unit::TestCase
-  include Heroku::Vendor
+  include Heroku::Samorau
 
   setup do
     @data = Manifest.skeleton.merge :id => 123

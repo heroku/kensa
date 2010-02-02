@@ -5,7 +5,7 @@ require 'timeout'
 
 module Heroku
 
-  module Vendor
+  module Samorau
 
     module Manifest
 

@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + "/helper"
-require "heroku/vendor"
+require "heroku/samorau"
 
 class CreateCheckTest < Test::Unit::TestCase
-  include Heroku::Vendor
+  include Heroku::Samorau
 
   setup do
     @data = Manifest.skeleton
