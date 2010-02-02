@@ -3,7 +3,7 @@
 require 'term/ansicolor'
 require 'heroku/samorau'
 
-fn="heroku-addon.manifest"
+fn="addon-manifest.json"
 async=false
 
 ARGV.options do |o|
