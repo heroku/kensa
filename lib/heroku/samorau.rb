@@ -265,6 +265,7 @@ module Heroku
     class CreateCheck < Check
       include HTTP
 
+      READLEN = 1024 * 10
       APPID = "app123@heroku.com"
 
       def call!
@@ -298,7 +299,7 @@ module Heroku
                 reader.close
                 server = TCPServer.open(7779)
                 client = server.accept
-                writer.write(client.readpartial(256))
+                writer.write(client.readpartial(READLEN))
                 client.write("Status: 200\r\n\r\n")
                 client.close
                 writer.close
@@ -322,7 +323,7 @@ module Heroku
 
         if data[:async]
           check "async response to PUT #{callback}" do
-            out = reader.readpartial(256)
+            out = reader.readpartial(READLEN)
             _, json = out.split("\r\n\r\n")
           end
         end
