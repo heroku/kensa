@@ -19,6 +19,8 @@ module Heroku
           "name" => "youraddon",
 
           "api" => {
+            "username" => "heroku",
+            "password" => generate_password,
             "test" => "http://localhost:4567/",
             "production" => "https://yourapp.com/"
           },
@@ -31,6 +33,10 @@ module Heroku
             }
           ]
         }
+      end
+
+      def self.generate_password
+        Array.new(8) { rand(256) }.pack('C*').unpack('H*').first
       end
 
     end
@@ -125,6 +131,12 @@ module Heroku
         end
         check "is a hash" do
           data["api"].is_a?(Hash)
+        end
+        check "contains username" do
+          data["api"].has_key?("username") && data["api"]["username"] != ""
+        end
+        check "contains password" do
+          data["api"].has_key?("password") && data["api"]["password"] != ""
         end
         check "contains test url" do
           data["api"].has_key?("test")

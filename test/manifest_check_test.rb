@@ -29,6 +29,16 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  test "api has a username" do
+    @data["api"].delete("username")
+    assert_invalid
+  end
+
+  test "api has a password" do
+    @data["api"].delete("password")
+    assert_invalid
+  end
+
   test "api contains test" do
     @data["api"].delete("test")
     assert_invalid
