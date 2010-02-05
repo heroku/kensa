@@ -352,11 +352,7 @@ module Heroku
         check "authentication" do
           wrong_credentials = ['wrong', 'secret']
           code, _ = post(wrong_credentials, path, payload)
-          if code == 200
-            error("not blocking wrong credentials")
-          elsif code != 401
-            error("expected 401, got #{code}")
-          end
+          error("expected 401, got #{code}") if code != 401
           true
         end
 
@@ -398,11 +394,7 @@ module Heroku
         check "authentication" do
           wrong_credentials = ['wrong', 'secret']
           code, _ = delete(wrong_credentials, path, nil)
-          if code == 200
-            error("not blocking wrong credentials")
-          elsif code != 401
-            error("expected 401, got #{code}")
-          end
+          error("expected 401, got #{code}") if code != 401
           true
         end
 
