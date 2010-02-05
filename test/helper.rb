@@ -36,10 +36,10 @@ class Test::Unit::TestCase
   end
 
   def stub(meth, o, returns)
-    o.instance_eval { @returns = returns }
+    o.instance_eval { @returns = Array(returns) }
     eval <<-EVAL
     def o.#{meth}(*args)
-      @returns
+      @returns.shift || fail("Nothing else to return from stub'ed method")
     end
     EVAL
   end

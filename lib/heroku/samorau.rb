@@ -232,21 +232,20 @@ module Heroku
 
     module HTTP
 
-      def post(path, payload=nil)
-        request(:post, path, payload)
+      def post(credentials, path, payload=nil)
+        request(:post, credentials, path, payload)
       end
 
-      def delete(path, payload=nil)
-        request(:delete, path, payload)
+      def delete(username, password, path, payload=nil)
+        request(:delete, credentials, path, payload)
       end
 
-      def request(meth, path, payload=nil)
+      def request(meth, credentials, path, payload=nil)
         code = nil
         body = nil
 
         begin
           args = [
-            @url + path,
             (Yajl::Encoder.encode(payload) if payload),
             {
               :accept => "application/json",
@@ -254,7 +253,8 @@ module Heroku
             }
           ].compact
 
-          body = RestClient.send(
+          user, pass = credentials
+          body = RestClient::Resource.new(@url, user, pass)[path].send(
             meth,
             *args
           )
@@ -282,6 +282,7 @@ module Heroku
 
       def call!
         @url = data["api"]["test"].chomp("/")
+        credentials = %w( username password ).map { |f| data["api"][f] }
 
         json = nil
         response = nil
@@ -292,19 +293,18 @@ module Heroku
         callback = "http://localhost:7779/callback/999"
         reader, writer = nil
 
+        payload = {
+          :id => APPID,
+          :plan => "Basic",
+          :callback_url => callback
+        }
+
         if data[:async]
           reader, writer = IO.pipe
         end
 
         test "POST /heroku/resources"
         check "response" do
-
-          payload = {
-            :id => APPID,
-            :plan => "Basic",
-            :callback_url => callback
-          }
-
           if data[:async]
             child = fork do
               Timeout.timeout(10) do
@@ -320,7 +320,7 @@ module Heroku
             sleep(1)
           end
 
-          code, json = post(path, payload)
+          code, json = post(credentials, path, payload)
 
           if code == 200
             # noop
@@ -349,6 +349,17 @@ module Heroku
           true
         end
 
+        check "authentication" do
+          wrong_credentials = ['wrong', 'secret']
+          code, _ = post(wrong_credentials, path, payload)
+          if code == 200
+            error("not blocking wrong credentials")
+          elsif code != 401
+            error("expected 401, got #{code}")
+          end
+          true
+        end
+
         data[:create_response] = response
 
         run CreateResponseCheck, response
@@ -370,10 +381,11 @@ module Heroku
         path = "/heroku/resources/#{id}"
 
         @url = data["api"]["test"].chomp("/")
+        credentials = %w( username password ).map { |f| data["api"][f] }
 
         test "DELETE #{path}"
         check "response" do
-          code, json = delete(path, nil)
+          code, json = delete(credentials, path, nil)
           if code == 200
             true
           elsif code == -1
