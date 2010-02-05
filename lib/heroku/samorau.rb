@@ -236,7 +236,7 @@ module Heroku
         request(:post, credentials, path, payload)
       end
 
-      def delete(username, password, path, payload=nil)
+      def delete(credentials, path, payload=nil)
         request(:delete, credentials, path, payload)
       end
 
@@ -385,7 +385,7 @@ module Heroku
 
         test "DELETE #{path}"
         check "response" do
-          code, json = delete(credentials, path, nil)
+          code, _ = delete(credentials, path, nil)
           if code == 200
             true
           elsif code == -1
@@ -393,6 +393,17 @@ module Heroku
           else
             error("expected 200, got #{code}")
           end
+        end
+
+        check "authentication" do
+          wrong_credentials = ['wrong', 'secret']
+          code, _ = delete(wrong_credentials, path, nil)
+          if code == 200
+            error("not blocking wrong credentials")
+          elsif code != 401
+            error("expected 401, got #{code}")
+          end
+          true
         end
 
       end
