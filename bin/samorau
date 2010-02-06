@@ -5,11 +5,13 @@ require 'heroku/samorau'
 
 fn="addon-manifest.json"
 async=false
+env="test"
 
 ARGV.options do |o|
   o.on("-f file", "--file") {|filename| fn = filename }
   o.on("-h", "--help") { command = "help" }
   o.on("--async") { async = true }
+  o.on("--production") { env = "production" }
   o.parse!
 end
 
@@ -80,18 +82,18 @@ when "test"
     run ManifestCheck, fn
   when "provision"
     run ManifestCheck, fn
-    run CreateCheck, fn, :async => async
+    run CreateCheck, fn, :async => async, :env => env
   when "deprovision"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn
-    run DeleteCheck, fn, :id => id, :async => async
+    run DeleteCheck, fn, :id => id, :async => async, :env => env
   else
     abort "! Unknown test '#{check}'; see usage"
   end
 when "run"
   abort "! missing command to run; see usage" if ARGV.empty?
   run ManifestCheck, fn
-  run AllCheck, fn, :args => ARGV, :async => async
+  run AllCheck, fn, :args => ARGV, :async => async, :env => env
 else
   abort DATA.read
 end
