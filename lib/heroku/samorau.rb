@@ -254,7 +254,7 @@ module Heroku
           ].compact
 
           user, pass = credentials
-          body = RestClient::Resource.new(@url, user, pass)[path].send(
+          body = RestClient::Resource.new(url, user, pass)[path].send(
             meth,
             *args
           )
@@ -273,17 +273,24 @@ module Heroku
 
     end
 
+    class ApiCheck < Check
+      def url
+        env = data[:env] || 'test'
+        data["api"][env].chomp("/")
+      end
 
-    class CreateCheck < Check
+      def credentials
+         %w( username password ).map { |attr| data["api"][attr] }
+      end
+    end
+
+    class CreateCheck < ApiCheck
       include HTTP
 
       READLEN = 1024 * 10
       APPID = "app123@heroku.com"
 
       def call!
-        @url = data["api"]["test"].chomp("/")
-        credentials = %w( username password ).map { |f| data["api"][f] }
-
         json = nil
         response = nil
 
@@ -325,7 +332,7 @@ module Heroku
           if code == 200
             # noop
           elsif code == -1
-            error("unable to connect to #{@url}")
+            error("unable to connect to #{url}")
           else
             error("expected 200, got #{code}")
           end
@@ -367,7 +374,7 @@ module Heroku
     end
 
 
-    class DeleteCheck < Check
+    class DeleteCheck < ApiCheck
       include HTTP
 
       def call!
@@ -376,16 +383,13 @@ module Heroku
 
         path = "/heroku/resources/#{id}"
 
-        @url = data["api"]["test"].chomp("/")
-        credentials = %w( username password ).map { |f| data["api"][f] }
-
         test "DELETE #{path}"
         check "response" do
           code, _ = delete(credentials, path, nil)
           if code == 200
             true
           elsif code == -1
-            error("unable to connect to #{@url}")
+            error("unable to connect to #{url}")
           else
             error("expected 200, got #{code}")
           end
