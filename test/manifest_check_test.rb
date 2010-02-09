@@ -54,6 +54,16 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  test "api contains config_vars array" do
+    @data["api"]["config_vars"] = "test"
+    assert_invalid
+  end
+
+  test "api contains at least one config var" do
+    @data["api"]["config_vars"].clear
+    assert_invalid
+  end
+
   test "plans key must exist" do
     @data.delete("plans")
     assert_invalid

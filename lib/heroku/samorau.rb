@@ -16,13 +16,14 @@ module Heroku
 
       def self.skeleton
         {
-          "name" => "youraddon",
+          "name" => "myaddon",
 
           "api" => {
             "username" => "heroku",
             "password" => generate_password,
             "test" => "http://localhost:4567/",
-            "production" => "https://yourapp.com/"
+            "production" => "https://yourapp.com/",
+            "config_vars" => ["MYADDON_URL"]
           },
 
           "plans" => [
@@ -146,6 +147,12 @@ module Heroku
         end
         check "production url uses SSL" do
           data["api"]["production"] =~ /^https:/
+        end
+        check "contains config_vars array" do
+          data["api"].has_key?("config_vars") && data["api"]["config_vars"].is_a?(Array)
+        end
+        check "contains at least one config var" do
+          !data["api"]["config_vars"].empty?
         end
 
         test "plans"
