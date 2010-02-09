@@ -151,8 +151,17 @@ module Heroku
         check "contains config_vars array" do
           data["api"].has_key?("config_vars") && data["api"]["config_vars"].is_a?(Array)
         end
-        check "contains at least one config var" do
+        check "containst at least one config var" do
           !data["api"]["config_vars"].empty?
+        end
+        check "all config vars are uppercase strings" do
+          data["api"]["config_vars"].each do |k, v|
+            if k =~ /^[A-Z][0-9A-Z_]+$/
+              true
+            else
+              error "#{k.inspect} is not a valid ENV key"
+            end
+          end
         end
 
         test "plans"

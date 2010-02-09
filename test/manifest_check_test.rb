@@ -64,6 +64,11 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  test "all config vars are in upper case" do
+    @data["api"]["config_vars"] << 'invalid_var'
+    assert_invalid
+  end
+
   test "plans key must exist" do
     @data.delete("plans")
     assert_invalid
