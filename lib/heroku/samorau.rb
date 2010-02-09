@@ -222,8 +222,11 @@ module Heroku
             response["config"].is_a?(Hash)
           end
 
-          check "all config keys are previously defined in the manifest" do
-            response["config"].keys.all? { |k| data["api"]["config_vars"].include?(k) }
+          check "all config keys were previously defined in the manifest" do
+            response["config"].keys.each do |key|
+              error "#{key} is not in the manifest" unless data["api"]["config_vars"].include?(key)
+            end
+            true
           end
 
           check "all config values are strings" do
