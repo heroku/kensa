@@ -7,7 +7,8 @@ class CreateResponseCheckTest < Test::Unit::TestCase
   def check ; CreateResponseCheck ; end
 
   setup do
-    @data =  { "id" => "123" }
+    @response = { "id" => "123" }
+    @data = { :create_response => @response }
   end
 
   test "is valid if no errors" do
@@ -15,7 +16,7 @@ class CreateResponseCheckTest < Test::Unit::TestCase
   end
 
   test "has an id" do
-    @data.delete("id")
+    @response.delete("id")
     assert_invalid
   end
 

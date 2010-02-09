@@ -210,19 +210,24 @@ module Heroku
     class CreateResponseCheck < Check
 
       def call!
+        response = data[:create_response]
         test "response"
         check "contains an id" do
-          data.has_key?("id")
+          response.has_key?("id")
         end
 
         if data.has_key?("config")
           test "config data"
           check "is a hash" do
-            data["config"].is_a?(Hash)
+            response["config"].is_a?(Hash)
+          end
+
+          check "all keys are defined in the manifest" do
+            response["config"].keys.all? { |k| }
           end
 
           check "all keys are uppercase strings" do
-            data["config"].each do |k, v|
+            response["config"].each do |k, v|
               if k =~ /^[A-Z][0-9A-Z_]*$/
                 true
               else
@@ -232,7 +237,7 @@ module Heroku
           end
 
           check "all values are strings" do
-            data["config"].each do |k, v|
+            response["config"].each do |k, v|
               if v.is_a?(String)
                 true
               else
@@ -381,7 +386,7 @@ module Heroku
 
         data[:create_response] = response
 
-        run CreateResponseCheck, response
+        run CreateResponseCheck, data
       end
 
     ensure
