@@ -8,7 +8,7 @@ class CreateResponseCheckTest < Test::Unit::TestCase
 
   setup do
     @response = { "id" => "123" }
-    @data = { :create_response => @response }
+    @data = Manifest.skeleton.merge(:create_response => @response)
   end
 
   test "is valid if no errors" do
@@ -23,20 +23,24 @@ class CreateResponseCheckTest < Test::Unit::TestCase
   describe "when config is present" do
 
     test "is a hash" do
-      @data["config"] = ""
+      @response["config"] = ""
       assert_invalid
     end
 
-    test "each key is a string" do
-      @data["config"] = { {} => "bar" }
+    test "each key is previously set in the manifest" do
+      @response["config"] = { "MYSQL_URL" => "http://..." }
       assert_invalid
     end
 
     test "each value is a string" do
-      @data["config"] = { "FOO" => {} }
+      @response["config"] = { "MYADDON_URL" => {} }
       assert_invalid
     end
 
+    test "is valid otherwise" do
+      @response["config"] = { "MYADDON_URL" => "http://..." }
+      assert_valid
+    end
   end
 
 end

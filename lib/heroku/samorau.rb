@@ -216,24 +216,14 @@ module Heroku
           response.has_key?("id")
         end
 
-        if data.has_key?("config")
+        if response.has_key?("config")
           test "config data"
           check "is a hash" do
             response["config"].is_a?(Hash)
           end
 
           check "all keys are defined in the manifest" do
-            response["config"].keys.all? { |k| }
-          end
-
-          check "all keys are uppercase strings" do
-            response["config"].each do |k, v|
-              if k =~ /^[A-Z][0-9A-Z_]*$/
-                true
-              else
-                error "#{k.inspect} is not a valid ENV key"
-              end
-            end
+            response["config"].keys.all? { |k| data["api"]["config_vars"].include?(k) }
           end
 
           check "all values are strings" do
