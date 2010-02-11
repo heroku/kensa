@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-$: << File.dirname(__FILE__) + '/../lib'
-
 require 'term/ansicolor'
 require 'heroku/samorau'
 
