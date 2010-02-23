@@ -15,7 +15,7 @@ begin
     gemspec.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
     gemspec.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
 
-    gemspec.version = '0.1.0'
+    gemspec.version = '0.1.1'
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: gem install jeweler"

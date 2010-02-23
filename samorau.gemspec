@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{samorau}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
-  s.date = %q{2010-02-11}
+  s.date = %q{2010-02-23}
   s.default_executable = %q{samorau}
   s.description = %q{}
   s.email = %q{pedro@heroku.com}
@@ -20,10 +20,12 @@ Gem::Specification.new do |s|
   s.files = [
     ".gitignore",
      "NOTES",
+     "Rakefile",
      "TODO",
      "a-server.rb",
      "bin/samorau",
      "lib/heroku/samorau.rb",
+     "samorau.gemspec",
      "server.rb",
      "set-env.sh",
      "test/create_check_test.rb",
@@ -35,7 +37,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://heroku.com}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{}
   s.test_files = [
     "test/create_check_test.rb",
