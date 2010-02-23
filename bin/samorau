@@ -95,7 +95,7 @@ when "run"
   run ManifestCheck, fn
   run AllCheck, fn, :args => ARGV, :async => async, :env => env
 else
-  abort DATA.read
+  abort File.read(__FILE__).split('__END__').last
 end
 
 __END__
