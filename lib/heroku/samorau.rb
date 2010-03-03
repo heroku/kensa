@@ -315,7 +315,7 @@ module Heroku
         reader, writer = nil
 
         payload = {
-          :id => APPID,
+          :heroku_id => APPID,
           :plan => "Basic",
           :callback_url => callback
         }
