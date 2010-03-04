@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{samorau}
-  s.version = "0.1.1"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
-  s.date = %q{2010-02-23}
+  s.date = %q{2010-03-04}
   s.default_executable = %q{samorau}
   s.description = %q{}
   s.email = %q{pedro@heroku.com}
@@ -32,7 +32,8 @@ Gem::Specification.new do |s|
      "test/create_response_check_test.rb",
      "test/delete_check.rb",
      "test/helper.rb",
-     "test/manifest_check_test.rb"
+     "test/manifest_check_test.rb",
+     "test/sso_check_test.rb"
   ]
   s.homepage = %q{http://heroku.com}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -44,7 +45,8 @@ Gem::Specification.new do |s|
      "test/create_response_check_test.rb",
      "test/delete_check.rb",
      "test/helper.rb",
-     "test/manifest_check_test.rb"
+     "test/manifest_check_test.rb",
+     "test/sso_check_test.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -58,6 +60,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rest-client>, ["~> 1.2.0"])
       s.add_runtime_dependency(%q<yajl-ruby>, ["~> 0.6"])
       s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0"])
+      s.add_runtime_dependency(%q<launchy>, [">= 0.3.2"])
     else
       s.add_dependency(%q<turn>, [">= 0"])
       s.add_dependency(%q<contest>, [">= 0"])
@@ -65,6 +68,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rest-client>, ["~> 1.2.0"])
       s.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
       s.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
+      s.add_dependency(%q<launchy>, [">= 0.3.2"])
     end
   else
     s.add_dependency(%q<turn>, [">= 0"])
@@ -73,6 +77,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rest-client>, ["~> 1.2.0"])
     s.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
     s.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
+    s.add_dependency(%q<launchy>, [">= 0.3.2"])
   end
 end
 
