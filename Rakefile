@@ -14,6 +14,7 @@ begin
     gemspec.add_dependency(%q<rest-client>, ["~> 1.2.0"])
     gemspec.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
     gemspec.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
+    gemspec.add_dependency(%q<launchy>, [">= 0.3.2"])
 
     gemspec.version = '0.1.1'
   end

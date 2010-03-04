@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'term/ansicolor'
+require 'launchy'
 require 'heroku/samorau'
 
 fn="addon-manifest.json"
@@ -99,6 +100,12 @@ when "run"
   abort "! missing command to run; see usage" if ARGV.empty?
   run ManifestCheck, fn
   run AllCheck, fn, :args => ARGV, :async => async, :env => env
+when "sso"
+  id = ARGV.shift || abort("! no id specified; see usage")
+  data = Yajl::Parser.parse(resolve_manifest(fn)).merge(:id => id)
+  sso = Sso.new(data)
+  puts "Opening #{sso.full_url}"
+  Launchy.open sso.full_url
 else
   abort File.read(__FILE__).split('__END__').last
 end
@@ -127,6 +134,8 @@ COMMANDS
   test <type>     Simulate call from Heroku (provision or deprovision)
 
   run <command>   Provisions a resource and runs command in returned ENV
+
+  sso <id>        Launches the browser on a Heroku session for the specified id
 
 TEST TYPES
 

@@ -427,39 +427,56 @@ module Heroku
     end
 
 
+    class Sso
+      attr_accessor :id, :url
+
+      def initialize(data)
+        @id   = data[:id]
+        @salt = data['api']['sso_salt']
+        @url  = data["api"]["test"].chomp('/')
+      end
+
+      def path
+        "/heroku/resources/#{id}"
+      end
+
+      def full_url
+        t = Time.now.to_i
+        "#{url}#{path}?token=#{make_token(t)}&timestamp=#{t}"
+      end
+
+      def make_token(t)
+        Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
+      end
+    end
+
+
     class SsoCheck < ApiCheck
       include HTTP
 
       def call!
-        id = data[:id]
-        raise ArgumentError, "No id specified" if id.nil?
+        sso = Sso.new(data)
+        t   = Time.now.to_i
 
-        path = "/heroku/resources/#{id}"
-        t = Time.now.to_i
-
-        test "GET #{path}"
+        test "GET #{sso.path}"
         check "validates token" do
-          code, _ = get(path, { :token => 'invalid', :timestamp => t })
+          code, _ = get(sso.path, { :token => 'invalid', :timestamp => t })
           error("expected 403, got #{code}") if code != 403
           true
         end
 
         check "validates timestamp" do
           prev = (Time.now - 60*6).to_i
-          code, _ = get(path, { :token => make_token(id, prev), :timestamp => prev })
+          code, _ = get(sso.path, { :token => sso.make_token(prev), :timestamp => prev })
           error("expected 403, got #{code}") if code != 403
           true
         end
 
         check "logs in" do
-          code, _ = get(path, { :token => make_token(id, t), :timestamp => t })
+          code, _ = get(sso.path, { :token => sso.make_token(t), :timestamp => t })
           error("expected 200, got #{code}") if code != 200
           true
         end
-      end
-
-      def make_token(id, t)
-        Digest::SHA1.hexdigest([id, data['api']['sso_salt'], t].join(':'))
       end
     end
 
