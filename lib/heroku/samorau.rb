@@ -247,6 +247,11 @@ module Heroku
 
     module HTTP
 
+      def get(path, params={})
+        path = "#{path}?" + params.map { |k, v| "#{k}=#{v}" }.join("&") unless params.empty?
+        request(:get, [], path)
+      end
+
       def post(credentials, path, payload=nil)
         request(:post, credentials, path, payload)
       end
@@ -422,6 +427,43 @@ module Heroku
     end
 
 
+    class SsoCheck < ApiCheck
+      include HTTP
+
+      def call!
+        id = data[:id]
+        raise ArgumentError, "No id specified" if id.nil?
+
+        path = "/heroku/resources/#{id}"
+        t = Time.now.to_i
+
+        test "GET #{path}"
+        check "validates token" do
+          code, _ = get(path, { :token => 'invalid', :timestamp => t })
+          error("expected 403, got #{code}") if code != 403
+          true
+        end
+
+        check "validates timestamp" do
+          prev = (Time.now - 60*6).to_i
+          code, _ = get(path, { :token => make_token(id, prev), :timestamp => prev })
+          error("expected 403, got #{code}") if code != 403
+          true
+        end
+
+        check "logs in" do
+          code, _ = get(path, { :token => make_token(id, t), :timestamp => t })
+          error("expected 200, got #{code}") if code != 200
+          true
+        end
+      end
+
+      def make_token(id, t)
+        Digest::SHA1.hexdigest([id, data['api']['sso_salt'], t].join(':'))
+      end
+    end
+
+
     ##
     # On Testing:
     #  I've opted to not write tests for this
@@ -450,6 +492,7 @@ module Heroku
           screen.message "End of #{args.first}"
         end
 
+        run SsoCheck, data
         run DeleteCheck, data
       end
 

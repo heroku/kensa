@@ -88,6 +88,10 @@ when "test"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn
     run DeleteCheck, fn, :id => id, :async => async, :env => env
+  when "sso"
+    id = ARGV.shift || abort("! no id specified; see usage")
+    run ManifestCheck, fn
+    run SsoCheck, fn, :id => id, :env => env
   else
     abort "! Unknown test '#{check}'; see usage"
   end
@@ -131,6 +135,9 @@ TEST TYPES
 
   deprovision <id>
     Simulate a deprovision call from Heroku.
+
+  sso <id>
+    Simulate a single sign-on call from Heroku.
 
   manifest
     Confirm that the manifest is valid.  Automatically runs before all tests.
