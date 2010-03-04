@@ -436,7 +436,7 @@ module Heroku
         run CreateCheck, data
 
         response = data[:create_response]
-        id = response["id"]
+        data.merge!(:id => response["id"])
         config = response["config"] || Hash.new
 
         if args
@@ -450,7 +450,7 @@ module Heroku
           screen.message "End of #{args.first}"
         end
 
-        run DeleteCheck, data.merge(:id => id)
+        run DeleteCheck, data
       end
 
       def run_in_env(env)
