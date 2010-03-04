@@ -21,6 +21,7 @@ module Heroku
           "api" => {
             "username" => "heroku",
             "password" => generate_password,
+            "sso_salt" => generate_password(40),
             "test" => "http://localhost:4567/",
             "production" => "https://yourapp.com/",
             "config_vars" => ["MYADDON_URL"]
@@ -36,8 +37,8 @@ module Heroku
         }
       end
 
-      def self.generate_password
-        Array.new(8) { rand(256) }.pack('C*').unpack('H*').first
+      def self.generate_password(size=16)
+        Array.new(size/2) { rand(256) }.pack('C*').unpack('H*').first
       end
 
     end
