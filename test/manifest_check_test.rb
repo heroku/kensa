@@ -14,6 +14,11 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_valid
   end
 
+  test "has an id" do
+    @data.delete("id")
+    assert_invalid
+  end
+
   test "has a name" do
     @data.delete("name")
     assert_invalid

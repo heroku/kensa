@@ -16,7 +16,8 @@ module Heroku
 
       def self.skeleton
         {
-          "name" => "myaddon",
+          "id" => "myaddon",
+          "name" => "My Addon",
 
           "api" => {
             "username" => "heroku",
@@ -117,6 +118,17 @@ module Heroku
       ValidPriceUnits = %w[month dyno_hour]
 
       def call!
+        test "manifest id key"
+        check "if exists" do
+          data.has_key?("id")
+        end
+        check "is a string" do
+          data["id"].is_a?(String)
+        end
+        check "is not blank" do
+          !data["id"].empty?
+        end
+
         test "manifest name key"
         check "if exists" do
           data.has_key?("name")
