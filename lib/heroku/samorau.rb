@@ -30,6 +30,7 @@ module Heroku
 
           "plans" => [
             {
+              "id" => "basic",
               "name" => "Basic",
               "price" => "0",
               "price_unit" => "month"
@@ -190,6 +191,13 @@ module Heroku
         end
         check "all plans are a hash" do
           data["plans"].all? {|plan| plan.is_a?(Hash) }
+        end
+        check "all plans must have an id" do
+          data["plans"].all? {|plan| plan.has_key?("id") }
+        end
+        check "all plans have an unique id" do
+          ids = data["plans"].map {|plan| plan["id"] }
+          ids.size == ids.uniq.size
         end
         check "all plans have a name" do
           data["plans"].all? {|plan| plan.has_key?("name") }

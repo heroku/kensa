@@ -8,6 +8,12 @@ class ManifestCheckTest < Test::Unit::TestCase
 
   setup do
     @data = Manifest.skeleton
+    @data["plans"] << {
+      "id" => "advanced",
+      "name" => "Advanced",
+      "price" => "100",
+      "price_unit" => "month"
+    }
   end
 
   test "is valid if no errors" do
@@ -94,13 +100,23 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  test "all plans have an id" do
+    @data["plans"].first.delete("id")
+    assert_invalid
+  end
+
+  test "all plans have an unique id" do
+    @data["plans"].first["id"] = @data["plans"].last["id"]
+    assert_invalid
+  end
+
   test "all plans have a name" do
     @data["plans"].first.delete("name")
     assert_invalid
   end
 
   test "all plans have a unique name" do
-    @data["plans"] << @data["plans"].first.dup
+    @data["plans"].first["name"] = @data["plans"].last["name"]
     assert_invalid
   end
 
