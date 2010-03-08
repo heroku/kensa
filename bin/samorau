@@ -84,7 +84,7 @@ when "test"
     run ManifestCheck, fn
   when "provision"
     run ManifestCheck, fn
-    run CreateCheck, fn, :async => async, :env => env
+    run ProvisionCheck, fn, :async => async, :env => env
   when "deprovision"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn

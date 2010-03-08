@@ -1,14 +1,14 @@
 require File.dirname(__FILE__) + "/helper"
 require 'heroku/samorau'
 
-class CreateResponseCheckTest < Test::Unit::TestCase
+class ProvisionResponseCheckTest < Test::Unit::TestCase
   include Heroku::Samorau
 
-  def check ; CreateResponseCheck ; end
+  def check ; ProvisionResponseCheck ; end
 
   setup do
     @response = { "id" => "123" }
-    @data = Manifest.skeleton.merge(:create_response => @response)
+    @data = Manifest.skeleton.merge(:provision_response => @response)
   end
 
   test "is valid if no errors" do

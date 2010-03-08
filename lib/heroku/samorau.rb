@@ -209,10 +209,10 @@ module Heroku
     end
 
 
-    class CreateResponseCheck < Check
+    class ProvisionResponseCheck < Check
 
       def call!
-        response = data[:create_response]
+        response = data[:provision_response]
         test "response"
         check "contains an id" do
           response.has_key?("id")
@@ -305,7 +305,7 @@ module Heroku
       end
     end
 
-    class CreateCheck < ApiCheck
+    class ProvisionCheck < ApiCheck
       include HTTP
 
       READLEN = 1024 * 10
@@ -384,9 +384,9 @@ module Heroku
           true
         end
 
-        data[:create_response] = response
+        data[:provision_response] = response
 
-        run CreateResponseCheck, data
+        run ProvisionResponseCheck, data
       end
 
     ensure
@@ -493,9 +493,9 @@ module Heroku
 
       def call!
         args = data[:args]
-        run CreateCheck, data
+        run ProvisionCheck, data
 
-        response = data[:create_response]
+        response = data[:provision_response]
         data.merge!(:id => response["id"])
         config = response["config"] || Hash.new
 

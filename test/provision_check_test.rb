@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/helper"
 require "heroku/samorau"
 
-class CreateCheckTest < Test::Unit::TestCase
+class ProvisionCheckTest < Test::Unit::TestCase
   include Heroku::Samorau
 
   setup do
@@ -12,7 +12,7 @@ class CreateCheckTest < Test::Unit::TestCase
     ]
   end
 
-  def check ; CreateCheck ; end
+  def check ; ProvisionCheck ; end
 
   test "valid on 200 for the regular check, and 401 for the auth check" do
     assert_valid do |check|
@@ -34,7 +34,7 @@ class CreateCheckTest < Test::Unit::TestCase
     end
   end
 
-  test "runs create response check" do
+  test "runs provision response check" do
     @responses[0] = [200, to_json({ :noid => 456 })]
     assert_invalid do |check|
       stub :post, check, @responses
