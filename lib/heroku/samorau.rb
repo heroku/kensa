@@ -37,8 +37,9 @@ module Heroku
         }
       end
 
+      PasswordChars = chars = ['a'..'z', 'A'..'Z', '0'..'9'].map { |r| r.to_a }.flatten
       def self.generate_password(size=16)
-        Array.new(size/2) { rand(256) }.pack('C*').unpack('H*').first
+        Array.new(size) { PasswordChars[rand(PasswordChars.size)] }.join
       end
 
     end
