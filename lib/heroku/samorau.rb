@@ -395,7 +395,7 @@ module Heroku
     end
 
 
-    class DeleteCheck < ApiCheck
+    class DeprovisionCheck < ApiCheck
       include HTTP
 
       def call!
@@ -511,7 +511,7 @@ module Heroku
         end
 
         run SsoCheck, data
-        run DeleteCheck, data
+        run DeprovisionCheck, data
       end
 
       def run_in_env(env)

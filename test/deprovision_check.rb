@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/helper"
 require "heroku/samorau"
 
-class DeleteCheckTest < Test::Unit::TestCase
+class DeprovisionCheckTest < Test::Unit::TestCase
   include Heroku::Samorau
 
   setup do
@@ -12,7 +12,7 @@ class DeleteCheckTest < Test::Unit::TestCase
     ]
   end
 
-  def check ; DeleteCheck ; end
+  def check ; DeprovisionCheck ; end
 
   test "valid on 200" do
     assert_valid do |check|

@@ -88,7 +88,7 @@ when "test"
   when "deprovision"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn
-    run DeleteCheck, fn, :id => id, :async => async, :env => env
+    run DeprovisionCheck, fn, :id => id, :async => async, :env => env
   when "sso"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn
