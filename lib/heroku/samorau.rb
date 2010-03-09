@@ -530,7 +530,6 @@ module Heroku
           screen.message "End of #{args.first}"
         end
 
-        run SsoCheck, data
         run DeprovisionCheck, data
       end
 
