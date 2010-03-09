@@ -343,7 +343,7 @@ module Heroku
 
         payload = {
           :heroku_id => APPID,
-          :plan => "Basic",
+          :plan => @data['plans'].first['id'],
           :callback_url => callback
         }
 
