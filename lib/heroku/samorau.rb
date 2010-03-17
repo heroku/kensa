@@ -10,33 +10,34 @@ module Heroku
     module Manifest
 
       def self.init(filename)
-        json = Yajl::Encoder.encode(skeleton, :pretty => true)
-        open(filename, 'w') {|f| f << json }
+        open(filename, 'w') {|f| f << skeleton }
       end
 
       def self.skeleton
-        {
-          "id" => "myaddon",
-          "name" => "My Addon",
-
-          "api" => {
-            "username" => "heroku",
-            "password" => generate_password,
-            "sso_salt" => generate_password(40),
-            "test" => "http://localhost:4567/",
-            "production" => "https://yourapp.com/",
-            "config_vars" => ["MYADDON_URL"]
-          },
-
-          "plans" => [
-            {
-              "id" => "basic",
-              "name" => "Basic",
-              "price" => "0",
-              "price_unit" => "month"
-            }
-          ]
-        }
+        return <<EOJSON
+{
+  "id": "myaddon",
+  "name": "My Addon",
+  "plans": [
+    {
+      "id": "basic",
+      "name": "Basic",
+      "price": "0",
+      "price_unit": "month"
+    }
+  ],
+  "api": {
+    "config_vars": [
+      "MYADDON_URL"
+    ],
+    "production": "https://yourapp.com/",
+    "test": "http://localhost:4567/",
+    "username": "heroku",
+    "password": "#{generate_password(16)}",
+    "sso_salt": "#{generate_password(16)}"
+  }
+}
+EOJSON
       end
 
       PasswordChars = chars = ['a'..'z', 'A'..'Z', '0'..'9'].map { |r| r.to_a }.flatten
