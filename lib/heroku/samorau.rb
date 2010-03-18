@@ -331,6 +331,7 @@ EOJSON
 
       READLEN = 1024 * 10
       APPID = "app123@heroku.com"
+      APPNAME = "myapp"
 
       def call!
         json = nil
@@ -344,6 +345,7 @@ EOJSON
 
         payload = {
           :heroku_id => APPID,
+          :appname => APPNAME,
           :plan => @data['plans'].first['id'],
           :callback_url => callback
         }
