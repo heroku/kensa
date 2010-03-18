@@ -10,10 +10,14 @@ module Heroku
     module Manifest
 
       def self.init(filename)
-        open(filename, 'w') {|f| f << skeleton }
+        open(filename, 'w') {|f| f << skeleton_str }
       end
 
       def self.skeleton
+        Yajl::Parser.parse(skeleton_str)
+      end
+
+      def self.skeleton_str
         return <<EOJSON
 {
   "id": "myaddon",
