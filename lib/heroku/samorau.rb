@@ -274,6 +274,7 @@ EOJSON
                 uri = URI.parse(value)
                 error "#{value} is not a valid URI - missing host" unless uri.host
                 error "#{value} is not a valid URI - missing scheme" unless uri.scheme
+                error "#{value} is not a valid URI - pointing to localhost" if @data[:env] == 'production' && uri.host == 'localhost'
               rescue URI::Error
                 error "#{value} is not a valid URI"
               end

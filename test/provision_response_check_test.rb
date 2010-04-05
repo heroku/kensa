@@ -58,6 +58,12 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
       assert_valid
     end
 
+    test "doesn't allow localhost URIs on production" do
+      @data[:env] = 'production'
+      @response["config"] = { "MYADDON_URL" => "http://localhost/abc" }
+      assert_invalid
+    end
+
     test "is valid otherwise" do
       @response["config"] = { "MYADDON_URL" => "http://localhost/abc" }
       assert_valid
