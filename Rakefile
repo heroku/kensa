@@ -16,7 +16,7 @@ begin
     gemspec.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
     gemspec.add_dependency(%q<launchy>, [">= 0.3.2"])
 
-    gemspec.version = '0.3.0'
+    gemspec.version = '0.4.0'
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: gem install jeweler"

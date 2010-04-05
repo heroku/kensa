@@ -4,16 +4,16 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{samorau}
-  s.version = "0.3.0"
+  s.name = %q{sensei}
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
   s.date = %q{2010-04-05}
-  s.default_executable = %q{samorau}
+  s.default_executable = %q{sensei}
   s.description = %q{}
   s.email = %q{pedro@heroku.com}
-  s.executables = ["samorau"]
+  s.executables = ["sensei"]
   s.extra_rdoc_files = [
     "TODO"
   ]
@@ -22,9 +22,9 @@ Gem::Specification.new do |s|
      "Rakefile",
      "TODO",
      "a-server.rb",
-     "bin/samorau",
-     "lib/heroku/samorau.rb",
-     "samorau.gemspec",
+     "bin/sensei",
+     "lib/heroku/sensei.rb",
+     "sensei.gemspec",
      "server.rb",
      "set-env.sh",
      "test/deprovision_check.rb",
