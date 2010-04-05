@@ -184,6 +184,15 @@ EOJSON
             end
           end
         end
+        check "all config vars are prefixed with the addon id" do
+          data["api"]["config_vars"].each do |k|
+            if k =~ /^#{data['id'].upcase}_/
+              true
+            else
+              error "#{k} is not a valid ENV key - must be prefixed with #{data['id'].upcase}_"
+            end
+          end
+        end
 
         test "plans"
         check "key must exist" do

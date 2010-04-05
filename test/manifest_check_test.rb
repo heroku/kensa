@@ -76,7 +76,12 @@ class ManifestCheckTest < Test::Unit::TestCase
   end
 
   test "all config vars are in upper case" do
-    @data["api"]["config_vars"] << 'invalid_var'
+    @data["api"]["config_vars"] << 'MYADDON_invalid_var'
+    assert_invalid
+  end
+
+  test "assert config var prefixes match addon id" do
+    @data["api"]["config_vars"] << 'MONGO_URL'
     assert_invalid
   end
 
