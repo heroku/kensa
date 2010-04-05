@@ -9,6 +9,7 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
   setup do
     @response = { "id" => "123" }
     @data = Manifest.skeleton.merge(:provision_response => @response)
+    @data['api']['config_vars'] << "MYADDON_CONFIG"
   end
 
   test "is valid if no errors" do
@@ -37,8 +38,28 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
       assert_invalid
     end
 
+    test "asserts _URL vars are valid URIs" do
+      @response["config"] = { "MYADDON_URL" => "abc:" }
+      assert_invalid
+    end
+
+    test "asserts _URL vars have a host" do
+      @response["config"] = { "MYADDON_URL" => "path" }
+      assert_invalid
+    end
+
+    test "asserts _URL vars have a scheme" do
+      @response["config"] = { "MYADDON_URL" => "//host/path" }
+      assert_invalid
+    end
+
+    test "doesn't run URI test against other vars" do
+      @response["config"] = { "MYADDON_CONFIG" => "abc:" }
+      assert_valid
+    end
+
     test "is valid otherwise" do
-      @response["config"] = { "MYADDON_URL" => "http://..." }
+      @response["config"] = { "MYADDON_URL" => "http://localhost/abc" }
       assert_valid
     end
   end

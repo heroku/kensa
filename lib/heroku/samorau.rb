@@ -2,6 +2,7 @@ require 'yajl'
 require 'restclient'
 require 'socket'
 require 'timeout'
+require 'uri'
 
 module Heroku
 
@@ -265,6 +266,20 @@ EOJSON
               end
             end
           end
+
+          check "URL configs vars" do
+            response["config"].each do |key, value|
+              next unless key =~ /_URL$/
+              begin
+                uri = URI.parse(value)
+                error "#{value} is not a valid URI - missing host" unless uri.host
+                error "#{value} is not a valid URI - missing scheme" unless uri.scheme
+              rescue URI::Error
+                error "#{value} is not a valid URI"
+              end
+            end
+          end
+
         end
       end
 
