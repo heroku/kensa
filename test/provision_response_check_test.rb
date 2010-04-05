@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + "/helper"
-require 'heroku/samorau'
+require 'heroku/sensei'
 
 class ProvisionResponseCheckTest < Test::Unit::TestCase
-  include Heroku::Samorau
+  include Heroku::Sensei
 
   def check ; ProvisionResponseCheck ; end
 

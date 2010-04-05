@@ -1,7 +1,7 @@
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "samorau"
+    gemspec.name = "sensei"
     gemspec.summary = ""
     gemspec.description = ""
     gemspec.email = "pedro@heroku.com"

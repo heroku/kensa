@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
-  s.date = %q{2010-03-17}
+  s.date = %q{2010-04-05}
   s.default_executable = %q{samorau}
   s.description = %q{}
   s.email = %q{pedro@heroku.com}
@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".gitignore",
-     "NOTES",
      "Rakefile",
      "TODO",
      "a-server.rb",

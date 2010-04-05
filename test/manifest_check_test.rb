@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + "/helper"
-require 'heroku/samorau'
+require 'heroku/sensei'
 
 class ManifestCheckTest < Test::Unit::TestCase
-  include Heroku::Samorau
+  include Heroku::Sensei
 
   def check ; ManifestCheck ; end
 

@@ -6,7 +6,7 @@ require 'uri'
 
 module Heroku
 
-  module Samorau
+  module Sensei
 
     module Manifest
 

@@ -3,7 +3,7 @@
 require 'optparse'
 require 'term/ansicolor'
 require 'launchy'
-require 'heroku/samorau'
+require 'heroku/sensei'
 
 fn="addon-manifest.json"
 async=false
@@ -72,7 +72,7 @@ def run(klass, fn, extras={})
   screen.finish
 end
 
-include Heroku::Samorau
+include Heroku::Sensei
 
 case command
 when "init"
@@ -111,10 +111,10 @@ else
 end
 
 __END__
-Usage: samorau [OPTIONS] command
-       samorau init
-       samorau test <type> [arg1 arg2 ...]
-       samorau run <command> [arg1 arg1 ...]
+Usage: sensei [OPTIONS] command
+       sensei init
+       sensei test <type> [arg1 arg2 ...]
+       sensei run <command> [arg1 arg1 ...]
 
 OPTIONS
 

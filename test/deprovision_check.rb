@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + "/helper"
-require "heroku/samorau"
+require "heroku/sensei"
 
 class DeprovisionCheckTest < Test::Unit::TestCase
-  include Heroku::Samorau
+  include Heroku::Sensei
 
   setup do
     @data = Manifest.skeleton.merge :id => 123
