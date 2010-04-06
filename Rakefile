@@ -1,3 +1,13 @@
+task :test do
+  fork do
+    exec "ruby test/resources/test_server.rb > /dev/null 2>&1"
+  end
+  system "turn"
+  system "ps -ax | grep test_server | grep -v grep | awk '{print $1}' | xargs kill"
+end
+
+task :default => :test
+
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
@@ -15,6 +25,7 @@ begin
     gemspec.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
     gemspec.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
     gemspec.add_dependency(%q<launchy>, [">= 0.3.2"])
+    gemspec.add_dependency(%q<mechanize>, ["~> 1.0.0"])
 
     gemspec.version = '0.4.0'
   end

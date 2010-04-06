@@ -3,6 +3,7 @@ require 'restclient'
 require 'socket'
 require 'timeout'
 require 'uri'
+require 'mechanize'
 
 module Heroku
 
@@ -507,27 +508,37 @@ EOJSON
     class SsoCheck < ApiCheck
       include HTTP
 
+      def mechanize_get url
+        agent = Mechanize.new
+        page = agent.get(url)
+        return page, 200
+      rescue Mechanize::ResponseCodeError => error
+        return nil, error.response_code.to_i
+      rescue Errno::ECONNREFUSED
+        error("connection refused to #{url}")
+      end
+      
       def call!
         sso = Sso.new(data)
         t   = Time.now.to_i
 
         test "GET #{sso.path}"
         check "validates token" do
-          code, _ = get(sso.path, { :token => 'invalid', :timestamp => t })
-          error("expected 403, got #{code}") if code != 403
+          page, respcode = mechanize_get sso.url + sso.path + "?token=invalid&timestamp=#{t}"
+          error("expected 403, got 200") unless respcode == 403
           true
         end
 
         check "validates timestamp" do
           prev = (Time.now - 60*6).to_i
-          code, _ = get(sso.path, { :token => sso.make_token(prev), :timestamp => prev })
-          error("expected 403, got #{code}") if code != 403
+          page, respcode = mechanize_get sso.url + sso.path + "?token=#{sso.make_token(prev)}&timestamp=#{prev}"
+          error("expected 403, got 200") unless respcode == 403
           true
         end
 
         check "logs in" do
-          code, _ = get(sso.path, { :token => sso.make_token(t), :timestamp => t })
-          error("expected 200, got #{code}") if code != 200
+          page, respcode = mechanize_get sso.url + sso.path + "?token=#{sso.make_token(t)}&timestamp=#{t}"
+          error("expected 200, got #{respcode}") unless respcode == 200
           true
         end
       end

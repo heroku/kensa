@@ -6,33 +6,24 @@ class SsoCheckTest < Test::Unit::TestCase
 
   setup do
     @data = Manifest.skeleton.merge :id => 123
-    @responses = [
-      [403, ""],
-      [403, ""],
-      [200, ""]
-    ]
+    @data['api']['sso_salt'] = 'SSO_SALT'
   end
 
   def check ; SsoCheck ; end
 
+  test "working sso request" do
+    @data['api']['test'] += "working"
+    assert_valid
+  end
+
   test "rejects bad token" do
-    @responses[0] = [200, ""]
-    assert_invalid do |check|
-      stub :get, check, @responses
-    end
+    @data['api']['test'] += "notoken"
+    assert_invalid
   end
 
-  test "rejects bad timestamp do" do
-    @responses[1] = [200, ""]
-    assert_invalid do |check|
-      stub :get, check, @responses
-    end
-  end
-
-  test "accepts sso otherwise" do
-    assert_valid do |check|
-      stub :get, check, @responses
-    end
+  test "rejects old timestamp" do
+    @data['api']['test'] += "notimestamp"
+    assert_invalid
   end
 
 end
