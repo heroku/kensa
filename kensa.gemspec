@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{kensa}
-  s.version = "0.4.0"
+  s.version = "0.4.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
      "TODO",
      "a-server.rb",
      "bin/kensa",
+     "kensa.gemspec",
      "lib/heroku/kensa.rb",
      "server.rb",
      "set-env.sh",
