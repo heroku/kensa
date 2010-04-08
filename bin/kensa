@@ -3,7 +3,7 @@
 require 'optparse'
 require 'term/ansicolor'
 require 'launchy'
-require 'heroku/sensei'
+require 'heroku/kensa'
 
 fn="addon-manifest.json"
 async=false
@@ -111,10 +111,10 @@ else
 end
 
 __END__
-Usage: sensei [OPTIONS] command
-       sensei init
-       sensei test <type> [arg1 arg2 ...]
-       sensei run <command> [arg1 arg1 ...]
+Usage: kensa [OPTIONS] command
+       kensa init
+       kensa test <type> [arg1 arg2 ...]
+       kensa run <command> [arg1 arg1 ...]
 
 OPTIONS
 

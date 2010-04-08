@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + "/helper"
-require "heroku/sensei"
 
 class SsoCheckTest < Test::Unit::TestCase
   include Heroku::Sensei

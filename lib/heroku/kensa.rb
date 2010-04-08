@@ -360,7 +360,7 @@ EOJSON
       include HTTP
 
       READLEN = 1024 * 10
-      APPID = "app#{rand(10000)}@sensei.heroku.com"
+      APPID = "app#{rand(10000)}@kensa.heroku.com"
       APPNAME = "myapp"
 
       def call!

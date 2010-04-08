@@ -11,7 +11,7 @@ task :default => :test
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "sensei"
+    gemspec.name = "kensa"
     gemspec.summary = ""
     gemspec.description = ""
     gemspec.email = "pedro@heroku.com"

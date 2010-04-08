@@ -1,3 +1,4 @@
+require 'heroku/kensa'
 require 'contest'
 
 class Test::Unit::TestCase
