@@ -5,46 +5,35 @@ class ProvisionCheckTest < Test::Unit::TestCase
 
   setup do
     @data = Manifest.skeleton
-    @responses = [
-      [200, to_json({ :id => 456 })],
-      [401, "Unauthorized"]
-    ]
+    @data['api']['username'] = 'test'
+    @data['api']['password'] = 'secret'
   end
 
   def check ; ProvisionCheck ; end
 
-  test "valid on 200 for the regular check, and 401 for the auth check" do
-    assert_valid do |check|
-      stub :post, check, @responses
-    end
+  test "working provision call" do
+    @data['api']['test'] += "working"
+    assert_valid
   end
 
   test "invalid JSON" do
-    @responses[0] = [200, "---"]
-    assert_invalid do |check|
-      stub :post, check, @responses
-    end
+    @data['api']['test'] += "invalid-json"
+    assert_invalid
   end
 
   test "status other than 200" do
-    @responses[0] = [500, to_json({ :id => 456 })]
-    assert_invalid do |check|
-      stub :post, check, @responses
-    end
+    @data['api']['test'] += "invalid-status"
+    assert_invalid
   end
 
   test "runs provision response check" do
-    @responses[0] = [200, to_json({ :noid => 456 })]
-    assert_invalid do |check|
-      stub :post, check, @responses
-    end
+    @data['api']['test'] += "invalid-missing-id"
+    assert_invalid
   end
 
   test "runs auth check" do
-    @responses[1] = [200, to_json({ :id => 456 })]
-    assert_invalid do |check|
-      stub :post, check, @responses
-    end
+    @data['api']['test'] += "invalid-missing-auth"
+    assert_invalid
   end
 
 end
