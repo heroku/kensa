@@ -329,7 +329,7 @@ EOJSON
           body = RestClient::Resource.new(url, user, pass)[path].send(
             meth,
             *args
-          )
+          ).to_s
 
           code = 200
         rescue RestClient::ExceptionWithResponse => boom
