@@ -455,7 +455,7 @@ EOJSON
         id = data[:id]
         raise ArgumentError, "No id specified" if id.nil?
 
-        path = "/heroku/resources/#{id}"
+        path = "/heroku/resources/#{CGI::escape(id.to_s)}"
 
         test "DELETE #{path}"
         check "response" do
