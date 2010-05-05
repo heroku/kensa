@@ -272,7 +272,7 @@ EOJSON
               if v.is_a?(String)
                 true
               else
-                error "#{v.inspect} is not a string"
+                error "the key #{k} doesn't contain a string (#{v.inspect})"
               end
             end
           end
