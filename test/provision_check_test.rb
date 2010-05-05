@@ -21,6 +21,11 @@ class ProvisionCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  test "detects invalid response" do
+    @data['api']['test'] += "invalid-response"
+    assert_invalid
+  end
+
   test "detects invalid status" do
     @data['api']['test'] += "invalid-status"
     assert_invalid

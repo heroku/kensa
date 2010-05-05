@@ -41,6 +41,11 @@ post '/invalid-json/heroku/resources' do
   'invalidjson'
 end
 
+post '/invalid-response/heroku/resources' do
+  heroku_only!
+  nil.to_json
+end
+
 post '/invalid-status/heroku/resources' do
   heroku_only!
   status 422

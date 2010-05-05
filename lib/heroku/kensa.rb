@@ -251,7 +251,7 @@ EOJSON
         response = data[:provision_response]
         test "response"
         check "contains an id" do
-          response.has_key?("id")
+          response.is_a?(Hash) && response.has_key?("id")
         end
 
         if response.has_key?("config")
