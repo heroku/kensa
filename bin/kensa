@@ -5,15 +5,17 @@ require 'term/ansicolor'
 require 'launchy'
 require 'heroku/kensa'
 
-fn="addon-manifest.json"
-async=false
-env="test"
+fn = "addon-manifest.json"
+options = {
+  :async => false,
+  :env   => "test",
+}
 
 ARGV.options do |o|
   o.on("-f file", "--file") {|filename| fn = filename }
+  o.on("--async") { options[:async] = true }
+  o.on("--production") { options[:env] = "production" }
   o.on("-h", "--help") { command = "help" }
-  o.on("--async") { async = true }
-  o.on("--production") { env = "production" }
   o.parse!
 end
 
@@ -84,26 +86,26 @@ when "test"
     run ManifestCheck, fn
   when "provision"
     run ManifestCheck, fn
-    run ProvisionCheck, fn, :async => async, :env => env
+    run ProvisionCheck, fn, options
   when "deprovision"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn
-    run DeprovisionCheck, fn, :id => id, :async => async, :env => env
+    run DeprovisionCheck, fn, options.merge(:id => id)
   when "sso"
     id = ARGV.shift || abort("! no id specified; see usage")
     run ManifestCheck, fn
-    run SsoCheck, fn, :id => id, :env => env
+    run SsoCheck, fn, options.merge(:id => id)
   else
     abort "! Unknown test '#{check}'; see usage"
   end
 when "run"
   abort "! missing command to run; see usage" if ARGV.empty?
   run ManifestCheck, fn
-  run AllCheck, fn, :args => ARGV, :async => async, :env => env
+  run AllCheck, fn, options.merge(:args => ARGV)
 when "sso"
   id = ARGV.shift || abort("! no id specified; see usage")
-  data = Yajl::Parser.parse(resolve_manifest(fn)).merge(:id => id, :env => env)
-  sso = Sso.new(data)
+  data = Yajl::Parser.parse(resolve_manifest(fn)).merge(:id => id)
+  sso = Sso.new(data.merge(options))
   puts "Opening #{sso.full_url}"
   Launchy.open sso.full_url
 else
