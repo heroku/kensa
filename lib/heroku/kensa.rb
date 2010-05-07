@@ -376,7 +376,7 @@ EOJSON
         payload = {
           :heroku_id => APPID,
           :appname => APPNAME,
-          :plan => @data['plans'].first['id'],
+          :plan => @data[:plan] || @data['plans'].first['id'],
           :callback_url => callback
         }
 

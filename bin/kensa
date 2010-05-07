@@ -15,6 +15,7 @@ ARGV.options do |o|
   o.on("-f file", "--file") {|filename| fn = filename }
   o.on("--async") { options[:async] = true }
   o.on("--production") { options[:env] = "production" }
+  o.on("--plan PLANID") { |plan| options[:plan] = plan }
   o.on("-h", "--help") { command = "help" }
   o.parse!
 end
@@ -128,6 +129,9 @@ OPTIONS
 
   --async
     Check provision call with async response.
+
+  --plan plan-id
+    Use the identified plan when doing provision calls
 
 COMMANDS
 
