@@ -487,7 +487,8 @@ EOJSON
       def initialize(data)
         @id   = data[:id]
         @salt = data['api']['sso_salt']
-        @url  = data["api"]["test"].chomp('/')
+        env   = data[:env] || 'test'
+        @url  = data["api"][env].chomp('/')
       end
 
       def path

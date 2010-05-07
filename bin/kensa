@@ -102,7 +102,7 @@ when "run"
   run AllCheck, fn, :args => ARGV, :async => async, :env => env
 when "sso"
   id = ARGV.shift || abort("! no id specified; see usage")
-  data = Yajl::Parser.parse(resolve_manifest(fn)).merge(:id => id)
+  data = Yajl::Parser.parse(resolve_manifest(fn)).merge(:id => id, :env => env)
   sso = Sso.new(data)
   puts "Opening #{sso.full_url}"
   Launchy.open sso.full_url
