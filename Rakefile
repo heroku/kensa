@@ -27,7 +27,7 @@ begin
     gemspec.add_dependency(%q<launchy>, [">= 0.3.2"])
     gemspec.add_dependency(%q<mechanize>, ["~> 1.0.0"])
 
-    gemspec.version = '0.4.1'
+    gemspec.version = '0.4.2'
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: gem install jeweler"
