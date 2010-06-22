@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/helper"
 
 class ProvisionCheckTest < Test::Unit::TestCase
-  include Heroku::Sensei
+  include Heroku::Kensa
 
   setup do
     @data = Manifest.skeleton

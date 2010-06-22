@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/helper"
 
 class ManifestCheckTest < Test::Unit::TestCase
-  include Heroku::Sensei
+  include Heroku::Kensa
 
   def check ; ManifestCheck ; end
 

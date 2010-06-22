@@ -7,7 +7,7 @@ require 'mechanize'
 
 module Heroku
 
-  module Sensei
+  module Kensa
 
     module Manifest
 

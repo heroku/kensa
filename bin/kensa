@@ -75,7 +75,7 @@ def run(klass, fn, extras={})
   screen.finish
 end
 
-include Heroku::Sensei
+include Heroku::Kensa
 
 case command
 when "init"
