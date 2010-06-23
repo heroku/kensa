@@ -61,6 +61,14 @@ module Heroku
         Launchy.open sso.full_url
       end
 
+      def push
+        require_heroku
+        client   = Heroku::Command.run "auth:client", []
+        resource = RestClient::Resource.new("https://addons.heroku.com", client.user, client.password)
+        resource['manifests'].put(resolve_manifest)
+        puts "Manifest pushed succesfully"
+      end
+
       private
 
         def resolve_manifest
@@ -77,6 +85,14 @@ module Heroku
           check = klass.new(data.merge(@options.merge(args)), screen)
           check.call
           screen.finish
+        end
+
+        def require_heroku
+          require 'heroku'
+          require 'heroku/command'
+          require 'heroku/commands/auth'
+        rescue LoadError
+          abort("fatal: Could not load the Heroku gem. Plase make sure the Heroku gem is available and up to date")
         end
 
 

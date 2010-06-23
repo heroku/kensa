@@ -59,6 +59,8 @@ COMMANDS
 
   sso <id>        Launches the browser on a Heroku session for the specified id
 
+  push            Send the manifest to Heroku
+
 TEST TYPES
 
   provision
