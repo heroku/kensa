@@ -1,18 +1,19 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'term/ansicolor'
-require 'launchy'
 require 'heroku/kensa'
+require 'heroku/kensa/client'
 
-fn = "addon-manifest.json"
+$stdout.sync = true
+
 options = {
-  :async => false,
-  :env   => "test",
+  :filename => 'addon-manifest.json',
+  :env      => "test",
+  :async    => false,
 }
 
 ARGV.options do |o|
-  o.on("-f file", "--file") {|filename| fn = filename }
+  o.on("-f file", "--file") {|filename| options[:filename] = filename }
   o.on("--async") { options[:async] = true }
   o.on("--production") { options[:env] = "production" }
   o.on("--plan PLANID") { |plan| options[:plan] = plan }
@@ -20,96 +21,11 @@ ARGV.options do |o|
   o.parse!
 end
 
-command = ARGV.shift
-
-$stdout.sync = true
-
-class Screen
-  include Term::ANSIColor
-
-  def test(msg)
-    $stdout.puts
-    $stdout.puts
-    $stdout.print "Testing #{msg}"
-  end
-
-  def check(msg)
-    $stdout.puts
-    $stdout.print "  Check #{msg}"
-  end
-
-  def error(msg)
-    $stdout.print "\n", magenta("    ! #{msg}")
-  end
-
-  def result(status)
-    msg = status ? bold("[PASS]") : red(bold("[FAIL]"))
-    $stdout.print " #{msg}"
-  end
-
-  def message(msg)
-    $stdout.puts msg
-  end
-
-  def finish
-    $stdout.puts
-    $stdout.puts
-    $stdout.puts "done."
-  end
-
-end
-
-def resolve_manifest(fn)
-  if File.exists?(fn)
-    File.read(fn)
-  else
-    abort("fatal: #{fn} not found")
-  end
-end
-
-def run(klass, fn, extras={})
-  screen = Screen.new
-  data = Yajl::Parser.parse(resolve_manifest(fn))
-  check = klass.new(data.merge(extras), screen)
-  check.call
-  screen.finish
-end
-
 include Heroku::Kensa
 
-case command
-when "init"
-  Manifest.init(fn)
-  Screen.new.message "Initialized new addon manifest in #{fn}"
-when "test"
-  case check = ARGV.shift
-  when "manifest"
-    run ManifestCheck, fn
-  when "provision"
-    run ManifestCheck, fn
-    run ProvisionCheck, fn, options
-  when "deprovision"
-    id = ARGV.shift || abort("! no id specified; see usage")
-    run ManifestCheck, fn
-    run DeprovisionCheck, fn, options.merge(:id => id)
-  when "sso"
-    id = ARGV.shift || abort("! no id specified; see usage")
-    run ManifestCheck, fn
-    run SsoCheck, fn, options.merge(:id => id)
-  else
-    abort "! Unknown test '#{check}'; see usage"
-  end
-when "run"
-  abort "! missing command to run; see usage" if ARGV.empty?
-  run ManifestCheck, fn
-  run AllCheck, fn, options.merge(:args => ARGV)
-when "sso"
-  id = ARGV.shift || abort("! no id specified; see usage")
-  data = Yajl::Parser.parse(resolve_manifest(fn)).merge(:id => id)
-  sso = Sso.new(data.merge(options))
-  puts "Opening #{sso.full_url}"
-  Launchy.open sso.full_url
-else
+begin
+  Client.new(ARGV, options).run!
+rescue Client::CommandInvalid
   abort File.read(__FILE__).split('__END__').last
 end
 
