@@ -63,7 +63,7 @@ module Heroku
 
       def push
         require_heroku
-        client   = Heroku::Command.run "auth:client", []
+        client   = Heroku::Command.run "auth:client", ['--ignore-keys']
         resource = RestClient::Resource.new("https://addons.heroku.com", client.user, client.password)
         resource['manifests'].put(resolve_manifest)
         puts "Manifest pushed succesfully"
