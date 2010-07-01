@@ -466,6 +466,7 @@ module Heroku
           screen.message ""
 
           run_in_env(config) { system(*args) }
+          error("run exited abnormally, expected 0, got #{$?.to_i}") unless $?.to_i == 0
 
           screen.message ""
           screen.message "End of #{args.first}"
