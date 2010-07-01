@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
-  s.date = %q{2010-05-21}
+  s.date = %q{2010-07-01}
   s.default_executable = %q{kensa}
   s.description = %q{}
   s.email = %q{pedro@heroku.com}
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "bin/kensa",
      "kensa.gemspec",
      "lib/heroku/kensa.rb",
+     "lib/heroku/kensa/client.rb",
      "server.rb",
      "set-env.sh",
      "test/deprovision_check.rb",
@@ -58,7 +59,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<turn>, [">= 0"])
       s.add_development_dependency(%q<contest>, [">= 0"])
       s.add_runtime_dependency(%q<sinatra>, ["~> 0.9"])
-      s.add_runtime_dependency(%q<rest-client>, ["~> 1.2.0"])
+      s.add_runtime_dependency(%q<rest-client>, ["~> 1.4.0"])
       s.add_runtime_dependency(%q<yajl-ruby>, ["~> 0.6"])
       s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0"])
       s.add_runtime_dependency(%q<launchy>, [">= 0.3.2"])
@@ -67,7 +68,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<turn>, [">= 0"])
       s.add_dependency(%q<contest>, [">= 0"])
       s.add_dependency(%q<sinatra>, ["~> 0.9"])
-      s.add_dependency(%q<rest-client>, ["~> 1.2.0"])
+      s.add_dependency(%q<rest-client>, ["~> 1.4.0"])
       s.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
       s.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
       s.add_dependency(%q<launchy>, [">= 0.3.2"])
@@ -77,7 +78,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<turn>, [">= 0"])
     s.add_dependency(%q<contest>, [">= 0"])
     s.add_dependency(%q<sinatra>, ["~> 0.9"])
-    s.add_dependency(%q<rest-client>, ["~> 1.2.0"])
+    s.add_dependency(%q<rest-client>, ["~> 1.4.0"])
     s.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
     s.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
     s.add_dependency(%q<launchy>, [">= 0.3.2"])

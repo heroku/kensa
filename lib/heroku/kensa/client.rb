@@ -89,7 +89,6 @@ module Heroku
         end
 
         def require_heroku
-          require 'rubygems'
           require 'heroku'
           require 'heroku/command'
           require 'heroku/commands/auth'

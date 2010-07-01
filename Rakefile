@@ -21,7 +21,7 @@ begin
     gemspec.add_development_dependency(%q<turn>, [">= 0"])
     gemspec.add_development_dependency(%q<contest>, [">= 0"])
     gemspec.add_dependency(%q<sinatra>, ["~> 0.9"])
-    gemspec.add_dependency(%q<rest-client>, ["~> 1.2.0"])
+    gemspec.add_dependency(%q<rest-client>, ["~> 1.4.0"])
     gemspec.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
     gemspec.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
     gemspec.add_dependency(%q<launchy>, [">= 0.3.2"])
