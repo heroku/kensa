@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/helper"
+require 'test/helper'
 
 class SsoCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
