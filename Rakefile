@@ -1,3 +1,4 @@
+desc 'Run all unit tests'
 task :test do
   fork do
     exec "ruby test/resources/test_server.rb > /dev/null 2>&1"
