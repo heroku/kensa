@@ -21,6 +21,7 @@ begin
 
     gemspec.add_development_dependency(%q<turn>, [">= 0"])
     gemspec.add_development_dependency(%q<contest>, [">= 0"])
+    gemspec.add_development_dependency(%q<timecop>, [">= 0.3.5"])
     gemspec.add_dependency(%q<sinatra>, ["~> 0.9"])
     gemspec.add_dependency(%q<rest-client>, ["~> 1.4.0"])
     gemspec.add_dependency(%q<yajl-ruby>, ["~> 0.6"])

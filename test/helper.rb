@@ -1,5 +1,6 @@
 require 'heroku/kensa'
 require 'contest'
+require 'timecop'
 
 class Test::Unit::TestCase
 
