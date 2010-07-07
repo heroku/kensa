@@ -8,7 +8,8 @@ module Heroku
       def initialize(data)
         @id   = data[:id]
         @salt = data['api']['sso_salt']
-        env   = data[:env] || 'test'
+
+        env   = data.fetch :env, 'test'
         @url  = data["api"][env].chomp('/')
       end
 
