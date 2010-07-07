@@ -24,4 +24,17 @@ class SsoCheckTest < Test::Unit::TestCase
       assert_equal expected, @sso.full_url
     end
   end
+
+  context 'sso without salt' do
+    setup do
+      @data['api'].delete 'sso_salt'
+      @sso = Sso.new @data
+    end
+
+    test 'builds full url' do
+      expected = 'http://localhost:4567/heroku/resources/1'
+
+      assert_equal expected, @sso.full_url
+    end
+  end
 end

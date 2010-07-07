@@ -1,3 +1,5 @@
+require 'restclient'
+
 module Heroku
   module Kensa
     class Sso
@@ -15,13 +17,21 @@ module Heroku
       end
 
       def full_url
-        t = Time.now.to_i
-        "#{url}#{path}?token=#{make_token(t)}&timestamp=#{t}"
+        [ url, path, token_querystring ].join
       end
 
       def make_token(t)
         Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
       end
+
+      private
+
+        def token_querystring
+          return '' unless @salt
+
+          t = Time.now.to_i
+          "?token=#{make_token(t)}&timestamp=#{t}"
+        end
 
     end
   end
