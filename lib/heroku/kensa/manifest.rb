@@ -7,7 +7,8 @@ module Heroku
       end
 
       def skeleton
-        { 'id'    => 'myaddon',
+        response = {
+          'id'    => 'myaddon',
           'name'  => 'My Addon',
           'plans' => [{
             'id'          => 'basic',
@@ -20,10 +21,15 @@ module Heroku
             'production'  => 'https://yourapp.com/',
             'test'        => 'http://localhost:4567/',
             'username'    => 'heroku',
-            'password'    => generate_password(16),
-            'sso_salt'    => generate_password(16)
+            'password'    => generate_password(16)
           }
         }
+
+        unless @options[:sso] === false
+          response['api']['sso_salt'] = generate_password 16
+        end
+
+        response
       end
 
       # I thought it would be easier to convert #skeleton to a hash and use Yajl
