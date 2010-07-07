@@ -399,6 +399,8 @@ module Heroku
       end
       
       def call!
+        error("need an sso salt to perform sso test") unless data['api']['sso_salt']
+
         sso = Sso.new(data)
         t   = Time.now.to_i
 

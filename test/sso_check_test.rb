@@ -25,4 +25,11 @@ class SsoCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  test "reject omitted sso salt" do
+    @data['api'].delete 'sso_salt'
+    @data['api']['test'] += "working"
+
+    assert_invalid
+  end
+
 end
