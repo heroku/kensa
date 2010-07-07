@@ -7,7 +7,7 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
 
   setup do
     @response = { "id" => "123" }
-    @data = Manifest.skeleton.merge(:provision_response => @response)
+    @data = Manifest.new.skeleton.merge(:provision_response => @response)
     @data['api']['config_vars'] << "MYADDON_CONFIG"
   end
 

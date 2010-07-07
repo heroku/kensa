@@ -4,7 +4,7 @@ class ProvisionCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
-    @data = Manifest.skeleton
+    @data = Manifest.new.skeleton
     @data['api']['username'] = 'test'
     @data['api']['password'] = 'secret'
   end

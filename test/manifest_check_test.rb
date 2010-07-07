@@ -6,7 +6,7 @@ class ManifestCheckTest < Test::Unit::TestCase
   def check ; ManifestCheck ; end
 
   setup do
-    @data = Manifest.skeleton
+    @data = Manifest.new.skeleton
     @data["plans"] << {
       "id" => "advanced",
       "name" => "Advanced",

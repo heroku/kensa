@@ -24,7 +24,7 @@ module Heroku
       end
 
       def init
-        Manifest.init(filename)
+        Manifest.new(filename, @options).write
         Screen.new.message "Initialized new addon manifest in #{filename}"
       end
 

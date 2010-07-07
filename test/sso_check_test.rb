@@ -4,7 +4,7 @@ class SsoCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
-    @data = Manifest.skeleton.merge :id => 123
+    @data = Manifest.new.skeleton.merge :id => 123
     @data['api']['sso_salt'] = 'SSO_SALT'
   end
 

@@ -4,7 +4,7 @@ class DeprovisionCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
-    @data = Manifest.skeleton.merge :id => 123
+    @data = Manifest.new.skeleton.merge :id => 123
     @responses = [
       [200, ""],
       [401, ""],
