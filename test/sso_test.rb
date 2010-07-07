@@ -1,6 +1,6 @@
 require 'test/helper'
 
-class SsoCheckTest < Test::Unit::TestCase
+class SsoTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
