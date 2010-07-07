@@ -1,3 +1,4 @@
+require 'restclient'
 require 'term/ansicolor'
 require 'launchy'
 
