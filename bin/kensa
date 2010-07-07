@@ -17,6 +17,7 @@ ARGV.options do |o|
   o.on("--async") { options[:async] = true }
   o.on("--production") { options[:env] = "production" }
   o.on("--plan PLANID") { |plan| options[:plan] = plan }
+  o.on("--without-sso") { options[:sso] = false }
   o.on("-h", "--help") { command = "help" }
   o.parse!
 end
@@ -48,6 +49,9 @@ OPTIONS
 
   --plan plan-id
     Use the identified plan when doing provision calls
+
+  --without-sso
+    Skip single sign-on authentication when doing provision calls
 
 COMMANDS
 
