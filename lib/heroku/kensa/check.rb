@@ -388,8 +388,11 @@ module Heroku
     class SsoCheck < ApiCheck
       include HTTP
 
+      def agent
+        @agent ||= Mechanize.new
+      end
+
       def mechanize_get url
-        agent = Mechanize.new
         page = agent.get(url)
         return page, 200
       rescue Mechanize::ResponseCodeError => error
@@ -397,7 +400,7 @@ module Heroku
       rescue Errno::ECONNREFUSED
         error("connection refused to #{url}")
       end
-      
+
       def call!
         error("need an sso salt to perform sso test") unless data['api']['sso_salt']
 
@@ -418,9 +421,22 @@ module Heroku
           true
         end
 
+        page_logged_in = nil
         check "logs in" do
-          page, respcode = mechanize_get sso.url + sso.path + "?token=#{sso.make_token(t)}&timestamp=#{t}"
+          page_logged_in, respcode = mechanize_get sso.url + sso.path + sso.querystring
           error("expected 200, got #{respcode}") unless respcode == 200
+          true
+        end
+
+        check "creates the heroku-nav-data cookie" do
+          cookie = agent.cookie_jar.cookies(URI.parse(sso.full_url)).detect { |c| c.name == 'heroku-nav-data' }
+          error("could not find cookie heroku-nav-data") unless cookie
+          error("expected #{sso.sample_nav_data}, got #{cookie.value}") unless cookie.value == sso.sample_nav_data
+          true
+        end
+
+        check "displays the heroku layout" do
+          error("could not find Heroku layout") if page_logged_in.search('div#heroku-header').empty?
           true
         end
       end

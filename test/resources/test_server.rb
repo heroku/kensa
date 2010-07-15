@@ -25,8 +25,10 @@ helpers do
     Digest::SHA1.hexdigest([params[:id], 'SSO_SALT', params[:timestamp]].join(':'))
   end
   
-  def login
+  def login(heroku_user=true)
+    session.clear
     session[:logged_in] = true
+    session[:heroku]    = heroku_user
     redirect '/'
   end
 end
@@ -66,22 +68,58 @@ get '/working/heroku/resources/:id' do
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
+  response.set_cookie('heroku-nav-data', params['nav-data'])
   login
 end
 
 get '/notoken/heroku/resources/:id' do
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
+  response.set_cookie('heroku-nav-data', params['nav-data'])
   login
 end
 
 get '/notimestamp/heroku/resources/:id' do
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:token] == make_token
+  response.set_cookie('heroku-nav-data', params['nav-data'])
+  login
+end
+
+get '/nolayout/heroku/resources/:id' do
+  unauthorized! unless params[:id] && params[:token]
+  unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
+  unauthorized! unless params[:token] == make_token
+  response.set_cookie('heroku-nav-data', params['nav-data'])
+  login(false)
+end
+
+get '/nocookie/heroku/resources/:id' do
+  unauthorized! unless params[:id] && params[:token]
+  unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
+  unauthorized! unless params[:token] == make_token
+  login
+end
+
+get '/badcookie/heroku/resources/:id' do
+  unauthorized! unless params[:id] && params[:token]
+  unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
+  unauthorized! unless params[:token] == make_token
+  response.set_cookie('heroku-nav-data', 'wrong value')
   login
 end
 
 get '/' do
   unauthorized! unless session[:logged_in]
-  "OK"
+  haml :index
 end
+
+__END__
+
+@@ index
+%html
+  %body
+    - if session[:heroku]
+      #heroku-header
+        %h1 Heroku
+    %h1 Sample Addon
