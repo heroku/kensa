@@ -64,6 +64,12 @@ post '/invalid-missing-auth/heroku/resources' do
 end
 
 
+delete '/working/heroku/resources/:id' do
+  heroku_only!
+  "Ok"
+end
+
+
 get '/working/heroku/resources/:id' do
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i

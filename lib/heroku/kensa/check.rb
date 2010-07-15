@@ -21,6 +21,8 @@ module Heroku
       def result(status)
       end
 
+      def message(msg)
+      end
     end
 
 

@@ -1,10 +1,10 @@
 desc 'Run all unit tests'
 task :test do
   fork do
-    exec "ruby test/resources/test_server.rb > /dev/null 2>&1"
+    exec "ruby test/resources/sample_server.rb > /dev/null 2>&1"
   end
   system "turn"
-  system "ps -ax | grep test_server | grep -v grep | awk '{print $1}' | xargs kill"
+  system "ps -ax | grep sample_server | grep -v grep | awk '{print $1}' | xargs kill"
 end
 
 task :default => :test
