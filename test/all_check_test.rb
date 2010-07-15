@@ -8,7 +8,7 @@ class AllCheckTest < Test::Unit::TestCase
     @data['api']['username'] = 'test'
     @data['api']['password'] = 'secret'
     @data['api']['test'] += "working"
-    @file = File.dirname(__FILE__) + "/resources/sample_integration.rb"
+    @file = File.dirname(__FILE__) + "/resources/runner.rb"
   end
 
   def check; AllCheck; end
