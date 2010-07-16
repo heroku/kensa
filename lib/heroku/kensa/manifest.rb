@@ -6,47 +6,45 @@ module Heroku
         @filename, @options = filename, options
       end
 
-      def skeleton
-        response = {
-          'id'    => 'myaddon',
-          'name'  => 'My Addon',
-          'plans' => [{
-            'id'          => 'basic',
-            'name'        => 'Basic',
-            'price'       => '0',
-            'price_unit'  => 'month'
-          }],
-          'api' => {
-            'config_vars' => [ 'MYADDON_URL' ],
-            'production'  => 'https://yourapp.com/',
-            'test'        => 'http://localhost:4567/',
-            'username'    => 'heroku',
-            'password'    => generate_password(16)
-          }
-        }
-
-        unless @options[:sso] === false
-          response['api']['sso_salt'] = generate_password 16
-        end
-
-        response
+      def skeleton_json
+        <<-JSON
+{
+  "id": "myaddon",
+  "plans": [
+    { "id": "basic" },
+    { "id": "premium" }
+  ],
+  "api": {
+    "config_vars": [ "MYADDON_URL" ],
+    "username": "heroku",
+    "password": "b1EWrHYXE1R5J71D",#{ sso_key }
+    "production": "https://yourapp.com/",
+    "test": "http://localhost:4567/"
+  }
+}
+JSON
       end
 
-      # I thought it would be easier to convert #skeleton to a hash and use Yajl
-      # to encode it as a string here, but then you lose control over organizing
-      # keys in a logical manner.
-      def skeleton_str
-        Yajl::Encoder.encode skeleton, :pretty => true
+      def skeleton
+        Yajl::Parser.parse skeleton_json
       end
 
       def write
-        open(@filename, 'w') { |f| f << skeleton_str }
+        open(@filename, 'w') { |f| f << skeleton_json }
       end
 
-      PasswordChars = chars = ['a'..'z', 'A'..'Z', '0'..'9'].map { |r| r.to_a }.flatten
-      def generate_password(size=16)
-        Array.new(size) { PasswordChars[rand(PasswordChars.size)] }.join
-      end
+      private
+
+        def sso_key
+          unless @options[:sso] === false
+            %{\n    "sso_salt": #{ generate_password(16).inspect },}
+          end
+        end
+
+        PasswordChars = chars = ['a'..'z', 'A'..'Z', '0'..'9'].map { |r| r.to_a }.flatten
+        def generate_password(size=16)
+          Array.new(size) { PasswordChars[rand(PasswordChars.size)] }.join
+        end
 
     end
   end

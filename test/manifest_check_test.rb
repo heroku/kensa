@@ -24,11 +24,6 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
-  test "has a name" do
-    @data.delete("name")
-    assert_invalid
-  end
-
   test "api key exists" do
     @data.delete("api")
     assert_invalid
@@ -111,31 +106,6 @@ class ManifestCheckTest < Test::Unit::TestCase
 
   test "all plans have an unique id" do
     @data["plans"].first["id"] = @data["plans"].last["id"]
-    assert_invalid
-  end
-
-  test "all plans have a name" do
-    @data["plans"].first.delete("name")
-    assert_invalid
-  end
-
-  test "all plans have a unique name" do
-    @data["plans"].first["name"] = @data["plans"].last["name"]
-    assert_invalid
-  end
-
-  test "plans have a price" do
-    @data["plans"].first.delete("price")
-    assert_invalid
-  end
-
-  test "plans have an integer price" do
-    @data["plans"].first["price"] = "fiddy cent"
-    assert_invalid
-  end
-
-  test "plans have a valid price_unit" do
-    @data["plans"].first["price_unit"] = "first ov da munth"
     assert_invalid
   end
 

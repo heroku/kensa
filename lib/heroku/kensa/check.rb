@@ -92,17 +92,6 @@ module Heroku
           !data["id"].empty?
         end
 
-        test "manifest name key"
-        check "if exists" do
-          data.has_key?("name")
-        end
-        check "is a string" do
-          data["name"].is_a?(String)
-        end
-        check "is not blank" do
-          !data["name"].empty?
-        end
-
         test "manifest api key"
         check "if exists" do
           data.has_key?("api")
@@ -169,31 +158,6 @@ module Heroku
         check "all plans have an unique id" do
           ids = data["plans"].map {|plan| plan["id"] }
           ids.size == ids.uniq.size
-        end
-        check "all plans have a name" do
-          data["plans"].all? {|plan| plan.has_key?("name") }
-        end
-        check "all plans have a unique name" do
-          names = data["plans"].map {|plan| plan["name"] }
-          names.size == names.uniq.size
-        end
-
-        data["plans"].each do |plan|
-          check "#{plan["name"]} has a valid price" do
-            if plan["price"] !~ /^\d+$/
-              error "expected an integer"
-            else
-              true
-            end
-          end
-
-          check "#{plan["name"]} has a valid price_unit" do
-            if ValidPriceUnits.include?(plan["price_unit"])
-              true
-            else
-              error "expected #{ValidPriceUnits.join(" or ")} but got #{plan["price_unit"].inspect}"
-            end
-          end
         end
       end
 
