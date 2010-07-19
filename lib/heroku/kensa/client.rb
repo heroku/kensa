@@ -67,7 +67,7 @@ module Heroku
         client   = Heroku::Command.run "auth:client", ['--ignore-keys']
         host     = ENV['ADDONS_HOST'] || 'https://addons.heroku.com'
         resource = RestClient::Resource.new(host, client.user, client.password)
-        resource['provider/manifests'].post(resolve_manifest)
+        resource['provider/addons'].post(resolve_manifest)
         puts "Manifest pushed succesfully"
       end
 
