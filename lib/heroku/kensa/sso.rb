@@ -37,9 +37,9 @@ module Heroku
           :addon => 'Your Addon',
           :appname => 'myapp',
           :addons => [
-            { :slug => 'cron', :name => 'Cron'},
-            { :slug => 'custom_domains+wildcard', :name => 'Custom Domains + Wildcard'},
-            { :slug => 'youraddon', :name => 'Your Addon'},
+            { :slug => 'cron', :name => 'Cron' },
+            { :slug => 'custom_domains+wildcard', :name => 'Custom Domains + Wildcard' },
+            { :slug => 'youraddon', :name => 'Your Addon', :current => true },
           ]
         })
         base64_url_variant(json)
