@@ -69,6 +69,10 @@ module Heroku
         resource = RestClient::Resource.new(host, client.user, client.password)
         resource['provider/addons'].post(resolve_manifest)
         puts "Manifest pushed succesfully"
+      rescue RestClient::Unauthorized
+        abort("Authentication failure")
+      rescue RestClient::Forbidden
+        abort("Not authorized to push this manifest. Please make sure you have permissions to push it")
       end
 
       private
