@@ -5,15 +5,7 @@ class ManifestCheckTest < Test::Unit::TestCase
 
   def check ; ManifestCheck ; end
 
-  setup do
-    @data = Manifest.new.skeleton
-    @data["plans"] << {
-      "id" => "advanced",
-      "name" => "Advanced",
-      "price" => "100",
-      "price_unit" => "month"
-    }
-  end
+  setup { @data = Manifest.new.skeleton }
 
   test "is valid if no errors" do
     assert_valid
@@ -76,36 +68,6 @@ class ManifestCheckTest < Test::Unit::TestCase
 
   test "assert config var prefixes match addon id" do
     @data["api"]["config_vars"] << 'MONGO_URL'
-    assert_invalid
-  end
-
-  test "plans key must exist" do
-    @data.delete("plans")
-    assert_invalid
-  end
-
-  test "plans key must be an Array" do
-    @data["plans"] = ""
-    assert_invalid
-  end
-
-  test "has at least one plan" do
-    @data["plans"] = []
-    assert_invalid
-  end
-
-  test "all plans are a hash" do
-    @data["plans"][0] = ""
-    assert_invalid
-  end
-
-  test "all plans have an id" do
-    @data["plans"].first.delete("id")
-    assert_invalid
-  end
-
-  test "all plans have an unique id" do
-    @data["plans"].first["id"] = @data["plans"].last["id"]
     assert_invalid
   end
 

@@ -10,10 +10,6 @@ module Heroku
         <<-JSON
 {
   "id": "myaddon",
-  "plans": [
-    { "id": "basic" },
-    { "id": "premium" }
-  ],
   "api": {
     "config_vars": [ "MYADDON_URL" ],
     "username": "heroku",
