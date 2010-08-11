@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{kensa}
-  s.version = "1.0.0.beta2"
+  s.version = "1.0.0.beta3"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
-  s.date = %q{2010-07-28}
+  s.date = %q{2010-08-11}
   s.default_executable = %q{kensa}
   s.description = %q{}
   s.email = %q{pedro@heroku.com}
