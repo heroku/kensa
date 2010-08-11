@@ -10,7 +10,9 @@ end
 task :default => :test
 
 begin
+  $: << File.join(File.dirname(__FILE__), 'lib')
   require 'jeweler'
+  require 'heroku/kensa'
   Jeweler::Tasks.new do |gemspec|
     gemspec.name = "kensa"
     gemspec.summary = ""
@@ -29,7 +31,7 @@ begin
     gemspec.add_dependency(%q<launchy>, [">= 0.3.2"])
     gemspec.add_dependency(%q<mechanize>, ["~> 1.0.0"])
 
-    gemspec.version = '1.0.0.beta2'
+    gemspec.version = Heroku::Kensa::VERSION
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: gem install jeweler"
