@@ -18,7 +18,7 @@ module Heroku
       class CommandInvalid < Exception; end
 
       def run!
-        command = @args.shift
+        command = @args.shift || @options[:command]
         raise CommandInvalid unless command && respond_to?(command)
         send(command)
       end
@@ -73,6 +73,10 @@ module Heroku
         abort("Authentication failure")
       rescue RestClient::Forbidden
         abort("Not authorized to push this manifest. Please make sure you have permissions to push it")
+      end
+
+      def version
+        puts "Kensa #{VERSION}"
       end
 
       private
