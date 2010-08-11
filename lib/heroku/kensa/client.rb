@@ -66,9 +66,11 @@ module Heroku
         require_heroku
         client   = Heroku::Command.run "auth:client", ['--ignore-keys']
         host     = ENV['ADDONS_HOST'] || 'https://addons.heroku.com'
+        data     = Yajl::Parser.parse(resolve_manifest)
         resource = RestClient::Resource.new(host, client.user, client.password)
         resource['provider/addons'].post(resolve_manifest)
-        puts "Manifest pushed succesfully"
+        puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
+        puts "       Continue at https://provider.heroku.com/addons/#{data['id']}"
       rescue RestClient::Unauthorized
         abort("Authentication failure")
       rescue RestClient::Forbidden
