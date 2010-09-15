@@ -15,10 +15,10 @@ begin
   require 'heroku/kensa'
   Jeweler::Tasks.new do |gemspec|
     gemspec.name = "kensa"
-    gemspec.summary = ""
-    gemspec.description = ""
+    gemspec.summary = "Tool to help Heroku add-on providers integrating their services"
+    gemspec.description = "Kensa is a command-line tool to help add-on providers integrating their services with Heroku. It manages manifest files, and provides a TDD-like approach for programmers to test and develop their APIs."
     gemspec.email = "pedro@heroku.com"
-    gemspec.homepage = "http://heroku.com"
+    gemspec.homepage = "http://provider.heroku.com/resources"
     gemspec.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
 
     gemspec.add_development_dependency(%q<turn>, [">= 0"])
