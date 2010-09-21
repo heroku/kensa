@@ -63,11 +63,10 @@ module Heroku
       end
 
       def push
-        require_heroku
-        client   = Heroku::Command.run "auth:client", ['--ignore-keys']
+        user, password = ask_for_credentials
         host     = ENV['ADDONS_HOST'] || 'https://addons.heroku.com'
         data     = Yajl::Parser.parse(resolve_manifest)
-        resource = RestClient::Resource.new(host, client.user, client.password)
+        resource = RestClient::Resource.new(host, user, password)
         resource['provider/addons'].post(resolve_manifest)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
         puts "       Continue at https://provider.heroku.com/addons/#{data['id']}"
@@ -99,12 +98,53 @@ module Heroku
           screen.finish
         end
 
-        def require_heroku
-          require 'heroku'
-          require 'heroku/command'
-          require 'heroku/commands/auth'
-        rescue LoadError
-          abort("fatal: Could not load the Heroku gem. Plase make sure the Heroku gem is available and up to date")
+        def running_on_windows?
+          RUBY_PLATFORM =~ /mswin32|mingw32/
+        end
+
+        def echo_off
+          system "stty -echo"
+        end
+
+        def echo_on
+          system "stty echo"
+        end
+
+        def ask_for_credentials
+          puts "Enter your Heroku Provider credentials."
+
+          print "Email: "
+          user = gets.strip
+
+          print "Password: "
+          password = running_on_windows? ? ask_for_password_on_windows : ask_for_password
+
+          [ user, password ]
+        end
+
+        def ask_for_password_on_windows
+          require "Win32API"
+          char = nil
+          password = ''
+
+          while char = Win32API.new("crtdll", "_getch", [ ], "L").Call do
+            break if char == 10 || char == 13 # received carriage return or newline
+            if char == 127 || char == 8 # backspace and delete
+              password.slice!(-1, 1)
+            else
+              password << char.chr
+            end
+          end
+          puts
+          return password
+        end
+
+        def ask_for_password
+          echo_off
+          password = gets.strip
+          puts
+          echo_on
+          return password
         end
 
 
