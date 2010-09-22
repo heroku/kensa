@@ -64,6 +64,22 @@ post '/invalid-missing-auth/heroku/resources' do
 end
 
 
+put '/working/heroku/resources/:id' do
+  heroku_only!
+  {}.to_json
+end
+
+put '/invalid-missing-auth/heroku/resources/:id' do
+  { :id => 123 }.to_json
+end
+
+put '/invalid-status/heroku/resources/:id' do
+  heroku_only!
+  status 422
+  {}.to_json
+end
+
+
 delete '/working/heroku/resources/:id' do
   heroku_only!
   "Ok"

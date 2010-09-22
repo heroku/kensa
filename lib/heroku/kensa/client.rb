@@ -39,6 +39,11 @@ module Heroku
             id = ARGV.shift || abort("! no id specified; see usage")
             run_check ManifestCheck
             run_check DeprovisionCheck, :id => id
+          when "planchange"
+            id   = ARGV.shift || abort("! no id specified; see usage")
+            plan = ARGV.shift || abort("! no plan specified; see usage")
+            run_check ManifestCheck
+            run_check PlanChangeCheck, :id => id, :plan => plan
           when "sso"
             id = ARGV.shift || abort("! no id specified; see usage")
             run_check ManifestCheck

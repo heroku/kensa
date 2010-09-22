@@ -13,6 +13,10 @@ module Heroku
         request(:post, credentials, path, payload)
       end
 
+      def put(credentials, path, payload=nil)
+        request(:put, credentials, path, payload)
+      end
+
       def delete(credentials, path, payload=nil)
         request(:delete, credentials, path, payload)
       end

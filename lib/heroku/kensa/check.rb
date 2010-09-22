@@ -328,6 +328,40 @@ module Heroku
     end
 
 
+    class PlanChangeCheck < ApiCheck
+      include HTTP
+
+      def call!
+        id = data[:id]
+        raise ArgumentError, "No id specified" if id.nil?
+
+        new_plan = data[:plan]
+        raise ArgumentError, "No plan specified" if new_plan.nil?
+
+        path = "/heroku/resources/#{CGI::escape(id.to_s)}"
+
+        test "PUT #{path}"
+        check "response" do
+          code, _ = put(credentials, path, { :plan => new_plan})
+          if code == 200
+            true
+          elsif code == -1
+            error("unable to connect to #{url}")
+          else
+            error("expected 200, got #{code}")
+          end
+        end
+
+        check "authentication" do
+          wrong_credentials = ['wrong', 'secret']
+          code, _ = delete(wrong_credentials, path, nil)
+          error("expected 401, got #{code}") if code != 401
+          true
+        end
+      end
+    end
+
+
     class SsoCheck < ApiCheck
       include HTTP
 

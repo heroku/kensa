@@ -70,6 +70,9 @@ TEST TYPES
   deprovision <id>
     Simulate a deprovision call from Heroku.
 
+  planchange <id> <new_plan>
+    Simulate a plan change call from Heroku.
+
   sso <id>
     Simulate a single sign-on call from Heroku.
 
