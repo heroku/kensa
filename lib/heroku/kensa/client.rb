@@ -177,7 +177,7 @@ module Heroku
         end
 
         def message(msg)
-          $stdout.puts msg
+          $stdout.print msg
         end
 
         def finish

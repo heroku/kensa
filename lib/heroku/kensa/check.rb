@@ -148,9 +148,12 @@ module Heroku
       def call!
         response = data[:provision_response]
         test "response"
+
         check "contains an id" do
           response.is_a?(Hash) && response.has_key?("id")
         end
+
+        screen.message " (id #{response['id']})"
 
         if response.has_key?("config")
           test "config data"
@@ -440,13 +443,13 @@ module Heroku
         if args
           screen.message "\n\n"
           screen.message "Starting #{args.first}..."
-          screen.message ""
+          screen.message "\n\n"
 
           run_in_env(config) { system(*args) }
           error("run exited abnormally, expected 0, got #{$?.to_i}") unless $?.to_i == 0
 
-          screen.message ""
-          screen.message "End of #{args.first}"
+          screen.message "\n"
+          screen.message "End of #{args.first}\n"
         end
 
         run DeprovisionCheck, data
