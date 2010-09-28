@@ -228,7 +228,7 @@ module Heroku
 
         payload = {
           :heroku_id => APPID,
-          :plan => 'test',
+          :plan => data[:plan] || 'test',
           :callback_url => callback
         }
 
