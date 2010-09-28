@@ -5,13 +5,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{kensa}
-  s.version = "1.0.0"
+  s.version = "1.0.1.pre"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
-  s.date = %q{2010-09-14}
+  s.date = %q{2010-09-27}
   s.default_executable = %q{kensa}
-  s.description = %q{}
+  s.description = %q{Kensa is a command-line tool to help add-on providers integrating their services with Heroku. It manages manifest files, and provides a TDD-like approach for programmers to test and develop their APIs.}
   s.email = %q{pedro@heroku.com}
   s.executables = ["kensa"]
   s.extra_rdoc_files = [
@@ -31,10 +31,11 @@ Gem::Specification.new do |s|
      "lib/heroku/kensa/sso.rb",
      "set-env.sh",
      "test/all_check_test.rb",
-     "test/deprovision_check.rb",
+     "test/deprovision_check_test.rb",
      "test/helper.rb",
      "test/manifest_check_test.rb",
      "test/manifest_test.rb",
+     "test/plan_change_check_test.rb",
      "test/provision_check_test.rb",
      "test/provision_response_check_test.rb",
      "test/resources/runner.rb",
@@ -42,17 +43,18 @@ Gem::Specification.new do |s|
      "test/sso_check_test.rb",
      "test/sso_test.rb"
   ]
-  s.homepage = %q{http://heroku.com}
+  s.homepage = %q{http://provider.heroku.com/resources}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.6}
-  s.summary = %q{}
+  s.summary = %q{Tool to help Heroku add-on providers integrating their services}
   s.test_files = [
     "test/all_check_test.rb",
-     "test/deprovision_check.rb",
+     "test/deprovision_check_test.rb",
      "test/helper.rb",
      "test/manifest_check_test.rb",
      "test/manifest_test.rb",
+     "test/plan_change_check_test.rb",
      "test/provision_check_test.rb",
      "test/provision_response_check_test.rb",
      "test/resources/runner.rb",

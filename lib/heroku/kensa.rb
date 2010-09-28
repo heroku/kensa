@@ -5,6 +5,6 @@ require 'heroku/kensa/sso'
 
 module Heroku
   module Kensa
-    VERSION = "1.0.0"
+    VERSION = "1.0.1.pre"
   end
 end
