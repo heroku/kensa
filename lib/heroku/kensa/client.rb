@@ -71,8 +71,9 @@ module Heroku
         user, password = ask_for_credentials
         host     = ENV['ADDONS_HOST'] || 'https://addons.heroku.com'
         data     = Yajl::Parser.parse(resolve_manifest)
+        headers  = { "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
         resource = RestClient::Resource.new(host, user, password)
-        resource['provider/addons'].post(resolve_manifest)
+        resource['provider/addons'].post(resolve_manifest, headers)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
         puts "       Continue at https://provider.heroku.com/addons/#{data['id']}"
       rescue RestClient::Unauthorized
