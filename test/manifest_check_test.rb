@@ -71,4 +71,10 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  test "replaces dashes for underscores on the config var check" do
+    @data["id"] = "MY-ADDON"
+    @data["api"]["config_vars"] = ["MY_ADDON_URL"]
+    assert_valid
+  end
+
 end
