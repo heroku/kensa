@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{kensa}
-  s.version = "1.0.1"
+  s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
-  s.date = %q{2010-11-29}
+  s.date = %q{2011-01-16}
   s.default_executable = %q{kensa}
   s.description = %q{Kensa is a command-line tool to help add-on providers integrating their services with Heroku. It manages manifest files, and provides a TDD-like approach for programmers to test and develop their APIs.}
   s.email = %q{pedro@heroku.com}
@@ -72,7 +72,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<contest>, [">= 0"])
       s.add_development_dependency(%q<timecop>, [">= 0.3.5"])
       s.add_development_dependency(%q<sinatra>, [">= 0.9"])
-      s.add_runtime_dependency(%q<rest-client>, ["~> 1.4.0"])
+      s.add_runtime_dependency(%q<rest-client>, [">= 1.4.0", "< 1.7.0"])
       s.add_runtime_dependency(%q<yajl-ruby>, ["~> 0.6"])
       s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0"])
       s.add_runtime_dependency(%q<launchy>, [">= 0.3.2"])
@@ -82,7 +82,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<contest>, [">= 0"])
       s.add_dependency(%q<timecop>, [">= 0.3.5"])
       s.add_dependency(%q<sinatra>, [">= 0.9"])
-      s.add_dependency(%q<rest-client>, ["~> 1.4.0"])
+      s.add_dependency(%q<rest-client>, [">= 1.4.0", "< 1.7.0"])
       s.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
       s.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
       s.add_dependency(%q<launchy>, [">= 0.3.2"])
@@ -93,7 +93,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<contest>, [">= 0"])
     s.add_dependency(%q<timecop>, [">= 0.3.5"])
     s.add_dependency(%q<sinatra>, [">= 0.9"])
-    s.add_dependency(%q<rest-client>, ["~> 1.4.0"])
+    s.add_dependency(%q<rest-client>, [">= 1.4.0", "< 1.7.0"])
     s.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
     s.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
     s.add_dependency(%q<launchy>, [">= 0.3.2"])
