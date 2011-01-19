@@ -13,7 +13,7 @@ module Heroku
   "api": {
     "config_vars": [ "MYADDON_URL" ],
     "username": "heroku",
-    "password": "b1EWrHYXE1R5J71D",#{ sso_key }
+    "password": "#{generate_password(16)}",#{ sso_key }
     "production": "https://yourapp.com/",
     "test": "http://localhost:4567/"
   }
