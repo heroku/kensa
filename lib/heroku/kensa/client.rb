@@ -76,6 +76,8 @@ module Heroku
         resource['provider/addons'].post(resolve_manifest, headers)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
         puts "       Continue at https://provider.heroku.com/addons/#{data['id']}"
+      rescue RestClient::UnprocessableEntity => e
+        abort("FAILED: #{e.http_body}")
       rescue RestClient::Unauthorized
         abort("Authentication failure")
       rescue RestClient::Forbidden
