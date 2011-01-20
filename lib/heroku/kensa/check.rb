@@ -99,9 +99,6 @@ module Heroku
         check "is a hash" do
           data["api"].is_a?(Hash)
         end
-        check "contains username" do
-          data["api"].has_key?("username") && data["api"]["username"] != ""
-        end
         check "contains password" do
           data["api"].has_key?("password") && data["api"]["password"] != ""
         end
@@ -138,6 +135,12 @@ module Heroku
               error "#{k} is not a valid ENV key - must be prefixed with #{addon_key}_"
             end
           end
+        end
+        check "deprecated fields" do
+          if data["api"].has_key?("username")
+            error "username is deprecated: Please authenticate using the add-on id."
+          end
+          true
         end
       end
 
@@ -206,7 +209,7 @@ module Heroku
       end
 
       def credentials
-         %w( username password ).map { |attr| data["api"][attr] }
+        [ data['id'], data['api']['password'] ]
       end
     end
 

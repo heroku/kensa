@@ -5,7 +5,6 @@ class AllCheckTest < Test::Unit::TestCase
 
   setup do
     @data = Manifest.new.skeleton
-    @data['api']['username'] = 'test'
     @data['api']['password'] = 'secret'
     @data['api']['test'] += "working"
     @file = File.dirname(__FILE__) + "/resources/runner.rb"

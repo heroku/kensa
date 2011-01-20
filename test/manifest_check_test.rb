@@ -26,11 +26,6 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
-  test "api has a username" do
-    @data["api"].delete("username")
-    assert_invalid
-  end
-
   test "api has a password" do
     @data["api"].delete("password")
     assert_invalid
@@ -77,4 +72,8 @@ class ManifestCheckTest < Test::Unit::TestCase
     assert_valid
   end
 
+  test "username is deprecated" do
+    @data["api"]["username"] = "heroku"
+    assert_invalid
+  end
 end

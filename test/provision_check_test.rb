@@ -5,7 +5,6 @@ class ProvisionCheckTest < Test::Unit::TestCase
 
   setup do
     @data = Manifest.new.skeleton
-    @data['api']['username'] = 'test'
     @data['api']['password'] = 'secret'
   end
 

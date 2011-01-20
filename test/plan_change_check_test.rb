@@ -5,7 +5,6 @@ class PlanChangeCheckTest < Test::Unit::TestCase
 
   setup do
     @data = Manifest.new.skeleton.merge :id => 123, :plan => 'premium'
-    @data['api']['username'] = 'test'
     @data['api']['password'] = 'secret'
   end
 
