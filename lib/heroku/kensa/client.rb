@@ -71,7 +71,6 @@ module Heroku
         user, password = ask_for_credentials
         host     = ENV['ADDONS_HOST'] || 'https://addons.heroku.com'
         data     = Yajl::Parser.parse(resolve_manifest)
-        headers  = { "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
         resource = RestClient::Resource.new(host, user, password)
         resource['provider/addons'].post(resolve_manifest, headers)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
@@ -84,18 +83,42 @@ module Heroku
         abort("Not authorized to push this manifest. Please make sure you have permissions to push it")
       end
 
+      def pull
+        addon = @args.first || abort('usage: kensa pull <add-on name>')
+
+        if manifest_exists?
+          print "Manifest already exists. Replace it? (y/n) "
+          abort unless gets.strip.downcase == 'y'
+          puts
+        end
+
+        user, password = ask_for_credentials
+        host     = ENV['ADDONS_HOST'] || 'https://addons.heroku.com'
+        resource = RestClient::Resource.new(host, user, password)
+        manifest = resource["provider/addons/#{addon}"].get(headers)
+        File.open(filename, 'w') { |f| f.puts manifest }
+        puts "-----> Manifest for \"#{addon}\" received successfully"
+      end
+
       def version
         puts "Kensa #{VERSION}"
       end
 
       private
+        def headers
+          { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
+        end
 
         def resolve_manifest
-          if File.exists?(filename)
+          if manifest_exists?
             File.read(filename)
           else
             abort("fatal: #{filename} not found")
           end
+        end
+
+        def manifest_exists?
+          File.exists?(filename)
         end
 
         def run_check(klass, args={})

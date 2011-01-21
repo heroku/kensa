@@ -68,6 +68,8 @@ COMMANDS
 
   push            Send the manifest to Heroku
 
+  pull <id>       Fetch the latest manifest from Heroku
+
 TEST TYPES
 
   provision
