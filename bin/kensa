@@ -26,7 +26,9 @@ end
 include Heroku::Kensa
 
 begin
-  Client.new(ARGV, options).run!
+  args = ARGV.dup
+  ARGV.clear
+  Client.new(args, options).run!
 rescue Client::CommandInvalid
   abort File.read(__FILE__).split('__END__').last
 end
