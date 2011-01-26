@@ -36,16 +36,16 @@ module Heroku
             run_check ManifestCheck
             run_check ProvisionCheck
           when "deprovision"
-            id = ARGV.shift || abort("! no id specified; see usage")
+            id = @args.shift || abort("! no id specified; see usage")
             run_check ManifestCheck
             run_check DeprovisionCheck, :id => id
           when "planchange"
-            id   = ARGV.shift || abort("! no id specified; see usage")
-            plan = ARGV.shift || abort("! no plan specified; see usage")
+            id   = @args.shift || abort("! no id specified; see usage")
+            plan = @args.shift || abort("! no plan specified; see usage")
             run_check ManifestCheck
             run_check PlanChangeCheck, :id => id, :plan => plan
           when "sso"
-            id = ARGV.shift || abort("! no id specified; see usage")
+            id = @args.shift || abort("! no id specified; see usage")
             run_check ManifestCheck
             run_check SsoCheck, :id => id
           else
@@ -54,13 +54,13 @@ module Heroku
       end
 
       def run
-        abort "! missing command to run; see usage" if ARGV.empty?
+        abort "! missing command to run; see usage" if @args.empty?
         run_check ManifestCheck
-        run_check AllCheck, :args => ARGV
+        run_check AllCheck, :args => @args
       end
 
       def sso
-        id = ARGV.shift || abort("! no id specified; see usage")
+        id = @args.shift || abort("! no id specified; see usage")
         data = Yajl::Parser.parse(resolve_manifest).merge(:id => id)
         sso = Sso.new(data.merge(@options))
         puts "Opening #{sso.full_url}"
