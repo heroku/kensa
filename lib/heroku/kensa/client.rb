@@ -69,7 +69,7 @@ module Heroku
 
       def push
         user, password = ask_for_credentials
-        host     = ENV['ADDONS_HOST'] || 'https://addons.heroku.com'
+        host     = ENV['ADDONS_URL'] || 'https://addons.heroku.com'
         data     = Yajl::Parser.parse(resolve_manifest)
         resource = RestClient::Resource.new(host, user, password)
         resource['provider/addons'].post(resolve_manifest, headers)
@@ -93,7 +93,7 @@ module Heroku
         end
 
         user, password = ask_for_credentials
-        host     = ENV['ADDONS_HOST'] || 'https://addons.heroku.com'
+        host     = ENV['ADDONS_URL'] || 'https://addons.heroku.com'
         resource = RestClient::Resource.new(host, user, password)
         manifest = resource["provider/addons/#{addon}"].get(headers)
         File.open(filename, 'w') { |f| f.puts manifest }
