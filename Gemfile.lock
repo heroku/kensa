@@ -1,0 +1,51 @@
+PATH
+  remote: .
+  specs:
+    kensa (1.1.1)
+      launchy (>= 0.3.2)
+      mechanize (~> 1.0.0)
+      rest-client (>= 1.4.0, < 1.7.0)
+      term-ansicolor (~> 1.0)
+      yajl-ruby (~> 0.6)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    ansi (1.2.2)
+    configuration (1.2.0)
+    contest (0.1.2)
+    launchy (0.3.7)
+      configuration (>= 0.0.5)
+      rake (>= 0.8.1)
+    mechanize (1.0.0)
+      nokogiri (>= 1.2.1)
+    mime-types (1.16)
+    nokogiri (1.4.4)
+    rack (1.2.1)
+    rake (0.8.7)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
+    sinatra (1.1.2)
+      rack (~> 1.1)
+      tilt (~> 1.2)
+    term-ansicolor (1.0.5)
+    tilt (1.2.2)
+    timecop (0.3.5)
+    turn (0.8.1)
+      ansi (>= 1.2.2)
+    yajl-ruby (0.8.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  contest
+  kensa!
+  launchy (>= 0.3.2)
+  mechanize (~> 1.0.0)
+  rest-client (>= 1.4.0, < 1.7.0)
+  sinatra (>= 0.9)
+  term-ansicolor (~> 1.0)
+  timecop (>= 0.3.5)
+  turn
+  yajl-ruby (~> 0.6)
