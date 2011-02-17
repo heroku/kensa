@@ -69,12 +69,12 @@ module Heroku
 
       def push
         user, password = ask_for_credentials
-        host     = ENV['ADDONS_URL'] || 'https://addons.heroku.com'
+        host     = heroku_host
         data     = Yajl::Parser.parse(resolve_manifest)
         resource = RestClient::Resource.new(host, user, password)
         resource['provider/addons'].post(resolve_manifest, headers)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
-        puts "       Continue at https://provider.heroku.com/addons/#{data['id']}"
+        puts "       Continue at #{(heroku_host)}/addons/#{data['id']}"
       rescue RestClient::UnprocessableEntity => e
         abort("FAILED: #{e.http_body}")
       rescue RestClient::Unauthorized
@@ -93,7 +93,7 @@ module Heroku
         end
 
         user, password = ask_for_credentials
-        host     = ENV['ADDONS_URL'] || 'https://addons.heroku.com'
+        host     = heroku_host
         resource = RestClient::Resource.new(host, user, password)
         manifest = resource["provider/addons/#{addon}"].get(headers)
         File.open(filename, 'w') { |f| f.puts manifest }
@@ -107,6 +107,10 @@ module Heroku
       private
         def headers
           { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
+        end
+
+        def heroku_host
+          ENV['ADDONS_URL'] || 'https://addons.heroku.com'
         end
 
         def resolve_manifest
