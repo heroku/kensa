@@ -1,4 +1,3 @@
-$:.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
 require 'heroku/kensa'
 require 'contest'
 require 'timecop'
