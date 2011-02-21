@@ -33,21 +33,17 @@ module Heroku
           when "manifest"
             run_check ManifestCheck
           when "provision"
-            run_check ManifestCheck
-            run_check ProvisionCheck
+            run_check ManifestCheck, ProvisionCheck
           when "deprovision"
             id = @args.shift || abort("! no id specified; see usage")
-            run_check ManifestCheck
-            run_check DeprovisionCheck, :id => id
+            run_check ManifestCheck, DeprovisionCheck, :id => id
           when "planchange"
             id   = @args.shift || abort("! no id specified; see usage")
             plan = @args.shift || abort("! no plan specified; see usage")
-            run_check ManifestCheck
-            run_check PlanChangeCheck, :id => id, :plan => plan
+            run_check ManifestCheck, PlanChangeCheck, :id => id, :plan => plan
           when "sso"
             id = @args.shift || abort("! no id specified; see usage")
-            run_check ManifestCheck
-            run_check SsoCheck, :id => id
+            run_check ManifestCheck, SsoCheck, :id => id
           else
             abort "! Unknown test '#{check}'; see usage"
         end
@@ -125,12 +121,18 @@ module Heroku
           File.exists?(filename)
         end
 
-        def run_check(klass, args={})
-          screen = Screen.new
-          data = Yajl::Parser.parse(resolve_manifest)
-          check = klass.new(data.merge(@options.merge(args)), screen)
-          check.call
-          screen.finish
+        def run_check(*args)
+          options = {}
+          options = args.pop if args.last.is_a?(Hash)
+
+          args.each do |klass|
+            screen = Screen.new
+            data   = Yajl::Parser.parse(resolve_manifest)
+            check  = klass.new(data.merge(@options.merge(options)), screen)
+            result = check.call
+            screen.finish
+            exit 1 if !result
+          end
         end
 
         def running_on_windows?
