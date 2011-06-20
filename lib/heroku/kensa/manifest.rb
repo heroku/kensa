@@ -10,7 +10,6 @@ module Heroku
         <<-JSON
 {
   "id": "myaddon",
-  "name": "My Addon Name",
   "api": {
     "config_vars": [ "MYADDON_URL" ],
     "password": "#{generate_password(16)}",#{ sso_key }
