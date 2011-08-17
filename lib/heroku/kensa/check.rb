@@ -8,7 +8,6 @@ module Heroku
   module Kensa
 
     class NilScreen
-
       def test(msg)
       end
 
@@ -25,6 +24,11 @@ module Heroku
       end
     end
 
+    class STDOUTScreen
+      [:test, :check, :error, :result, :message].each do |method|
+        eval %{ def #{method}(*args)\n STDOUT.puts *args\n end }
+      end
+    end
 
     class Check
       attr_accessor :screen, :data

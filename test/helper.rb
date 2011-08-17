@@ -4,13 +4,17 @@ require 'timecop'
 
 class Test::Unit::TestCase
 
+  # in your test, do 
+  # @screen = STDOUTScreen.new
   def assert_valid(data=@data, &blk)
     check = create_check(data, &blk)
+    check.screen = @screen if @screen
     assert check.call
   end
 
   def assert_invalid(data=@data, &blk)
     check = create_check(data, &blk)
+    check.screen = @screen if @screen
     assert !check.call
   end
 
