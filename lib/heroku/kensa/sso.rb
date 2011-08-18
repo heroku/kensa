@@ -11,6 +11,8 @@ module Heroku
 
         env   = data.fetch :env, 'test'
         @url  = data["api"][env].chomp('/')
+        @use_post = data[:post]
+        run_proxy if data[:post]
       end
 
       def path
@@ -18,7 +20,11 @@ module Heroku
       end
 
       def full_url
-        [ url, path, querystring ].join
+        if @use_post
+          "http://localhost:#{@proxy_port}/"
+        else
+          [ url, path, querystring ].join
+        end
       end
 
       def make_token(t)
@@ -50,6 +56,24 @@ module Heroku
         base64.tr('+/','-_')
       end
 
+      def run_proxy
+        @proxy_port = 9999
+        begin
+          params = { :port => @proxy_port, :host => url, :id => @id }
+          t = Time.now.to_i
+          params.merge! :token => make_token(t), :timestamp => t, 'nav-data' => sample_nav_data if @salt
+          server = PostProxy.new params
+        rescue Errno::EADDRINUSE
+          @proxy_port -= 1
+          retry
+        end
+
+        trap("INT") { server.stop }
+        pid = fork do
+          server.start 
+        end
+        at_exit { server.stop; Process.waitpid pid }
+      end
     end
   end
 end

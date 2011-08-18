@@ -24,6 +24,10 @@ class SsoTest < Test::Unit::TestCase
 
       assert @sso.full_url.include?(expected)
     end
+
+    test 'builds post body' do
+
+    end
   end
 
   context 'sso without salt' do
