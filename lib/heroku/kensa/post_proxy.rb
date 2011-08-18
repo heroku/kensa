@@ -1,11 +1,10 @@
 require 'webrick'
 
 class Heroku::Kensa::PostProxy < WEBrick::HTTPServer
-  def initialize(params = {})
-    @params = params
-    @id = params.delete :id
-    @host = params.delete :host
-    super :Port => params.delete(:port), :AccessLog => WEBrick::Log.new(StringIO.new),
+  def initialize(sso)
+    @params = sso.query_params
+    @sso = sso
+    super :Port => sso.proxy_port, :AccessLog => WEBrick::Log.new(StringIO.new),
             :Logger => WEBrick::Log.new(StringIO.new)
   end
 
@@ -19,7 +18,7 @@ class Heroku::Kensa::PostProxy < WEBrick::HTTPServer
           </script>
         </head>
         <body>
-          <form action="#{@host}/heroku/resources/#{@id}" method="POST">
+          <form action="#{@sso.post_url}" method="POST">
             #{ @params.map do |key, value|
                 %|<input type="hidden" name="#{key}" value="#{value}" />|
                end.join("\n")  
