@@ -59,8 +59,8 @@ module Heroku
         id = @args.shift || abort("! no id specified; see usage")
         data = Yajl::Parser.parse(resolve_manifest).merge(:id => id)
         sso = Sso.new(data.merge(@options))
-        puts "Opening #{sso.full_url}"
-        Launchy.open sso.full_url
+        puts sso.message
+        Launchy.open sso.sso_url
       end
 
       def push
