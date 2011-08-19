@@ -398,14 +398,14 @@ module Heroku
         test "GET #{sso.path}"
         check "validates token" do
           page, respcode = mechanize_get sso.url + sso.path + "?token=invalid&timestamp=#{t}"
-          error("expected 403, got 200") unless respcode == 403
+          error("expected 403, got #{respcode}") unless respcode == 403
           true
         end
 
         check "validates timestamp" do
           prev = (Time.now - 60*6).to_i
           page, respcode = mechanize_get sso.url + sso.path + "?token=#{sso.make_token(prev)}&timestamp=#{prev}"
-          error("expected 403, got 200") unless respcode == 403
+          error("expected 403, got #{respcode}") unless respcode == 403
           true
         end
 
