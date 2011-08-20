@@ -46,4 +46,16 @@ class SsoCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  context "with sso: POST" do
+    setup { @data['api']['test'] += "post" }
+
+    test "doesn't work with GET" do
+      assert_invalid
+    end
+
+    test "verifies sso via POST" do
+      @data['api']['sso'] = "post"
+      assert_valid
+    end
+  end
 end

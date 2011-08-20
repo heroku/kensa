@@ -58,7 +58,7 @@ module Heroku
       def sso
         id = @args.shift || abort("! no id specified; see usage")
         data = Yajl::Parser.parse(resolve_manifest).merge(:id => id)
-        sso = Sso.new(data.merge(@options))
+        sso = Sso.new(data.merge(@options)).start
         puts sso.message
         Launchy.open sso.sso_url
       end

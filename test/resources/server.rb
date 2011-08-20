@@ -85,13 +85,21 @@ delete '/working/heroku/resources/:id' do
   "Ok"
 end
 
-
-get '/working/heroku/resources/:id' do
+def sso
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
   response.set_cookie('heroku-nav-data', params['nav-data'])
   login
+end
+
+
+get '/working/heroku/resources/:id' do
+  sso
+end
+
+post '/post/heroku/resources/:id' do
+  sso
 end
 
 get '/notoken/heroku/resources/:id' do

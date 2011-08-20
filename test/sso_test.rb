@@ -23,14 +23,16 @@ class SsoTest < Test::Unit::TestCase
   end
 
   context 'sso' do
-    setup { @sso = Sso.new @data }
+    setup do
+      Timecop.freeze Time.utc(2010, 1)
+      @sso = Sso.new @data 
+    end
 
     test 'builds path' do
       assert_equal '/heroku/resources/1', @sso.path
     end
 
     test 'builds full url' do
-      Timecop.freeze Time.utc(2010, 1)
       builds_full_url('test')
     end
 
@@ -43,7 +45,7 @@ class SsoTest < Test::Unit::TestCase
     context 'when sso method is GET' do
       setup do
         @data['api']['sso'] = 'GET'
-        @sso = Sso.new @data
+        @sso = Sso.new(@data).start
       end
 
       test "#sso_url should be the #full_url" do
@@ -55,14 +57,14 @@ class SsoTest < Test::Unit::TestCase
       end
     end
 
-    context 'with sso method is POST' do
+    context 'when sso method is POST' do
       setup do
         Timecop.freeze Time.utc(2010, 1)
         @data['api']['sso'] = 'post'
       end
 
       test "it starts the proxy server" do
-        @sso = Sso.new @data
+        @sso = Sso.new(@data).start
         body = RestClient.get(@sso.sso_url)
 
         assert body.include? @sso.path
@@ -75,7 +77,7 @@ class SsoTest < Test::Unit::TestCase
       context "with the proxy working" do
         setup do 
           any_instance_of(Sso, :run_proxy => false)
-          @sso = Sso.new @data
+          @sso = Sso.new(@data).start
         end
 
         test "#sso_url should point to the proxy" do
@@ -108,6 +110,7 @@ class SsoTest < Test::Unit::TestCase
 
   context 'sso in a specific environment' do
     setup do
+      Timecop.freeze Time.utc(2010, 1)
       env = 'production'
       @data[:env] = env
       @data['api'][env] = 'http://localhost:7654/'
@@ -116,7 +119,6 @@ class SsoTest < Test::Unit::TestCase
     end
 
     test 'builds full url' do
-      Timecop.freeze Time.utc(2010, 1)
       builds_full_url('production')
     end
   end

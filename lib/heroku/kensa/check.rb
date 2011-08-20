@@ -380,8 +380,12 @@ module Heroku
         @agent ||= Mechanize.new
       end
 
-      def mechanize_get url
-        page = agent.get(url)
+      def mechanize_get
+        if @sso.POST?
+          page = agent.post(@sso.post_url, @sso.query_params)
+        else
+          page = agent.get(@sso.get_url)
+        end
         return page, 200
       rescue Mechanize::ResponseCodeError => error
         return nil, error.response_code.to_i
@@ -389,37 +393,43 @@ module Heroku
         error("connection refused to #{url}")
       end
 
+      def check(msg)
+        @sso = Sso.new(data)
+        super
+      end
+
       def call!
         error("need an sso salt to perform sso test") unless data['api']['sso_salt']
 
-        sso = Sso.new(data)
-        t   = Time.now.to_i
+        sso  = Sso.new(data)
+        verb = sso.POST? ? 'POST' : 'GET'
+        test "#{verb} #{sso.post_url}"
 
-        test "GET #{sso.path}"
         check "validates token" do
-          page, respcode = mechanize_get sso.url + sso.path + "?token=invalid&timestamp=#{t}"
+          @sso.token = 'invalid'
+          page, respcode = mechanize_get 
           error("expected 403, got #{respcode}") unless respcode == 403
           true
         end
 
         check "validates timestamp" do
-          prev = (Time.now - 60*6).to_i
-          page, respcode = mechanize_get sso.url + sso.path + "?token=#{sso.make_token(prev)}&timestamp=#{prev}"
+          @sso.timestamp = (Time.now - 60*6).to_i
+          page, respcode = mechanize_get
           error("expected 403, got #{respcode}") unless respcode == 403
           true
         end
 
         page_logged_in = nil
         check "logs in" do
-          page_logged_in, respcode = mechanize_get sso.url + sso.path + sso.querystring
+          page_logged_in, respcode = mechanize_get 
           error("expected 200, got #{respcode}") unless respcode == 200
           true
         end
 
         check "creates the heroku-nav-data cookie" do
-          cookie = agent.cookie_jar.cookies(URI.parse(sso.full_url)).detect { |c| c.name == 'heroku-nav-data' }
+          cookie = agent.cookie_jar.cookies(URI.parse(@sso.full_url)).detect { |c| c.name == 'heroku-nav-data' }
           error("could not find cookie heroku-nav-data") unless cookie
-          error("expected #{sso.sample_nav_data}, got #{cookie.value}") unless cookie.value == sso.sample_nav_data
+          error("expected #{@sso.sample_nav_data}, got #{cookie.value}") unless cookie.value == @sso.sample_nav_data
           true
         end
 

@@ -3,7 +3,7 @@ require 'restclient'
 module Heroku
   module Kensa
     class Sso
-      attr_accessor :id, :url, :proxy_port, :proxy
+      attr_accessor :id, :url, :proxy_port, :timestamp, :token
 
       def initialize(data)
         @id   = data[:id]
@@ -13,11 +13,16 @@ module Heroku
         @url  = data["api"][env].chomp('/')
         @use_post = data['api']['sso'].to_s.match(/post/i)
         @proxy_port = 9999
-        run_proxy if @use_post
+        @timestamp = Time.now.to_i
+        @token     = make_token(@timestamp)
       end
 
       def path
         "/heroku/resources/#{id}"
+      end
+
+      def POST?
+        @use_post
       end
 
       def sso_url
@@ -31,10 +36,16 @@ module Heroku
       def full_url
         [ url, path, querystring ].join
       end
+      alias get_url full_url
 
       def post_url
         [ url, path ].join
       end
+
+      def timestamp=(other)
+        @timestamp = other
+        @token = make_token(@timestamp)
+      end 
 
       def make_token(t)
         Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
@@ -50,9 +61,8 @@ module Heroku
       end
 
       def query_params
-        t = Time.now.to_i
-        {'token' => make_token(t),  
-          'timestamp' => t.to_s,
+        { 'token' => @token,  
+          'timestamp' => @timestamp.to_s,
           'nav-data' => sample_nav_data }
       end
 
@@ -82,7 +92,13 @@ module Heroku
         end
       end
 
+      def start
+        run_proxy
+        self
+      end
+
       def run_proxy
+        return unless @use_post
         begin
           server = PostProxy.new self
         rescue Errno::EADDRINUSE
