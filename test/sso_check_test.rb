@@ -10,52 +10,45 @@ class SsoCheckTest < Test::Unit::TestCase
 
   def check ; SsoCheck ; end
 
-  test "working sso request" do
-    @data['api']['test'] += "working"
-    assert_valid
-  end
+  ['POST', 'GET'].each do |method|
+    context "via #{method}" do
+      setup { @data['api']['sso'] = method }
 
-  test "rejects bad token" do
-    @data['api']['test'] += "notoken"
-    assert_invalid
-  end
+      test "working sso request" do
+        @data['api']['test'] += "working"
+        assert_valid
+      end
 
-  test "rejects old timestamp" do
-    @data['api']['test'] += "notimestamp"
-    assert_invalid
-  end
+      test "rejects bad token" do
+        @data['api']['test'] += "notoken"
+        assert_invalid
+      end
 
-  test "reject omitted sso salt" do
-    @data['api'].delete 'sso_salt'
-    @data['api']['test'] += "working"
-    assert_invalid
-  end
+      test "rejects old timestamp" do
+        @data['api']['test'] += "notimestamp"
+        assert_invalid
+      end
 
-  test "reject missing heroku layout" do
-    @data['api']['test'] += "nolayout"
-    assert_invalid
-  end
+      test "reject omitted sso salt" do
+        @data['api'].delete 'sso_salt'
+        @data['api']['test'] += "working"
+        assert_invalid
+      end
 
-  test "reject missing cookie" do
-    @data['api']['test'] += "nocookie"
-    assert_invalid
-  end
+      test "reject missing heroku layout" do
+        @data['api']['test'] += "nolayout"
+        assert_invalid
+      end
 
-  test "reject invalid cookie value" do
-    @data['api']['test'] += "badcookie"
-    assert_invalid
-  end
+      test "reject missing cookie" do
+        @data['api']['test'] += "nocookie"
+        assert_invalid
+      end
 
-  context "with sso: POST" do
-    setup { @data['api']['test'] += "post" }
-
-    test "doesn't work with GET" do
-      assert_invalid
-    end
-
-    test "verifies sso via POST" do
-      @data['api']['sso'] = "post"
-      assert_valid
+      test "reject invalid cookie value" do
+        @data['api']['test'] += "badcookie"
+        assert_invalid
+      end
     end
   end
 end
