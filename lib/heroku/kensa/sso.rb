@@ -11,10 +11,10 @@ module Heroku
 
         env   = data.fetch :env, 'test'
         @url  = data["api"][env].chomp('/')
-        @use_post = data['api']['sso'].to_s.match(/post/i)
-        @proxy_port = 9999
-        @timestamp = Time.now.to_i
-        @token     = make_token(@timestamp)
+        @use_post   = data['api']['sso'].to_s.match(/post/i)
+        @proxy_port = find_available_port
+        @timestamp  = Time.now.to_i
+        @token      = make_token(@timestamp)
       end
 
       def path
@@ -87,7 +87,7 @@ module Heroku
       end
 
       def message
-        if @use_post
+        if self.POST?
           "POSTing #{query_data} to #{post_url} via proxy on port #{@proxy_port}"
         else
           "Opening #{full_url}"
@@ -99,15 +99,16 @@ module Heroku
         self
       end
 
-      def run_proxy
-        return unless @use_post
-        begin
-          server = PostProxy.new self
-        rescue Errno::EADDRINUSE
-          @proxy_port -= 1
-          retry
-        end
+      def find_available_port
+        server = TCPServer.new('127.0.0.1', 0)
+        server.addr[1]
+      ensure
+        server.close if server
+      end
 
+      def run_proxy
+        return unless self.POST?
+        server = PostProxy.new self
         @proxy = server
 
         trap("INT") { server.stop }
