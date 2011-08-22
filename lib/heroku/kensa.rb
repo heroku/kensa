@@ -6,6 +6,6 @@ require 'heroku/kensa/post_proxy'
 
 module Heroku
   module Kensa
-    VERSION = "1.1.3"
+    VERSION = "1.1.4"
   end
 end
