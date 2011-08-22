@@ -5,4 +5,5 @@ group :development do
   gem 'contest'
   gem 'haml'
   gem 'jeweler'
+  gem 'rr'
 end

@@ -21,7 +21,6 @@ ARGV.options do |o|
   o.on("--async") { options[:async] = true }
   o.on("--production") { options[:env] = "production" }
   o.on("--without-sso") { options[:sso] = false }
-  o.on("--post") { options[:post] = true }
   o.on("-h", "--help") { command = "help" }
   o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
   o.on("-v", "--version") { options[:command] = "version" }

@@ -3,7 +3,7 @@ require 'restclient'
 module Heroku
   module Kensa
     class Sso
-      attr_accessor :id, :url
+      attr_accessor :id, :url, :proxy_port, :timestamp, :token
 
       def initialize(data)
         @id   = data[:id]
@@ -11,15 +11,42 @@ module Heroku
 
         env   = data.fetch :env, 'test'
         @url  = data["api"][env].chomp('/')
+        @use_post   = data['api']['sso'].to_s.match(/post/i)
+        @proxy_port = find_available_port
+        @timestamp  = Time.now.to_i
+        @token      = make_token(@timestamp)
       end
 
       def path
-        "/heroku/resources/#{id}"
+        extra = self.POST? ? '/sso' : ''
+        "/heroku/resources/#{id}#{extra}"
+      end
+
+      def POST?
+        @use_post
+      end
+
+      def sso_url
+        if self.POST?
+          "http://localhost:#{@proxy_port}/"
+        else
+          full_url
+        end
       end
 
       def full_url
         [ url, path, querystring ].join
       end
+      alias get_url full_url
+
+      def post_url
+        [ url, path ].join
+      end
+
+      def timestamp=(other)
+        @timestamp = other
+        @token = make_token(@timestamp)
+      end 
 
       def make_token(t)
         Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
@@ -27,9 +54,18 @@ module Heroku
 
       def querystring
         return '' unless @salt
+        '?' + query_data 
+      end
 
-        t = Time.now.to_i
-        "?token=#{make_token(t)}&timestamp=#{t}&nav-data=#{sample_nav_data}"
+      def query_data
+        query_params.map{|p| p.join('=')}.join('&')
+      end
+
+      def query_params
+        { 'token' => @token,  
+          'timestamp' => @timestamp.to_s,
+          'nav-data' => sample_nav_data,
+          'user'     => 'username@example.com' }
       end
 
       def sample_nav_data
@@ -50,6 +86,37 @@ module Heroku
         base64.tr('+/','-_')
       end
 
+      def message
+        if self.POST?
+          "POSTing #{query_data} to #{post_url} via proxy on port #{@proxy_port}"
+        else
+          "Opening #{full_url}"
+        end
+      end
+
+      def start
+        run_proxy
+        self
+      end
+
+      def find_available_port
+        server = TCPServer.new('127.0.0.1', 0)
+        server.addr[1]
+      ensure
+        server.close if server
+      end
+
+      def run_proxy
+        return unless self.POST?
+        server = PostProxy.new self
+        @proxy = server
+
+        trap("INT") { server.stop }
+        pid = fork do
+          server.start 
+        end
+        at_exit { server.stop; Process.waitpid pid }
+      end
     end
   end
 end
