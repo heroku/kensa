@@ -403,7 +403,7 @@ module Heroku
 
         sso  = Sso.new(data)
         verb = sso.POST? ? 'POST' : 'GET'
-        test "#{verb} #{sso.post_url}"
+        test "#{verb} #{sso.path}"
 
         check "validates token" do
           @sso.token = 'invalid'
