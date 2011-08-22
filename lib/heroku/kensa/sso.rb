@@ -63,7 +63,8 @@ module Heroku
       def query_params
         { 'token' => @token,  
           'timestamp' => @timestamp.to_s,
-          'nav-data' => sample_nav_data }
+          'nav-data' => sample_nav_data,
+          'user'     => 'username@example.com' }
       end
 
       def sample_nav_data

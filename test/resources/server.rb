@@ -93,7 +93,6 @@ def sso
   login
 end
 
-
 get '/working/heroku/resources/:id' do
   sso
 end
@@ -177,6 +176,19 @@ end
 
 post '/badcookie/heroku/resources/:id' do
   badcookie
+end
+
+def sso_user
+  head 404 unless params[:user] == 'username@example.com'
+  sso
+end
+
+get '/user/heroku/resources/:id' do
+  sso_user
+end
+
+post '/user/heroku/resources/:id' do
+  sso_user
 end
 
 get '/' do

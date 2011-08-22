@@ -49,6 +49,11 @@ class SsoCheckTest < Test::Unit::TestCase
         @data['api']['test'] += "badcookie"
         assert_invalid
       end
+
+      test "sends user param" do
+        @data['api']['test'] += "user"
+        assert_valid
+      end
     end
   end
 end
