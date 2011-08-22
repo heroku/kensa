@@ -85,11 +85,11 @@ class SsoTest < Test::Unit::TestCase
         end
 
         test "#post_url contains url and path" do
-          assert_equal "http://localhost:4567/heroku/resources/1", @sso.post_url
+          assert_equal "http://localhost:4567/heroku/resources/1/sso", @sso.post_url
         end
 
         test "#message is Posting <data> to <post_url> via proxy on port <proxy_port>" do
-          assert_equal "POSTing #{@sso.query_data} to http://localhost:4567/heroku/resources/1 via proxy on port #{@sso.proxy_port}", @sso.message
+          assert_equal "POSTing #{@sso.query_data} to http://localhost:4567/heroku/resources/1/sso via proxy on port #{@sso.proxy_port}", @sso.message
         end
       end
     end

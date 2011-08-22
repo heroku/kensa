@@ -18,7 +18,8 @@ module Heroku
       end
 
       def path
-        "/heroku/resources/#{id}"
+        extra = self.POST? ? '/sso' : ''
+        "/heroku/resources/#{id}#{extra}"
       end
 
       def POST?
@@ -26,7 +27,7 @@ module Heroku
       end
 
       def sso_url
-        if @use_post
+        if self.POST?
           "http://localhost:#{@proxy_port}/"
         else
           full_url
