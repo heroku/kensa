@@ -85,30 +85,53 @@ delete '/working/heroku/resources/:id' do
   "Ok"
 end
 
-
-get '/working/heroku/resources/:id' do
+def sso
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
+  response.set_cookie('heroku-nav-data', params['nav-data'])
+  login
+end
+
+get '/working/heroku/resources/:id' do
+  sso
+end
+
+post '/working/heroku/resources/:id/sso' do
+  sso
+end
+
+def notoken
+  unauthorized! unless params[:id] && params[:token]
+  unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   response.set_cookie('heroku-nav-data', params['nav-data'])
   login
 end
 
 get '/notoken/heroku/resources/:id' do
-  unauthorized! unless params[:id] && params[:token]
-  unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
-  response.set_cookie('heroku-nav-data', params['nav-data'])
-  login
+  notoken
 end
 
-get '/notimestamp/heroku/resources/:id' do
+post '/notoken/heroku/resources/:id/sso' do
+  notoken
+end
+
+def notimestamp
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:token] == make_token
   response.set_cookie('heroku-nav-data', params['nav-data'])
   login
 end
 
-get '/nolayout/heroku/resources/:id' do
+get '/notimestamp/heroku/resources/:id' do
+  notimestamp
+end
+
+post '/notimestamp/heroku/resources/:id/sso' do
+  notimestamp
+end
+
+def nolayout
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
@@ -116,19 +139,56 @@ get '/nolayout/heroku/resources/:id' do
   login(false)
 end
 
-get '/nocookie/heroku/resources/:id' do
+get '/nolayout/heroku/resources/:id' do
+  nolayout
+end
+
+post '/nolayout/heroku/resources/:id/sso' do
+  nolayout
+end
+
+def nocookie
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
   login
 end
 
-get '/badcookie/heroku/resources/:id' do
+get '/nocookie/heroku/resources/:id' do
+  nocookie
+end
+
+post '/nocookie/heroku/resources/:id/sso' do
+  nocookie
+end
+
+def badcookie
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
   response.set_cookie('heroku-nav-data', 'wrong value')
   login
+end
+
+get '/badcookie/heroku/resources/:id' do
+  badcookie
+end
+
+post '/badcookie/heroku/resources/:id/sso' do
+  badcookie
+end
+
+def sso_user
+  head 404 unless params[:user] == 'username@example.com'
+  sso
+end
+
+get '/user/heroku/resources/:id' do
+  sso_user
+end
+
+post '/user/heroku/resources/:id/sso' do
+  sso_user
 end
 
 get '/' do

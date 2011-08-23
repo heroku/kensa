@@ -1,8 +1,10 @@
 require 'heroku/kensa'
 require 'contest'
 require 'timecop'
+require 'rr'
 
 class Test::Unit::TestCase
+  include RR::Adapters::TestUnit
 
   # in your test, do 
   # @screen = STDOUTScreen.new
@@ -41,13 +43,12 @@ class Test::Unit::TestCase
     o
   end
 
-  def stub(meth, o, returns)
+  def kensa_stub(meth, o, returns)
     o.instance_eval { @returns = Array(returns) }
     eval <<-EVAL
     def o.#{meth}(*args)
-      @returns.shift || fail("Nothing else to return from stub'ed method")
+      @returns.shift or fail("Nothing else to return from stub'ed method")
     end
     EVAL
   end
-
 end
