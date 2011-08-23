@@ -20,7 +20,7 @@ begin
     gemspec.description = "Kensa is a command-line tool to help add-on providers integrating their services with Heroku. It manages manifest files, and provides a TDD-like approach for programmers to test and develop their APIs."
     gemspec.email = "pedro@heroku.com"
     gemspec.homepage = "http://provider.heroku.com/resources"
-    gemspec.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
+    gemspec.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins", "Chris Continanza"]
 
     gemspec.add_development_dependency(%q<turn>, [">= 0"])
     gemspec.add_development_dependency(%q<contest>, [">= 0"])

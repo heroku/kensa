@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.version = "1.1.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins"]
+  s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins", 'Chris Continanza']
   s.date = %q{2011-08-22}
   s.default_executable = %q{kensa}
   s.description = %q{Kensa is a command-line tool to help add-on providers integrating their services with Heroku. It manages manifest files, and provides a TDD-like approach for programmers to test and develop their APIs.}
