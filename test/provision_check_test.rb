@@ -4,8 +4,13 @@ class ProvisionCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
+    Artifice.activate_with(KensaServer.new)
     @data = Manifest.new.skeleton
     @data['api']['password'] = 'secret'
+  end
+
+  teardown do
+    Artifice.deactivate
   end
 
   def check ; ProvisionCheck ; end

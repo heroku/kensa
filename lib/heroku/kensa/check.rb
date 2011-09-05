@@ -407,7 +407,7 @@ module Heroku
 
         check "validates token" do
           @sso.token = 'invalid'
-          page, respcode = mechanize_get 
+          page, respcode = mechanize_get
           error("expected 403, got #{respcode}") unless respcode == 403
           true
         end
@@ -421,7 +421,7 @@ module Heroku
 
         page_logged_in = nil
         check "logs in" do
-          page_logged_in, respcode = mechanize_get 
+          page_logged_in, respcode = mechanize_get
           error("expected 200, got #{respcode}") unless respcode == 200
           true
         end

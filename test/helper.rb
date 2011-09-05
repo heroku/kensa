@@ -2,11 +2,13 @@ require 'heroku/kensa'
 require 'contest'
 require 'timecop'
 require 'rr'
+require 'artifice'
+require "#{File.dirname(__FILE__)}/resources/server"
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
 
-  # in your test, do 
+  # in your test, do
   # @screen = STDOUTScreen.new
   def assert_valid(data=@data, &blk)
     check = create_check(data, &blk)
