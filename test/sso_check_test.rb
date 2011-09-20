@@ -67,11 +67,6 @@ class SsoCheckTest < Test::Unit::TestCase
   context "via POST" do
     setup { @data['api']['sso'] = "POST" }
 
-    test "working sso request" do
-      @data['api']['test'] += "working"
-      assert_valid
-    end
-
     test "rejects bad token" do
       @data['api']['test'] += "notoken"
       assert_invalid
@@ -103,9 +98,5 @@ class SsoCheckTest < Test::Unit::TestCase
       assert_invalid
     end
 
-    test "sends user param" do
-      @data['api']['test'] += "user"
-      assert_valid
-    end
   end
 end
