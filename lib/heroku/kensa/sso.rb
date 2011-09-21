@@ -10,8 +10,13 @@ module Heroku
         @salt = data['api']['sso_salt']
 
         env   = data.fetch :env, 'test'
-        @url  = data["api"][env].chomp('/')
-        @use_post   = data['api']['sso'].to_s.match(/post/i)
+        if data["api"][env].is_a?(Hash)
+          @url  = data["api"][env]["base_url"].chomp('/')
+          @use_post = true
+        else
+          @url  = data["api"][env].chomp('/')
+          @use_post = false
+        end
         @proxy_port = find_available_port
         @timestamp  = Time.now.to_i
         @token      = make_token(@timestamp)
@@ -46,7 +51,7 @@ module Heroku
       def timestamp=(other)
         @timestamp = other
         @token = make_token(@timestamp)
-      end 
+      end
 
       def make_token(t)
         Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
@@ -54,7 +59,7 @@ module Heroku
 
       def querystring
         return '' unless @salt
-        '?' + query_data 
+        '?' + query_data
       end
 
       def query_data
@@ -62,7 +67,7 @@ module Heroku
       end
 
       def query_params
-        { 'token' => @token,  
+        { 'token' => @token,
           'timestamp' => @timestamp.to_s,
           'nav-data' => sample_nav_data,
           'user'     => 'username@example.com' }
@@ -113,7 +118,7 @@ module Heroku
 
         trap("INT") { server.stop }
         pid = fork do
-          server.start 
+          server.start
         end
         at_exit { server.stop; Process.waitpid pid }
       end

@@ -65,7 +65,10 @@ class SsoTest < Test::Unit::TestCase
     context 'when sso method is POST' do
       setup do
         Timecop.freeze Time.utc(2010, 1)
-        @data['api']['sso'] = 'post'
+        @data['api']['test'] = {
+          "base_url" => "http://localhost:4567",
+          "sso_url" => "http://localhost:4567/sso"
+        }
       end
 
       test "it starts the proxy server" do
