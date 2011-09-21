@@ -67,7 +67,7 @@ class SsoTest < Test::Unit::TestCase
         Timecop.freeze Time.utc(2010, 1)
         @data['api']['test'] = {
           "base_url" => "http://localhost:4567",
-          "sso_url" => "http://localhost:4567/sso"
+          "sso_url" => "http://localhost:4567/users/login/sso"
         }
       end
 
@@ -76,7 +76,6 @@ class SsoTest < Test::Unit::TestCase
         @sso = Sso.new(@data).start
         body = RestClient.get(@sso.sso_url)
 
-        assert body.include? @sso.path
         assert body.include? 'b6010f6fbb850887a396c2bc0ab23974003008f6'
         assert body.include? '1262304000'
         assert body.include? @sso.url
@@ -94,11 +93,11 @@ class SsoTest < Test::Unit::TestCase
         end
 
         test "#post_url contains url and path" do
-          assert_equal "http://localhost:4567/heroku/resources/1/sso", @sso.post_url
+          assert_equal "http://localhost:4567/users/login/sso", @sso.post_url
         end
 
         test "#message is Posting <data> to <post_url> via proxy on port <proxy_port>" do
-          assert_equal "POSTing #{@sso.query_data} to http://localhost:4567/heroku/resources/1/sso via proxy on port #{@sso.proxy_port}", @sso.message
+          assert_equal "POSTing #{@sso.query_data} to #{@sso.post_url} via proxy on port #{@sso.proxy_port}", @sso.message
         end
       end
     end

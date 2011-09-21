@@ -3,7 +3,7 @@ require 'restclient'
 module Heroku
   module Kensa
     class Sso
-      attr_accessor :id, :url, :proxy_port, :timestamp, :token
+      attr_accessor :id, :url, :proxy_port, :timestamp, :token, :sso_url
 
       def initialize(data)
         @id   = data[:id]
@@ -12,6 +12,7 @@ module Heroku
         env   = data.fetch :env, 'test'
         if data["api"][env].is_a?(Hash)
           @url  = data["api"][env]["base_url"].chomp('/')
+          @sso_url = data["api"][env]["sso_url"].chomp('/')
           @use_post = true
         else
           @url  = data["api"][env].chomp('/')
@@ -23,16 +24,20 @@ module Heroku
       end
 
       def path
-        extra = self.POST? ? '/sso' : ''
-        "/heroku/resources/#{id}#{extra}"
+        extra = self.post? ? '/sso' : ''
+        if self.post?
+          self.sso_url
+        else
+          "/heroku/resources/#{id}"
+        end
       end
 
-      def POST?
+      def post?
         @use_post
       end
 
       def sso_url
-        if self.POST?
+        if self.post?
           "http://localhost:#{@proxy_port}/"
         else
           full_url
@@ -45,7 +50,7 @@ module Heroku
       alias get_url full_url
 
       def post_url
-        [ url, path ].join
+        @sso_url
       end
 
       def timestamp=(other)
@@ -92,7 +97,7 @@ module Heroku
       end
 
       def message
-        if self.POST?
+        if self.post?
           "POSTing #{query_data} to #{post_url} via proxy on port #{@proxy_port}"
         else
           "Opening #{full_url}"
@@ -112,7 +117,7 @@ module Heroku
       end
 
       def run_proxy
-        return unless self.POST?
+        return unless self.post?
         server = PostProxy.new self
         @proxy = server
 

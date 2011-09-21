@@ -381,7 +381,7 @@ module Heroku
       end
 
       def mechanize_get
-        if @sso.POST?
+        if @sso.post?
           page = agent.post(@sso.post_url, @sso.query_params)
         else
           page = agent.get(@sso.get_url)
@@ -402,7 +402,7 @@ module Heroku
         error("need an sso salt to perform sso test") unless data['api']['sso_salt']
 
         sso  = Sso.new(data)
-        verb = sso.POST? ? 'POST' : 'GET'
+        verb = sso.post? ? 'POST' : 'GET'
         test "#{verb} #{sso.path}"
 
         check "validates token" do
