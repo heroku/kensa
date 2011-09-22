@@ -1,12 +1,14 @@
 require 'test/helper'
 
+class Response < Struct.new(:code, :body, :json_body)
+end
+
 class SsoCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
     Timecop.freeze Time.now.utc
     @data = Manifest.new.skeleton.merge :id => 123
-    @data['api']['sso_salt'] = 'SSO_SALT'
   end
 
   teardown do
@@ -14,89 +16,56 @@ class SsoCheckTest < Test::Unit::TestCase
     Artifice.deactivate
   end
 
-  def check ; SsoCheck ; end
+  def make_token(id, salt, timestamp)
+    Digest::SHA1.hexdigest([id, salt, timestamp].join(':'))
+  end
+
+  def get(path, params = {})
+    response = RestClient.get("http://provider.org#{path}", :params => params)
+  rescue RestClient::Forbidden
+    Response.new(403)
+  end
 
   context "via GET" do
     setup do
-      Artifice.activate_with(KensaServer.new)
-      @data['api']['sso'] = "GET"
+      Artifice.activate_with(ProviderServer.new)
+      @params = { :timestamp => Time.now.to_i,
+                  :token => make_token(123, "SSO_SALT", Time.now.to_i.to_s),
+                  "nav-data" => "some-nav-data"
+                }
     end
 
-    test "working sso request" do
-      @data['api']['test'] += "working"
-      assert_valid
+    test "validates token" do
+      @params[:token] = "foo"
+      response = get "/heroku/resources/123", @params
+      assert_equal 403, response.code, "FAILURE: Signing in via SSO at /heroku/resources/:id must return a 403 if the token is invalid."
     end
 
-    test "rejects bad token" do
-      @data['api']['test'] += "notoken"
-      assert_invalid
+    test "validates timestamp" do
+      @params[:timestamp] = (Time.now-60*3).to_i
+      @params[:token] = make_token(123, "SSO_SALT", @params[:timestamp].to_s)
+      response = get "/heroku/resources/123", @params
+      assert_equal 403, response.code, "FAILURE: Signing in via SSO at /heroku/resources/:id must return a 403 if the timestamp is expired."
+
+      @params[:timestamp] = "foo"
+      response = get "/heroku/resources/123", @params
+      assert_equal 403, response.code, "FAILURE: Signing in via SSO at /heroku/resources/:id must return a 403 if the timestamp is invalid."
     end
 
-    test "rejects old timestamp" do
-      @data['api']['test'] += "notimestamp"
-      assert_invalid
+    test "logs in" do
+      response = get "/heroku/resources/123", @params
+      assert response.code.to_s.match(/\A2/), "FAILURE: Signing in via SSO at /heroku/resources/:id must return a 2xx response if sign in was valid."
     end
 
-    test "reject omitted sso salt" do
-      @data['api'].delete 'sso_salt'
-      @data['api']['test'] += "working"
-      assert_invalid
+    test "creates the heroku-nav-data cookie" do
+      response = get "/heroku/resources/123", @params
+      assert_equal @params["nav-data"], response.cookies["heroku-nav-data"], "FAILURE: SSO sign in should set the heroku-nav-data cookie to the value of the passed nav-data parameter."
     end
 
-    test "reject missing heroku layout" do
-      @data['api']['test'] += "nolayout"
-      assert_invalid
+    test "displays the heroku layout" do
+      response = get "/heroku/resources/123", @params
+      document = Nokogiri::HTML.parse(response.body)
+      assert !document.search("div#heroku-header").empty?, "FAILURE: Logged in page should contain the Heroku header."
     end
-
-    test "reject missing cookie" do
-      @data['api']['test'] += "nocookie"
-      assert_invalid
-    end
-
-    test "reject invalid cookie value" do
-      @data['api']['test'] += "badcookie"
-      assert_invalid
-    end
-
-    test "sends user param" do
-      @data['api']['test'] += "user"
-      assert_valid
-    end
-  end
-
-  context "via POST" do
-    setup { @data['api']['sso'] = "POST" }
-
-    test "rejects bad token" do
-      @data['api']['test'] += "notoken"
-      assert_invalid
-    end
-
-    test "rejects old timestamp" do
-      @data['api']['test'] += "notimestamp"
-      assert_invalid
-    end
-
-    test "reject omitted sso salt" do
-      @data['api'].delete 'sso_salt'
-      @data['api']['test'] += "working"
-      assert_invalid
-    end
-
-    test "reject missing heroku layout" do
-      @data['api']['test'] += "nolayout"
-      assert_invalid
-    end
-
-    test "reject missing cookie" do
-      @data['api']['test'] += "nocookie"
-      assert_invalid
-    end
-
-    test "reject invalid cookie value" do
-      @data['api']['test'] += "badcookie"
-      assert_invalid
-    end
-
   end
 end

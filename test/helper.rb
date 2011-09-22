@@ -3,7 +3,9 @@ require 'contest'
 require 'timecop'
 require 'rr'
 require 'artifice'
-require "#{File.dirname(__FILE__)}/resources/server"
+Dir["#{File.dirname(__FILE__)}/resources/*.rb"].each do |lib|
+  require lib
+end
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit

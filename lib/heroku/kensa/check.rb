@@ -207,9 +207,18 @@ module Heroku
 
 
     class ApiCheck < Check
+      def custom_provision_url?
+        env = data[:env] || 'test'
+        data["api"][env].is_a?(Hash)
+      end
+
       def url
         env = data[:env] || 'test'
-        data["api"][env].chomp("/")
+        if custom_provision_url?
+          data["api"][env]["base_url"].chomp("/")
+        else
+          data["api"][env].chomp("/")
+        end
       end
 
       def credentials
@@ -230,7 +239,11 @@ module Heroku
 
         code = nil
         json = nil
-        path = "/heroku/resources"
+        if custom_provision_url?
+          path = nil
+        else
+          path = "/heroku/resources"
+        end
         callback = "http://localhost:7779/callback/999"
         reader, writer = nil
 

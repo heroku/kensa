@@ -35,6 +35,7 @@ module Heroku
           ].compact
 
           user, pass = credentials
+          require 'ruby-debug'; debugger
           body = RestClient::Resource.new(url, user, pass)[path].send(
             meth,
             *args

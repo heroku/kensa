@@ -20,6 +20,15 @@ class ProvisionCheckTest < Test::Unit::TestCase
     assert_valid
   end
 
+  test "allows the definition of a custom provisioning endpoint" do
+    Artifice.activate_with(KensaServer.new)
+    @data['api']['test'] = {
+      "base_url" => "https://example.org/providers/provision",
+      "sso_url"  => "https://example.org/sso"
+    }
+    assert_valid
+  end
+
   test "detects invalid JSON" do
     @data['api']['test'] += "invalid-json"
     assert_invalid
