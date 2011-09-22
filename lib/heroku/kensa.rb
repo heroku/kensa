@@ -1,8 +1,7 @@
-require 'heroku/kensa/http'
-require 'heroku/kensa/manifest'
-require 'heroku/kensa/check'
-require 'heroku/kensa/sso'
-require 'heroku/kensa/post_proxy'
+base_path = File.dirname(__FILE__)
+%w{http manifest check sso post_proxy}.each do |lib|
+  require "#{base_path}/kensa/#{lib}"
+end
 
 module Heroku
   module Kensa

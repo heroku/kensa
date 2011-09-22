@@ -1,7 +1,5 @@
 require 'test/libs'
 
-class Response < Struct.new(:code, :body, :json_body); end
-
 class SsoCheckTest < Test::Unit::TestCase
 
   def make_token(id, salt, timestamp)
@@ -9,19 +7,10 @@ class SsoCheckTest < Test::Unit::TestCase
   end
 
   def get(path, params = {})
-    puts "\n\n\n\n\n\n#{base_url}\n\n\n\n\n"
     response = RestClient.get("#{base_url}#{path}", :params => params)
+    Response.new(response.code, response.body, response.cookies)
   rescue RestClient::Forbidden
     Response.new(403)
-  end
-
-  def base_url
-    manifest["api"]["test"].chomp("/")
-  end
-
-  def manifest
-    return @manifest if @manifest
-    @manifest ||= $manifest || Heroku::Kensa::Manifest.new.skeleton
   end
 
   context "via GET" do

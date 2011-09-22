@@ -37,6 +37,34 @@ class ProviderServer < Sinatra::Base
       unauthorized! if params[:token] != token
     end
 
+    def authenticate!
+      unless auth_heroku?
+        response['WWW-Authenticate'] = %(Basic realm="Kensa Test Server")
+        unauthorized!(401)
+      end
+    end
+
+    def auth_heroku?
+      @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+      return false unless @auth.provided? && @auth.basic? && @auth.credentials
+      if @manifest
+        @auth.credentials == [@manifest["id"], @manifest["api"]["password"]]
+      else
+        @auth.credentials == ['myaddon', 'secret']
+      end
+    end
+
+  end
+
+  post '/heroku/resources' do
+    authenticate!
+    status 201
+    { "id" => 52343.to_s,
+      "config" => {
+        "SERVER_ID" => "1",
+        "SERVER_URL" => "http://host.example.org/"
+      }
+    }.to_json
   end
 
   get '/heroku/resources/:id' do

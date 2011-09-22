@@ -36,6 +36,7 @@ module Test
       module Console
         class TestRunner
 
+          alias_method :test_started_old, :test_started
 
           def add_fault(fault)
             @faults << fault

@@ -226,99 +226,6 @@ module Heroku
       end
     end
 
-    class ProvisionCheck < ApiCheck
-      include HTTP
-
-      READLEN = 1024 * 10
-      APPID = "app#{rand(10000)}@kensa.heroku.com"
-      APPNAME = "myapp"
-
-      def call!
-        json = nil
-        response = nil
-
-        code = nil
-        json = nil
-        if custom_provision_url?
-          path = nil
-        else
-          path = "/heroku/resources"
-        end
-        callback = "http://localhost:7779/callback/999"
-        reader, writer = nil
-
-        payload = {
-          :heroku_id => APPID,
-          :plan => data[:plan] || 'test',
-          :callback_url => callback
-        }
-
-        if data[:async]
-          reader, writer = IO.pipe
-        end
-
-        test "POST /heroku/resources"
-        check "response" do
-          if data[:async]
-            child = fork do
-              reader.close
-              server = TCPServer.open(7779)
-              client = server.accept
-              writer.write(client.readpartial(READLEN))
-              client.write("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n")
-              client.close
-              writer.close
-            end
-            sleep(1)
-          end
-
-          code, json = post(credentials, path, payload)
-
-          if code == 200
-            # noop
-          elsif code == -1
-            error("unable to connect to #{url}")
-          else
-            error("expected 200, got #{code}")
-          end
-
-          true
-        end
-
-        if data[:async]
-          check "async response to PUT #{callback}" do
-            out = reader.readpartial(READLEN)
-            _, json = out.split("\r\n\r\n")
-          end
-        end
-
-        check "valid JSON" do
-          begin
-            response = Yajl::Parser.parse(json)
-          rescue Yajl::ParseError => boom
-            error boom.message
-          end
-          true
-        end
-
-        check "authentication" do
-          wrong_credentials = ['wrong', 'secret']
-          code, _ = post(wrong_credentials, path, payload)
-          error("expected 401, got #{code}") if code != 401
-          true
-        end
-
-        data[:provision_response] = response
-
-        run ProvisionResponseCheck, data
-      end
-
-    ensure
-      reader.close rescue nil
-      writer.close rescue nil
-    end
-
-
     class DeprovisionCheck < ApiCheck
       include HTTP
 
@@ -385,75 +292,6 @@ module Heroku
       end
     end
 
-
-    class SsoCheck < ApiCheck
-      include HTTP
-
-      def agent
-        @agent ||= Mechanize.new
-      end
-
-      def mechanize_get
-        if @sso.post?
-          page = agent.post(@sso.post_url, @sso.query_params)
-        else
-          page = agent.get(@sso.get_url)
-        end
-        return page, 200
-      rescue Mechanize::ResponseCodeError => error
-        return nil, error.response_code.to_i
-      rescue Errno::ECONNREFUSED
-        error("connection refused to #{url}")
-      end
-
-      def check(msg)
-        @sso = Sso.new(data)
-        super
-      end
-
-      def call!
-        error("need an sso salt to perform sso test") unless data['api']['sso_salt']
-
-        sso  = Sso.new(data)
-        verb = sso.post? ? 'POST' : 'GET'
-        test "#{verb} #{sso.path}"
-
-        check "validates token" do
-          @sso.token = 'invalid'
-          page, respcode = mechanize_get
-          error("expected 403, got #{respcode}") unless respcode == 403
-          true
-        end
-
-        check "validates timestamp" do
-          @sso.timestamp = (Time.now - 60*6).to_i
-          page, respcode = mechanize_get
-          error("expected 403, got #{respcode}") unless respcode == 403
-          true
-        end
-
-        page_logged_in = nil
-        check "logs in" do
-          page_logged_in, respcode = mechanize_get
-          error("expected 200, got #{respcode}") unless respcode == 200
-          true
-        end
-
-        check "creates the heroku-nav-data cookie" do
-          cookie = agent.cookie_jar.cookies(URI.parse(@sso.full_url)).detect { |c| c.name == 'heroku-nav-data' }
-          error("could not find cookie heroku-nav-data") unless cookie
-          error("expected #{@sso.sample_nav_data}, got #{cookie.value}") unless cookie.value == @sso.sample_nav_data
-          true
-        end
-
-        check "displays the heroku layout" do
-          error("could not find Heroku layout") if page_logged_in.search('div#heroku-header').empty?
-          true
-        end
-      end
-    end
-
-
     ##
     # On Testing:
     #  I've opted to not write tests for this
@@ -464,6 +302,7 @@ module Heroku
     class AllCheck < Check
 
       def call!
+        screen.message "Running all :( \n\n"
         args = data[:args]
         run ProvisionCheck, data
 

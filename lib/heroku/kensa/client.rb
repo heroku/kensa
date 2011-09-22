@@ -33,7 +33,8 @@ module Heroku
           when "manifest"
             run_check ManifestCheck
           when "provision"
-            run_check ManifestCheck, ProvisionCheck
+            require "#{File.dirname(__FILE__)}/../../../test/provision_check_test"
+            $manifest = Yajl::Parser.parse(resolve_manifest)
           when "deprovision"
             id = @args.shift || abort("! no id specified; see usage")
             run_check ManifestCheck, DeprovisionCheck, :id => id
