@@ -43,7 +43,8 @@ module Heroku
             run_check ManifestCheck, PlanChangeCheck, :id => id, :plan => plan
           when "sso"
             id = @args.shift || abort("! no id specified; see usage")
-            run_check ManifestCheck, SsoCheck, :id => id
+            require "#{File.dirname(__FILE__)}/../../../test/sso_check_test"
+            $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
           else
             abort "! Unknown test '#{check}'; see usage"
         end

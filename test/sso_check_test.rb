@@ -1,36 +1,34 @@
-require 'test/helper'
+require 'test/libs'
 
-class Response < Struct.new(:code, :body, :json_body)
-end
+class Response < Struct.new(:code, :body, :json_body); end
 
 class SsoCheckTest < Test::Unit::TestCase
-  include Heroku::Kensa
-
-  setup do
-    Timecop.freeze Time.now.utc
-    @data = Manifest.new.skeleton.merge :id => 123
-  end
-
-  teardown do
-    Timecop.return
-    Artifice.deactivate
-  end
 
   def make_token(id, salt, timestamp)
     Digest::SHA1.hexdigest([id, salt, timestamp].join(':'))
   end
 
   def get(path, params = {})
-    response = RestClient.get("http://provider.org#{path}", :params => params)
+    puts "\n\n\n\n\n\n#{base_url}\n\n\n\n\n"
+    response = RestClient.get("#{base_url}#{path}", :params => params)
   rescue RestClient::Forbidden
     Response.new(403)
   end
 
+  def base_url
+    manifest["api"]["test"].chomp("/")
+  end
+
+  def manifest
+    return @manifest if @manifest
+    @manifest ||= $manifest || Heroku::Kensa::Manifest.new.skeleton
+  end
+
   context "via GET" do
     setup do
-      Artifice.activate_with(ProviderServer.new)
+      user_id ||= manifest["user_id"] || 123
       @params = { :timestamp => Time.now.to_i,
-                  :token => make_token(123, "SSO_SALT", Time.now.to_i.to_s),
+                  :token => make_token(user_id, manifest["sso_salt"], Time.now.to_i.to_s),
                   "nav-data" => "some-nav-data"
                 }
     end

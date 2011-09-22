@@ -1,14 +1,25 @@
 require 'heroku/kensa'
-require 'contest'
+require 'test/libs'
 require 'timecop'
 require 'rr'
-require 'artifice'
-Dir["#{File.dirname(__FILE__)}/resources/*.rb"].each do |lib|
-  require lib
-end
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
+
+  def setup
+    Timecop.freeze Time.now.utc
+    Artifice.activate_with(ProviderServer.new(manifest))
+  end
+
+  def teardown
+    Timecop.return
+    Artifice.deactivate
+  end
+
+  def manifest
+    return @manifest if @manifest
+    @manifest ||= $manifest || Heroku::Kensa::Manifest.new.skeleton
+  end
 
   # in your test, do
   # @screen = STDOUTScreen.new

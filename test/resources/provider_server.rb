@@ -5,6 +5,11 @@ require 'json'
 class ProviderServer < Sinatra::Base
   set :views, File.dirname(__FILE__) + "/views"
 
+  def initialize(manifest = nil)
+    @manifest = manifest
+    super
+  end
+
   helpers do
     def heroku_only!
       unless auth_heroku?
@@ -27,7 +32,8 @@ class ProviderServer < Sinatra::Base
     end
 
     def check_token!
-      token = Digest::SHA1.hexdigest([params[:id], 'SSO_SALT', params[:timestamp]].join(':'))
+      salt = @manifest && @manifest["sso_salt"]
+      token = Digest::SHA1.hexdigest([params[:id], salt, params[:timestamp]].join(':'))
       unauthorized! if params[:token] != token
     end
 
