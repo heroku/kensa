@@ -32,22 +32,29 @@ module Heroku
         case check = @args.shift
           when "manifest"
             require "#{File.dirname(__FILE__)}/../../../test/manifest_test"
+            Test::Unit.run = true
             $manifest = Yajl::Parser.parse(resolve_manifest)
           when "provision"
             require "#{File.dirname(__FILE__)}/../../../test/provision_test"
+            Test::Unit.run = true
             $manifest = Yajl::Parser.parse(resolve_manifest)
           when "deprovision"
             id = @args.shift || abort("! no id specified; see usage")
             require "#{File.dirname(__FILE__)}/../../../test/deprovision_test"
+            Test::Unit.run = true
             $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
           when "planchange"
             id   = @args.shift || abort("! no id specified; see usage")
             plan = @args.shift || abort("! no plan specified; see usage")
             require "#{File.dirname(__FILE__)}/../../../test/plan_change_test"
+            require 'test/unit/ui/console/testrunner'
             $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
+            Test::Unit.run = true
+            Test::Unit::UI::Console::TestRunner.new(PlanTest.suite).start
           when "sso"
             id = @args.shift || abort("! no id specified; see usage")
             require "#{File.dirname(__FILE__)}/../../../test/sso_test"
+            Test::Unit.run = true
             $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
           else
             abort "! Unknown test '#{check}'; see usage"

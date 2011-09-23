@@ -11,16 +11,26 @@ end
 
 module Test
   module Unit
+    class TestCase
+      alias_method :add_error_with_connection_exception, :add_error
+      alias_method :add_failure_with_connection_exception, :add_failure
+
+      private
+      def add_error(exception)
+        if exception.class == Errno::ECONNREFUSED
+          @test_passed = false
+          message = "Unable to connect to your API."
+          @_result.add_failure(Failure.new(name, filter_backtrace(caller()), message))
+        else
+          add_error_with_connection_exception(exception)
+        end
+      end
+    end
 
     class Failure
       def long_display
-        location_display = if(location.size == 1)
-          location[0].sub(/\A(.+:\d+).*/, ' [\\1]')
-        else
-          "\n    [#{location.join("\n     ")}]"
-        end
         name=(split=split_shoulda_names(@test_name))?split.join(" "):@test_name
-        "#{name} FAILED: #{location_display}:\n    #@message"
+        "#{name} FAILED: #@message"
       end
     end
 
