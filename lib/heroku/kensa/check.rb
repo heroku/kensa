@@ -79,26 +79,6 @@ module Heroku
 
     end
 
-    class ApiCheck < Check
-      def custom_provision_url?
-        env = data[:env] || 'test'
-        data["api"][env].is_a?(Hash)
-      end
-
-      def url
-        env = data[:env] || 'test'
-        if custom_provision_url?
-          data["api"][env]["base_url"].chomp("/")
-        else
-          data["api"][env].chomp("/")
-        end
-      end
-
-      def credentials
-        [ data['id'], data['api']['password'] ]
-      end
-    end
-
     ##
     # On Testing:
     #  I've opted to not write tests for this
