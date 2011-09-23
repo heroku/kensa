@@ -34,16 +34,16 @@ module Heroku
             require "#{File.dirname(__FILE__)}/../../../test/manifest_test"
             $manifest = Yajl::Parser.parse(resolve_manifest)
           when "provision"
-            require "#{file.dirname(__file__)}/../../../test/provision_test"
-            $manifest = yajl::parser.parse(resolve_manifest)
+            require "#{File.dirname(__FILE__)}/../../../test/provision_test"
+            $manifest = Yajl::Parser.parse(resolve_manifest)
           when "deprovision"
             id = @args.shift || abort("! no id specified; see usage")
-            require "#{file.dirname(__file__)}/../../../test/deprovision_test"
+            require "#{File.dirname(__FILE__)}/../../../test/deprovision_test"
             $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
           when "planchange"
             id   = @args.shift || abort("! no id specified; see usage")
             plan = @args.shift || abort("! no plan specified; see usage")
-            require "#{file.dirname(__file__)}/../../../test/plan_change_test"
+            require "#{File.dirname(__FILE__)}/../../../test/plan_change_test"
             $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
           when "sso"
             id = @args.shift || abort("! no id specified; see usage")

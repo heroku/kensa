@@ -1,5 +1,4 @@
-require 'test/helper'
-
+require 'test/lib/dependencies'
 class DeprovisionTest < Test::Unit::TestCase
 
   setup do

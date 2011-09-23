@@ -1,5 +1,4 @@
 require 'test/helper'
-
 class ManifestGenerationTest < Test::Unit::TestCase
   include Heroku::Kensa
 

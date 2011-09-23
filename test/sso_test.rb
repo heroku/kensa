@@ -1,5 +1,4 @@
-require 'test/libs'
-
+require 'test/lib/dependencies'
 class SsoTest < Test::Unit::TestCase
 
   context "via GET" do
