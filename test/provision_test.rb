@@ -11,7 +11,7 @@ class ProvisionTest < Test::Unit::TestCase
 
   test "working provision call" do
     response = provision
-    assert_equal 201, response.code, "FAILURE: Expects a 201 - Created response/status code when successfully provisioned."
+    assert_equal 201, response.code, "Expects a 201 - Created response/status code when successfully provisioned."
   end
 
   test "allows the definition of a custom provisioning endpoint" do
@@ -25,32 +25,32 @@ class ProvisionTest < Test::Unit::TestCase
 
   test "expects a valid JSON response" do
     response = provision
-    assert response.json_body, "FAILURE: Expects a valid JSON object as response body."
+    assert response.json_body, "Expects a valid JSON object as response body."
   end
 
   test "detects missing id" do
     response = provision
-    assert response.json_body["id"], "FAILURE: Expects JSON response to contain the Provider's unique ID for this app."
-    assert response.json_body["id"].strip != "", "FAILURE: Expects JSON response to contain the Provider's unique ID for this app."
+    assert response.json_body["id"], "Expects JSON response to contain the Provider's unique ID for this app."
+    assert response.json_body["id"].strip != "", "Expects JSON response to contain the Provider's unique ID for this app."
   end
 
   test "provides app config" do
     response = provision
-    assert response.json_body["config"].is_a?(Hash), "FAILURE: Expects JSON response to contain a hash of config variables."
+    assert response.json_body["config"].is_a?(Hash), "Expects JSON response to contain a hash of config variables."
   end
 
   test "all config values are strings" do
     response = provision
     response.json_body["config"].each do |k,v|
-      assert k.is_a?(String), "FAILURE: Expect all config names to be strings ('#{k}' is not)."
-      assert v.is_a?(String), "FAILURE: Expect all config values to be strings ('#{v}' is not)."
+      assert k.is_a?(String), "Expect all config names to be strings ('#{k}' is not)."
+      assert v.is_a?(String), "Expect all config values to be strings ('#{v}' is not)."
     end
   end
 
   test "all config vars are defined in the manifest" do
     response = provision
     response.json_body["config"].each do |k,v|
-      assert manifest["api"]["config_vars"].include?(k), "FAILURE: Only config vars defined in the manfiest can be set ('#{k}' is not)."
+      assert manifest["api"]["config_vars"].include?(k), "Only config vars defined in the manfiest can be set ('#{k}' is not)."
     end
   end
 
@@ -70,13 +70,13 @@ class ProvisionTest < Test::Unit::TestCase
 
   test "detects missing auth" do
     response = provision(auth = false)
-    assert_equal 401, response.code, "FAILED: Provisioning request should require authentication."
+    assert_equal 401, response.code, "Provisioning request should require authentication."
 
     response = provision(auth = [manifest["id"]+"a", manifest["api"]["password"]])
-    assert_equal 401, response.code, "FAILED: Provisioning request appears to allow any username, should require '#{manifest["id"]}'."
+    assert_equal 401, response.code, "Provisioning request appears to allow any username, should require '#{manifest["id"]}'."
 
     response = provision(auth = [manifest["id"], manifest["api"]["password"]+"a"])
-    assert_equal 401, response.code, "FAILED: Provisioning request appears to allow any password, should require '#{manifest["api"]["password"]}'."
+    assert_equal 401, response.code, "Provisioning request appears to allow any password, should require '#{manifest["api"]["password"]}'."
   end
 
 end

@@ -1,12 +1,8 @@
 require 'test/unit'
 require 'test/unit/ui/console/testrunner'
 
-def split_shoulda_names(name)
-  if /test: (.*) (should .*)\./ =~ name
-    [$1, $2]
-  elsif /(.*)\(Test(.*)\)/ =~ name
-    [$2, $1]
-  end
+def format_kensa_test_name(name)
+  name.sub(/\Atest_/,"").match(/\A([^\(]*)/)[1].gsub("_", " ")
 end
 
 module Test
@@ -29,15 +25,15 @@ module Test
 
     class Failure
       def long_display
-        name=(split=split_shoulda_names(@test_name))?split.join(" "):@test_name
-        "#{name} FAILED: #@message"
+        name = format_kensa_test_name(@test_name)
+        "#{name} - FAILED: #@message"
       end
     end
 
     class Error
       def long_display
         backtrace = filter_backtrace(@exception.backtrace).join("\n    ")
-        name=(split=split_shoulda_names(@test_name))?split.join(" "):@test_name
+        name = format_kensa_test_name(@test_name)
         "#{@exception.class.name} in #{name}:\n#{message}\n    #{backtrace}"
       end
     end
@@ -64,7 +60,6 @@ module Test
               end
               @ctx = ctx
               @current_test_text = " ==> #{should}"
-              #output_single("- #{should}: ")
             else
               test_started_old(name)
             end
@@ -73,12 +68,10 @@ module Test
           def test_finished(name)
             @current_test_text = name.sub(/\Atest_/,"").match(/\A([^\(]*)/)[1].gsub("_", " ")
             if fault = @faults.find {|f| f.test_name == name}
-              # Added ! to ERROR for length consistency
               fault_type = fault.is_a?(Test::Unit::Failure) ? "FAILED" : "ERROR!"
               # NOTE -- Concatenation because "\e[0m]" does funky stuff.
               output("[\e[0;31m#{fault_type}\e[0m" + "] #{@current_test_text}.")
             else
-              # Added spaces on either side of OK for length consistency
               output("[  \e[0;32mOK\e[0m  ] #{@current_test_text}.")
             end
             @already_outputted = false
