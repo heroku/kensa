@@ -5,7 +5,7 @@ class SsoTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
-    Artifice.activate_with(KensaServer.new)
+    #Artifice.activate_with(KensaServer.new)
     @data = Manifest.new.skeleton.merge(:id => 1)
     @data['api']['test'] = 'http://localhost:4567/'
     @data['api']['sso_salt'] = 'SSO_SALT'

@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'sinatra'
 require 'json'
 
@@ -11,20 +10,8 @@ class ProviderServer < Sinatra::Base
   end
 
   helpers do
-    def heroku_only!
-      unless auth_heroku?
-        response['WWW-Authenticate'] = %(Basic realm="Kensa Test Server")
-        unauthorized!(401)
-      end
-    end
-
-    def auth_heroku?
-      @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-      @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ['myaddon', 'secret']
-    end
-
     def unauthorized!(status=403)
-      throw(:halt, [status, "Not authorized\n"])
+      halt status, "Not authorized\n"
     end
 
     def check_timestamp!
@@ -45,15 +32,19 @@ class ProviderServer < Sinatra::Base
     end
 
     def auth_heroku?
-      @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-      return false unless @auth.provided? && @auth.basic? && @auth.credentials
+      auth =  Rack::Auth::Basic::Request.new(request.env)
+      return false unless auth.provided? && auth.basic? && auth.credentials
       if @manifest
-        @auth.credentials == [@manifest["id"], @manifest["api"]["password"]]
+        auth.credentials == [@manifest["id"], @manifest["api"]["password"]]
       else
-        @auth.credentials == ['myaddon', 'secret']
+        auth.credentials == ['myaddon', 'secret']
       end
     end
+  end
 
+  delete '/heroku/resources/:id' do
+    authenticate!
+    status 200
   end
 
   post '/heroku/resources' do

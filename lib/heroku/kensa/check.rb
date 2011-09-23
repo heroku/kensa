@@ -79,7 +79,6 @@ module Heroku
 
     end
 
-
     class ManifestCheck < Check
 
       ValidPriceUnits = %w[month dyno_hour]
@@ -225,39 +224,6 @@ module Heroku
         [ data['id'], data['api']['password'] ]
       end
     end
-
-    class DeprovisionCheck < ApiCheck
-      include HTTP
-
-      def call!
-        id = data[:id]
-        raise ArgumentError, "No id specified" if id.nil?
-
-        path = "/heroku/resources/#{CGI::escape(id.to_s)}"
-
-        test "DELETE #{path}"
-        check "response" do
-          code, _ = delete(credentials, path, nil)
-          if code == 200
-            true
-          elsif code == -1
-            error("unable to connect to #{url}")
-          else
-            error("expected 200, got #{code}")
-          end
-        end
-
-        check "authentication" do
-          wrong_credentials = ['wrong', 'secret']
-          code, _ = delete(wrong_credentials, path, nil)
-          error("expected 401, got #{code}") if code != 401
-          true
-        end
-
-      end
-
-    end
-
 
     class PlanChangeCheck < ApiCheck
       include HTTP

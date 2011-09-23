@@ -4,7 +4,7 @@ class PlanChangeCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
-    Artifice.activate_with(KensaServer.new)
+    #Artifice.activate_with(KensaServer.new)
     @data = Manifest.new.skeleton.merge :id => 123, :plan => 'premium'
     @data['api']['password'] = 'secret'
   end

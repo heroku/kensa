@@ -4,7 +4,7 @@ class AllCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
-    Artifice.activate_with(KensaServer.new)
+    #Artifice.activate_with(KensaServer.new)
     @data = Manifest.new.skeleton
     @data['api']['password'] = 'secret'
     @data['api']['test'] += "working"

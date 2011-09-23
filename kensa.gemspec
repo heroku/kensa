@@ -50,55 +50,39 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{Tool to help Heroku add-on providers integrating their services}
 
+  dev_deps = {
+    "turn" => ">= 0",
+    "contest" => ">= 0",
+    "timecop" => ">= 0.3.5",
+    "sinatra" => "~> 1.2.6",
+    "json" => ">= 0",
+    "contest" => ">= 0",
+    "haml" => ">= 0",
+    "jeweler" => ">= 0",
+    "rr" => ">= 0"
+  }
+  runtime_deps = {
+    "rest-client" => ["< 1.7.0", ">= 1.4.0"],
+    "yajl-ruby" => "~> 0.6",
+    "term-ansicolor" => "~> 1.0",
+    "launchy" => ">= 0.3.2",
+    "mechanize" => "~> 1.0.0"
+  }
   if s.respond_to? :specification_version then
     s.specification_version = 3
-
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<turn>, [">= 0"])
-      s.add_development_dependency(%q<contest>, [">= 0"])
-      s.add_development_dependency(%q<timecop>, [">= 0.3.5"])
-      s.add_development_dependency(%q<sinatra>, [">= 0.9"])
-      s.add_development_dependency(%q<json>, [">= 0"])
-      s.add_development_dependency(%q<contest>, [">= 0"])
-      s.add_development_dependency(%q<haml>, [">= 0"])
-      s.add_development_dependency(%q<jeweler>, [">= 0"])
-      s.add_development_dependency(%q<rr>, [">= 0"])
-      s.add_runtime_dependency(%q<rest-client>, ["< 1.7.0", ">= 1.4.0"])
-      s.add_runtime_dependency(%q<yajl-ruby>, ["~> 0.6"])
-      s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0"])
-      s.add_runtime_dependency(%q<launchy>, [">= 0.3.2"])
-      s.add_runtime_dependency(%q<mechanize>, ["~> 1.0.0"])
-    else
-      s.add_dependency(%q<turn>, [">= 0"])
-      s.add_dependency(%q<contest>, [">= 0"])
-      s.add_dependency(%q<timecop>, [">= 0.3.5"])
-      s.add_dependency(%q<sinatra>, [">= 0.9"])
-      s.add_dependency(%q<json>, [">= 0"])
-      s.add_dependency(%q<contest>, [">= 0"])
-      s.add_dependency(%q<haml>, [">= 0"])
-      s.add_dependency(%q<jeweler>, [">= 0"])
-      s.add_dependency(%q<rr>, [">= 0"])
-      s.add_dependency(%q<rest-client>, ["< 1.7.0", ">= 1.4.0"])
-      s.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
-      s.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
-      s.add_dependency(%q<launchy>, [">= 0.3.2"])
-      s.add_dependency(%q<mechanize>, ["~> 1.0.0"])
+    dev_deps.each do |dep, version|
+      s.add_development_dependency(dep, [*version])
+    end
+    runtime_deps.each do |dep, version|
+      s.add_runtime_dependency(dep, [*version])
     end
   else
-    s.add_dependency(%q<turn>, [">= 0"])
-    s.add_dependency(%q<contest>, [">= 0"])
-    s.add_dependency(%q<timecop>, [">= 0.3.5"])
-    s.add_dependency(%q<sinatra>, [">= 0.9"])
-    s.add_dependency(%q<json>, [">= 0"])
-    s.add_dependency(%q<contest>, [">= 0"])
-    s.add_dependency(%q<haml>, [">= 0"])
-    s.add_dependency(%q<jeweler>, [">= 0"])
-    s.add_dependency(%q<rr>, [">= 0"])
-    s.add_dependency(%q<rest-client>, ["< 1.7.0", ">= 1.4.0"])
-    s.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
-    s.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
-    s.add_dependency(%q<launchy>, [">= 0.3.2"])
-    s.add_dependency(%q<mechanize>, ["~> 1.0.0"])
+    dev_deps.each do |dep, version|
+      s.add_dependency(dep, [*version])
+    end
+    runtime_deps.each do |dep, version|
+      s.add_dependency(dep, [*version])
+    end
   end
 end
 
