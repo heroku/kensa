@@ -1,5 +1,5 @@
 require 'test/lib/dependencies'
-class PlanTest < Test::Unit::TestCase
+class PlanChangeTest < Test::Unit::TestCase
 
   setup do
     @params = { :plan => "new_plan" }
