@@ -76,7 +76,7 @@ module Test
               # Added ! to ERROR for length consistency
               fault_type = fault.is_a?(Test::Unit::Failure) ? "FAILED" : "ERROR!"
               # NOTE -- Concatenation because "\e[0m]" does funky stuff.
-              output("[\e[0;31m#{fault_type}\e[0m" + "] #{@current_test_text}. (#{@faults.length})")
+              output("[\e[0;31m#{fault_type}\e[0m" + "] #{@current_test_text}.")
             else
               # Added spaces on either side of OK for length consistency
               output("[  \e[0;32mOK\e[0m  ] #{@current_test_text}.")
