@@ -1,6 +1,6 @@
 require 'test/helper'
 
-class PlanChangeCheckTest < Test::Unit::TestCase
+class PlanTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do

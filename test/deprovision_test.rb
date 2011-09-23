@@ -1,6 +1,6 @@
 require 'test/helper'
 
-class DeprovisionCheckTest < Test::Unit::TestCase
+class DeprovisionTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do

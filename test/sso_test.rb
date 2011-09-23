@@ -1,120 +1,58 @@
-require 'test/helper'
-require 'cgi'
+require 'test/libs'
 
 class SsoTest < Test::Unit::TestCase
-  include Heroku::Kensa
 
-  setup do
-    #Artifice.activate_with(KensaServer.new)
-    @data = Manifest.new.skeleton.merge(:id => 1)
-    @data['api']['test'] = 'http://localhost:4567/'
-    @data['api']['sso_salt'] = 'SSO_SALT'
+  def make_token(id, salt, timestamp)
+    Digest::SHA1.hexdigest([id, salt, timestamp].join(':'))
   end
 
-  teardown do
-    Timecop.return
-    Artifice.deactivate
+  def get(path, params = {})
+    response = RestClient.get("#{base_url}#{path}", :params => params)
+    Response.new(response.code, response.body, response.cookies)
+  rescue RestClient::Forbidden
+    Response.new(403)
   end
 
-  def asserts_builds_full_url(env)
-    url, query = @sso.full_url.split('?')
-    data = CGI.parse(query)
-
-
-    assert_equal "#{@data['api'][env]}heroku/resources/1", url
-    assert_equal 'b6010f6fbb850887a396c2bc0ab23974003008f6', data['token'].first
-    assert_equal '1262304000', data['timestamp'].first
-    assert_equal 'username@example.com', data['user'].first
-  end
-
-  context 'sso' do
+  context "via GET" do
     setup do
-      Timecop.freeze Time.utc(2010, 1)
-      @sso = Sso.new @data
+      user_id ||= manifest["user_id"] || 123
+      @params = { :timestamp => Time.now.to_i,
+                  :token => make_token(user_id, manifest["sso_salt"], Time.now.to_i.to_s),
+                  "nav-data" => "some-nav-data"
+                }
     end
 
-    test 'builds path' do
-      assert_equal '/heroku/resources/1', @sso.path
+    test "validates token" do
+      @params[:token] = "foo"
+      response = get "/heroku/resources/123", @params
+      assert_equal 403, response.code, "FAILURE: Signing in via SSO at /heroku/resources/:id must return a 403 if the token is invalid."
     end
 
-    test 'builds full url' do
-      asserts_builds_full_url('test')
+    test "validates timestamp" do
+      @params[:timestamp] = (Time.now-60*3).to_i
+      @params[:token] = make_token(123, "SSO_SALT", @params[:timestamp].to_s)
+      response = get "/heroku/resources/123", @params
+      assert_equal 403, response.code, "FAILURE: Signing in via SSO at /heroku/resources/:id must return a 403 if the timestamp is expired."
+
+      @params[:timestamp] = "foo"
+      response = get "/heroku/resources/123", @params
+      assert_equal 403, response.code, "FAILURE: Signing in via SSO at /heroku/resources/:id must return a 403 if the timestamp is invalid."
     end
 
-    context 'with no "sso" field specified' do
-      test "defaults to GET" do
-        assert_equal @sso.full_url, @sso.sso_url
-      end
+    test "logs in" do
+      response = get "/heroku/resources/123", @params
+      assert response.code.to_s.match(/\A2/), "FAILURE: Signing in via SSO at /heroku/resources/:id must return a 2xx response if sign in was valid."
     end
 
-    context 'when sso method is GET' do
-      setup do
-        @data["api"]["test"] = "http://example.org/"
-        @sso = Sso.new(@data).start
-      end
-
-      test "#sso_url should be the #full_url" do
-        assert_equal @sso.full_url, @sso.sso_url
-      end
-
-      test "#message is Opening <full_url>" do
-        assert_equal "Opening #{@sso.full_url}", @sso.message
-      end
+    test "creates the heroku-nav-data cookie" do
+      response = get "/heroku/resources/123", @params
+      assert_equal @params["nav-data"], response.cookies["heroku-nav-data"], "FAILURE: SSO sign in should set the heroku-nav-data cookie to the value of the passed nav-data parameter."
     end
 
-    context 'when sso method is POST' do
-      setup do
-        Timecop.freeze Time.utc(2010, 1)
-        @data['api']['test'] = {
-          "base_url" => "http://localhost:4567",
-          "sso_url" => "http://localhost:4567/users/login/sso"
-        }
-      end
-
-      test "it starts the proxy server" do
-        Artifice.deactivate
-        @sso = Sso.new(@data).start
-        body = RestClient.get(@sso.sso_url)
-
-        assert body.include? 'b6010f6fbb850887a396c2bc0ab23974003008f6'
-        assert body.include? '1262304000'
-        assert body.include? @sso.url
-        assert body.include? @sso.sample_nav_data
-      end
-
-      context "with the proxy working" do
-        setup do
-          any_instance_of(Sso, :run_proxy => false)
-          @sso = Sso.new(@data).start
-        end
-
-        test "#sso_url should point to the proxy" do
-          assert_equal "http://localhost:#{@sso.proxy_port}/", @sso.sso_url
-        end
-
-        test "#post_url contains url and path" do
-          assert_equal "http://localhost:4567/users/login/sso", @sso.post_url
-        end
-
-        test "#message is Posting <data> to <post_url> via proxy on port <proxy_port>" do
-          assert_equal "POSTing #{@sso.query_data} to #{@sso.post_url} via proxy on port #{@sso.proxy_port}", @sso.message
-        end
-      end
-    end
-  end
-
-  context 'sso in a specific environment' do
-    setup do
-      Timecop.freeze Time.utc(2010, 1)
-      env = 'production'
-      @data[:env] = env
-      @data['api'][env] = 'http://localhost:7654/'
-
-      @sso = Sso.new @data
-    end
-
-    test 'builds full url' do
-      asserts_builds_full_url('production')
+    test "displays the heroku layout" do
+      response = get "/heroku/resources/123", @params
+      document = Nokogiri::HTML.parse(response.body)
+      assert !document.search("div#heroku-header").empty?, "FAILURE: Logged in page should contain the Heroku header."
     end
   end
 end
