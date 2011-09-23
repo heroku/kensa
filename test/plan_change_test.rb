@@ -1,27 +1,9 @@
 require 'test/helper'
 
 class PlanTest < Test::Unit::TestCase
-  include Heroku::Kensa
 
   setup do
     @params = { :plan => "new_plan" }
-  end
-
-  def put(path, params = {}, auth_credentials = nil)
-    if auth_credentials.nil?
-      auth_credentials = [manifest["id"], manifest["api"]["password"]]
-    end
-    uri = URI.parse(base_url)
-    uri.path = path
-    if auth_credentials
-      uri.userinfo = auth_credentials
-    end
-    response = RestClient.put("#{uri.to_s}", params)
-    Response.new(response.code, response.body, response.cookies)
-  rescue RestClient::Forbidden
-    Response.new(403)
-  rescue RestClient::Unauthorized
-    Response.new(401)
   end
 
   test "working plan change call" do

@@ -2,17 +2,6 @@ require 'test/libs'
 
 class SsoTest < Test::Unit::TestCase
 
-  def make_token(id, salt, timestamp)
-    Digest::SHA1.hexdigest([id, salt, timestamp].join(':'))
-  end
-
-  def get(path, params = {})
-    response = RestClient.get("#{base_url}#{path}", :params => params)
-    Response.new(response.code, response.body, response.cookies)
-  rescue RestClient::Forbidden
-    Response.new(403)
-  end
-
   context "via GET" do
     setup do
       user_id ||= manifest["user_id"] || 123
