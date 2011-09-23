@@ -47,13 +47,18 @@ class ProviderServer < Sinatra::Base
     status 200
   end
 
+  put '/heroku/resources/:id' do
+    authenticate!
+    status 200
+  end
+
   post '/heroku/resources' do
     authenticate!
     status 201
     { "id" => 52343.to_s,
       "config" => {
-        "SERVER_ID" => "1",
-        "SERVER_URL" => "http://host.example.org/"
+        "MYADDON_USER" => "1",
+        "MYADDON_URL" => "http://host.example.org/"
       }
     }.to_json
   end

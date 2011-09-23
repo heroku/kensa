@@ -6,7 +6,7 @@ require 'test/libs'
 require 'timecop'
 require 'rr'
 
-class Response < Struct.new(:code, :body, :cookies)
+Response = Struct.new(:code, :body, :cookies) do
   def json_body
     Yajl::Parser.parse(self.body)
   end

@@ -2,8 +2,6 @@ require 'test/helper'
 
 class ManifestCheckTest < Test::Unit::TestCase
 
-  setup { @data = Manifest.new.skeleton }
-
   test "has an id" do
     assert manifest["id"], "FAILURE: Manifest needs to specify the ID of the add-on."
   end

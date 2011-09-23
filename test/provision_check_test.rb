@@ -65,7 +65,7 @@ class ProvisionCheckTest < Test::Unit::TestCase
   test "all config vars are defined in the manifest" do
     response = post "/heroku/resources", @params
     response.json_body["config"].each do |k,v|
-      assert manifest["config_vars"].include?(k), "FAILURE: Only config vars defined in the manfiest can be set ('#{k}' is not)."
+      assert manifest["api"]["config_vars"].include?(k), "FAILURE: Only config vars defined in the manfiest can be set ('#{k}' is not)."
     end
   end
 
