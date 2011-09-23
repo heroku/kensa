@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.date = %q{2011-08-22}
   s.default_executable = %q{kensa}
   s.description = %q{Kensa is a command-line tool to help add-on providers integrating their services with Heroku. It manages manifest files, and provides a TDD-like approach for programmers to test and develop their APIs.}
-  s.email = %q{pedro@heroku.com}
+  s.email = %q{glenn@heroku.com}
   s.executables = ["kensa"]
   s.extra_rdoc_files = [
     "README.md"
