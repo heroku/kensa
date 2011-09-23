@@ -16,7 +16,7 @@ class SsoTest < Test::Unit::TestCase
     Artifice.deactivate
   end
 
-  def builds_full_url(env)
+  def asserts_builds_full_url(env)
     url, query = @sso.full_url.split('?')
     data = CGI.parse(query)
 
@@ -38,7 +38,7 @@ class SsoTest < Test::Unit::TestCase
     end
 
     test 'builds full url' do
-      builds_full_url('test')
+      asserts_builds_full_url('test')
     end
 
     context 'with no "sso" field specified' do
@@ -49,7 +49,7 @@ class SsoTest < Test::Unit::TestCase
 
     context 'when sso method is GET' do
       setup do
-        @data['api']['sso'] = 'GET'
+        @data["api"]["test"] = "http://example.org/"
         @sso = Sso.new(@data).start
       end
 
@@ -103,19 +103,6 @@ class SsoTest < Test::Unit::TestCase
     end
   end
 
-  context 'sso without salt' do
-    setup do
-      @data['api'].delete 'sso_salt'
-      @sso = Sso.new @data
-    end
-
-    test 'builds full url' do
-      expected = 'http://localhost:4567/heroku/resources/1'
-
-      assert @sso.full_url.include?(expected)
-    end
-  end
-
   context 'sso in a specific environment' do
     setup do
       Timecop.freeze Time.utc(2010, 1)
@@ -127,7 +114,7 @@ class SsoTest < Test::Unit::TestCase
     end
 
     test 'builds full url' do
-      builds_full_url('production')
+      asserts_builds_full_url('production')
     end
   end
 end
