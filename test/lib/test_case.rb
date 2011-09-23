@@ -7,8 +7,12 @@ class Test::Unit::TestCase
     if auth_credentials.nil?
       auth_credentials = [manifest["id"], manifest["api"]["password"]]
     end
-    uri = URI.parse(base_url)
-    uri.path = path
+    if path =~ /http/
+      uri = URI.parse(path)
+    else
+      uri = URI.parse(base_url)
+      uri.path = path
+    end
     if auth_credentials
       uri.userinfo = auth_credentials
     end
@@ -43,6 +47,10 @@ class Test::Unit::TestCase
   end
 
   def base_url
-    manifest["api"]["test"].chomp("/")
+    if manifest["api"]["test"].is_a?(Hash)
+      manifest["api"]["test"]["base_url"].chomp("/")
+    else
+      manifest["api"]["test"].chomp("/")
+    end
   end
 end

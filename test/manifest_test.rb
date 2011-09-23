@@ -24,7 +24,12 @@ class ManifestTest < Test::Unit::TestCase
   end
 
   test "api contains production of https" do
-    assert manifest["api"]["production"].match(%r{\Ahttps://}), "Production environment must communicate over HTTPS."
+    if manifest["api"]["production"].is_a?(Hash)
+      url = manifest["api"]["production"]["base_url"]
+    else
+      url = manifest["api"]["production"]
+    end
+    assert url.match(%r{\Ahttps://}), "Production environment must communicate over HTTPS."
   end
 
   test "all config vars are in upper case" do

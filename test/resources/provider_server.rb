@@ -71,4 +71,12 @@ class ProviderServer < Sinatra::Base
     haml :index
   end
 
+  post '/sso/login' do
+    check_timestamp!
+    check_token!
+    response.set_cookie('heroku-nav-data', params['nav-data'])
+    session[:heroku] = true
+    haml :index
+  end
+
 end
