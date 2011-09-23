@@ -91,7 +91,7 @@ module Heroku
       def call!
         screen.message "Running all :( \n\n"
         args = data[:args]
-        run ProvisionCheck, data
+        #run ProvisionCheck, data
 
         response = data[:provision_response]
         data.merge!(:id => response["id"])
@@ -109,7 +109,7 @@ module Heroku
           screen.message "End of #{args.first}\n"
         end
 
-        run DeprovisionCheck, data
+        #run DeprovisionCheck, data
       end
 
       def run_in_env(env)
