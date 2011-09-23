@@ -10,6 +10,6 @@ end
 
 module Heroku
   module Kensa
-    VERSION = "1.1.4"
+    VERSION = "2.0.0rc"
   end
 end
