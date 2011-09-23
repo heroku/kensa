@@ -1,79 +1,48 @@
 require 'test/helper'
 
 class ManifestCheckTest < Test::Unit::TestCase
-  include Heroku::Kensa
-
-  def check ; ManifestCheck ; end
 
   setup { @data = Manifest.new.skeleton }
 
-  test "is valid if no errors" do
-    assert_valid
-  end
-
   test "has an id" do
-    @data.delete("id")
-    assert_invalid
+    assert manifest["id"], "FAILURE: Manifest needs to specify the ID of the add-on."
   end
 
-  test "api key exists" do
-    @data.delete("api")
-    assert_invalid
-  end
-
-  test "api is a Hash" do
-    @data["api"] = ""
-    assert_invalid
+  test "has a Hash of API settings" do
+    assert manifest["api"], "FAILURE: Manifest needs to contain a Hash of API settings."
+    assert manifest["api"].is_a?(Hash), "FAILURE: Manifest needs to contain a Hash of API settings."
   end
 
   test "api has a password" do
-    @data["api"].delete("password")
-    assert_invalid
+    assert manifest["api"]["password"], "FAILURE: Manifest must define a password within the API settings."
   end
 
   test "api contains test" do
-    @data["api"].delete("test")
-    assert_invalid
+    assert manifest["api"]["test"], "FAILURE: Manifest must define a test environment with the API settings."
   end
 
   test "api contains production" do
-    @data["api"].delete("production")
-    assert_invalid
+    assert manifest["api"]["production"], "FAILURE: Manifest must define a production environment with the API settings."
   end
 
   test "api contains production of https" do
-    @data["api"]["production"] = "http://foo.com"
-    assert_invalid
-  end
-
-  test "api contains config_vars array" do
-    @data["api"]["config_vars"] = "test"
-    assert_invalid
-  end
-
-  test "api contains at least one config var" do
-    @data["api"]["config_vars"].clear
-    assert_invalid
+    assert manifest["api"]["production"].match(%r{\Ahttps://}), "FAILURE: Production environment must communicate over HTTPS."
   end
 
   test "all config vars are in upper case" do
-    @data["api"]["config_vars"] << 'MYADDON_invalid_var'
-    assert_invalid
+    manifest["api"]["config_vars"].each do |var|
+      assert_equal var.upcase, var, "FAILURE: All config vars must be uppercase, #{var} is not."
+    end
   end
 
   test "assert config var prefixes match addon id" do
-    @data["api"]["config_vars"] << 'MONGO_URL'
-    assert_invalid
-  end
-
-  test "replaces dashes for underscores on the config var check" do
-    @data["id"] = "MY-ADDON"
-    @data["api"]["config_vars"] = ["MY_ADDON_URL"]
-    assert_valid
+    id = manifest["id"].upcase.gsub("-", "_")
+    manifest["api"]["config_vars"].each do |var|
+      assert var.match(%r{\A#{id}_}), "FAILURE: All config vars must be prefixed with the add-on ID (#{id}), #{var} is not."
+    end
   end
 
   test "username is deprecated" do
-    @data["api"]["username"] = "heroku"
-    assert_invalid
+    assert !manifest["api"]["username"], "FAILURE: Username has been deprecated."
   end
 end

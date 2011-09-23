@@ -31,13 +31,15 @@ module Heroku
       def test
         case check = @args.shift
           when "manifest"
-            run_check ManifestCheck
-          when "provision"
-            require "#{File.dirname(__FILE__)}/../../../test/provision_check_test"
+            require "#{File.dirname(__FILE__)}/../../../test/manifest_check_test"
             $manifest = Yajl::Parser.parse(resolve_manifest)
+          when "provision"
+            require "#{file.dirname(__file__)}/../../../test/provision_check_test"
+            $manifest = yajl::parser.parse(resolve_manifest)
           when "deprovision"
             id = @args.shift || abort("! no id specified; see usage")
-            run_check ManifestCheck, DeprovisionCheck, :id => id
+            require "#{file.dirname(__file__)}/../../../test/deprovision_check_test"
+            $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
           when "planchange"
             id   = @args.shift || abort("! no id specified; see usage")
             plan = @args.shift || abort("! no plan specified; see usage")
