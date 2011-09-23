@@ -11,7 +11,7 @@ class ManifestTest < Test::Unit::TestCase
     end
 
     test 'generates a new sso salt every time' do
-      assert @manifest.skeleton['api']['ssl_salt'] != Manifest.new.skeleton['api']['sso_salt']
+      assert @manifest.skeleton['api']['sso_salt'] != Manifest.new.skeleton['api']['sso_salt']
     end
 
     test 'has an api password' do
