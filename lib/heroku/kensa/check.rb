@@ -79,61 +79,6 @@ module Heroku
 
     end
 
-    class ProvisionResponseCheck < Check
-
-      def call!
-        response = data[:provision_response]
-        test "response"
-
-        check "contains an id" do
-          response.is_a?(Hash) && response.has_key?("id")
-        end
-
-        screen.message " (id #{response['id']})"
-
-        if response.has_key?("config")
-          test "config data"
-          check "is a hash" do
-            response["config"].is_a?(Hash)
-          end
-
-          check "all config keys were previously defined in the manifest" do
-            response["config"].keys.each do |key|
-              error "#{key} is not in the manifest" unless data["api"]["config_vars"].include?(key)
-            end
-            true
-          end
-
-          check "all config values are strings" do
-            response["config"].each do |k, v|
-              if v.is_a?(String)
-                true
-              else
-                error "the key #{k} doesn't contain a string (#{v.inspect})"
-              end
-            end
-          end
-
-          check "URL configs vars" do
-            response["config"].each do |key, value|
-              next unless key =~ /_URL$/
-              begin
-                uri = URI.parse(value)
-                error "#{value} is not a valid URI - missing host" unless uri.host
-                error "#{value} is not a valid URI - missing scheme" unless uri.scheme
-                error "#{value} is not a valid URI - pointing to localhost" if @data[:env] == 'production' && uri.host == 'localhost'
-              rescue URI::Error
-                error "#{value} is not a valid URI"
-              end
-            end
-          end
-
-        end
-      end
-
-    end
-
-
     class ApiCheck < Check
       def custom_provision_url?
         env = data[:env] || 'test'
