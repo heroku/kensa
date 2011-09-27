@@ -4,6 +4,7 @@ require 'timecop'
 require 'rr'
 require 'test/unit'
 require 'lib/heroku/kensa'
+require 'test/resources/provider_server'
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
