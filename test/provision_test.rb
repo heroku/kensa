@@ -33,7 +33,7 @@ class ProvisionTest < Test::Unit::TestCase
   def test_detects_missing_id
     response = provision
     assert response.json_body["id"], "Expects JSON response to contain the Provider's unique ID for this app."
-    assert response.json_body["id"].strip != "", "Expects JSON response to contain the Provider's unique ID for this app."
+    assert response.json_body["id"].to_s.strip != "", "Expects JSON response to contain the Provider's unique ID for this app."
   end
 
   def test_provides_app_config
