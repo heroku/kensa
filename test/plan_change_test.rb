@@ -1,7 +1,8 @@
 require 'test/lib/dependencies'
 class PlanChangeTest < Test::Unit::TestCase
 
-  setup do
+  def setup
+    super
     @params = { :plan => "new_plan" }
   end
 
@@ -9,12 +10,12 @@ class PlanChangeTest < Test::Unit::TestCase
     response = put "/heroku/resources/123", params, auth
   end
 
-  test "working plan change call" do
+  def test_working_plan_change_call
     response = plan_change
     assert_equal 200, response.code, "Expected a 200 response code on successful plan change."
   end
 
-  test "detects missing auth" do
+  def test_detects_missing_auth
     response = plan_change(auth = false)
     assert_equal 401, response.code, "Provisioning request should require authentication."
 

@@ -1,10 +1,9 @@
-require "rubygems"
-require "bundler/setup"
-
-require "#{File.dirname(__FILE__)}/../lib/heroku/kensa"
-require 'test/lib/dependencies'
+require 'rubygems'
+require 'bundler/setup'
 require 'timecop'
 require 'rr'
+require 'test/unit'
+require 'lib/heroku/kensa'
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit

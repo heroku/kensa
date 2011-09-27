@@ -1,7 +1,8 @@
 require 'test/lib/dependencies'
 class ProvisionTest < Test::Unit::TestCase
 
-  setup do
+  def setup
+    super
     @params = {}
   end
 
@@ -9,12 +10,12 @@ class ProvisionTest < Test::Unit::TestCase
     post "/heroku/resources", params, auth
   end
 
-  test "working provision call" do
+  def test_working_provision_call
     response = provision
     assert_equal 201, response.code, "Expects a 201 - Created response/status code when successfully provisioned."
   end
 
-  test "allows the definition of a custom provisioning endpoint" do
+  def test_allows_the_definition_of_a_custom_provisioning_endpoint
     #Artifice.activate_with(KensaServer.new)
     #@data['api']['test'] = {
     #  "base_url" => "https://example.org/providers/provision",
@@ -23,23 +24,23 @@ class ProvisionTest < Test::Unit::TestCase
     #assert_valid
   end
 
-  test "expects a valid JSON response" do
+  def test_expects_a_valid_json_response
     response = provision
     assert response.json_body, "Expects a valid JSON object as response body."
   end
 
-  test "detects missing id" do
+  def test_detects_missing_id
     response = provision
     assert response.json_body["id"], "Expects JSON response to contain the Provider's unique ID for this app."
     assert response.json_body["id"].strip != "", "Expects JSON response to contain the Provider's unique ID for this app."
   end
 
-  test "provides app config" do
+  def test_provides_app_config
     response = provision
     assert response.json_body["config"].is_a?(Hash), "Expects JSON response to contain a hash of config variables."
   end
 
-  test "all config values are strings" do
+  def test_all_config_values_are_strings
     response = provision
     response.json_body["config"].each do |k,v|
       assert k.is_a?(String), "Expect all config names to be strings ('#{k}' is not)."
@@ -47,14 +48,14 @@ class ProvisionTest < Test::Unit::TestCase
     end
   end
 
-  test "all config vars are defined in the manifest" do
+  def test_all_config_vars_are_defined_in_the_manifest
     response = provision
     response.json_body["config"].each do |k,v|
       assert manifest["api"]["config_vars"].include?(k), "Only config vars defined in the manfiest can be set ('#{k}' is not)."
     end
   end
 
-  test "all config URL values are valid" do
+  def test_all_config_url_values_are_valid
     response = provision
     response.json_body["config"].each do |k,v|
       next unless k =~ /_URL\z/
@@ -68,7 +69,7 @@ class ProvisionTest < Test::Unit::TestCase
     end
   end
 
-  test "detects missing auth" do
+  def test_detects_missing_auth
     response = provision(auth = false)
     assert_equal 401, response.code, "Provisioning request should require authentication."
 

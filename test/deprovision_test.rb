@@ -2,7 +2,8 @@ $:.unshift(File.expand_path("../..",__FILE__))
 require 'test/lib/dependencies'
 class DeprovisionTest < Test::Unit::TestCase
 
-  setup do
+  def setup
+    super
     @params = {}
   end
 
@@ -10,12 +11,12 @@ class DeprovisionTest < Test::Unit::TestCase
     delete "/heroku/resources/123", auth
   end
 
-  test "working deprovision call" do
+  def test_working_deprovision_call
     response = deprovision
     assert_equal 200, response.code, "Expects a 200 - OK response/status code when successfully deprovisioned."
   end
 
-  test "detects missing auth" do
+  def test_detects_missing_auth
     response = deprovision(auth = false)
     assert_equal 401, response.code, "Provisioning request should require authentication."
 

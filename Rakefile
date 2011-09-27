@@ -1,6 +1,10 @@
+$:.unshift File.dirname(__FILE__)
 desc 'Run all unit tests'
 task :test do
-  system "turn test/*.rb"
+  puts require "test/helper"
+  Dir["test/*_test.rb"].each do |test_file|
+    require test_file
+  end
 end
 
 task :default => :test
@@ -17,13 +21,13 @@ begin
     gemspec.homepage = "http://provider.heroku.com/resources"
     gemspec.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins", "Chris Continanza", "Glenn Gillen"]
 
-    gemspec.add_development_dependency(%q<turn>, ["~> 0.8.2"])
     gemspec.add_development_dependency(%q<contest>, ["~> 0.1.3"])
     gemspec.add_development_dependency(%q<timecop>, ["~> 0.3.5"])
     gemspec.add_development_dependency(%q<sinatra>, ["~> 1.2.6"])
     gemspec.add_development_dependency(%q<rr>, ["~> 1.0.4"])
-    gemspec.add_development_dependency(%q<artifice>, ["~> 0.6"])
     gemspec.add_development_dependency(%q<haml>, ["~> 3.1.3"])
+    gemspec.add_dependency(%q<artifice>, ["~> 0.6"])
+    gemspec.add_dependency(%q<test-unit>, ["~> 1.2.3"])
     gemspec.add_dependency(%q<rest-client>, ["~> 1.6.7"])
     gemspec.add_dependency(%q<yajl-ruby>, ["~> 0.8.3"])
     gemspec.add_dependency(%q<term-ansicolor>, ["~> 1.0.6"])
