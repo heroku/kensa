@@ -17,14 +17,17 @@ begin
     gemspec.homepage = "http://provider.heroku.com/resources"
     gemspec.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins", "Chris Continanza", "Glenn Gillen"]
 
-    gemspec.add_development_dependency(%q<turn>, [">= 0"])
-    gemspec.add_development_dependency(%q<contest>, [">= 0"])
-    gemspec.add_development_dependency(%q<timecop>, [">= 0.3.5"])
+    gemspec.add_development_dependency(%q<turn>, ["~> 0.8.2"])
+    gemspec.add_development_dependency(%q<contest>, ["~> 0.1.3"])
+    gemspec.add_development_dependency(%q<timecop>, ["~> 0.3.5"])
     gemspec.add_development_dependency(%q<sinatra>, ["~> 1.2.6"])
-    gemspec.add_dependency(%q<rest-client>, [">= 1.4.0", "< 1.7.0"])
-    gemspec.add_dependency(%q<yajl-ruby>, ["~> 0.6"])
-    gemspec.add_dependency(%q<term-ansicolor>, ["~> 1.0"])
-    gemspec.add_dependency(%q<launchy>, [">= 0.3.2"])
+    gemspec.add_development_dependency(%q<rr>, ["~> 1.0.4"])
+    gemspec.add_development_dependency(%q<artifice>, ["~> 0.6"])
+    gemspec.add_development_dependency(%q<haml>, ["~> 3.1.3"])
+    gemspec.add_dependency(%q<rest-client>, ["~> 1.6.7"])
+    gemspec.add_dependency(%q<yajl-ruby>, ["~> 0.8.3"])
+    gemspec.add_dependency(%q<term-ansicolor>, ["~> 1.0.6"])
+    gemspec.add_dependency(%q<launchy>, ["~> 2.0.5"])
     gemspec.add_dependency(%q<mechanize>, ["~> 1.0.0"])
 
     gemspec.version = Heroku::Kensa::VERSION

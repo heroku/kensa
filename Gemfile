@@ -1,11 +1,10 @@
-source :gemcutter
+source :rubygems
 gemspec
 group :development do
-  gem 'ruby-debug'
-  gem 'json'
-  gem 'contest'
-  gem 'haml'
+  if RUBY_VERSION < '1.9'
+    gem 'ruby-debug'
+  else
+    gem 'ruby-debug19'
+  end
   gem 'jeweler'
-  gem 'rr'
-  gem 'artifice'
 end
