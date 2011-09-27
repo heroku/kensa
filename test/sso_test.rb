@@ -1,3 +1,4 @@
+$:.unshift(File.expand_path("../..",__FILE__))
 require 'test/lib/dependencies'
 class SsoTest < Test::Unit::TestCase
 
