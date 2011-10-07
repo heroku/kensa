@@ -11,10 +11,16 @@ module Heroku
 {
   "id": "myaddon",
   "api": {
-    "config_vars": [ "MYADDON_URL" ],
+    "config_vars": [ "MYADDON_USER", "MYADDON_URL" ],
     "password": "#{generate_password(16)}",#{ sso_key }
-    "production": "https://yourapp.com/",
-    "test": "http://localhost:4567/"
+    "production": {
+      "base_url": "https://yourapp.com/heroku/resources",
+      "sso_url": "https://yourapp.com/sso/login"
+    },
+    "test": {
+      "base_url": "http://localhost:4567/heroku/resources",
+      "sso_url": "http://localhost:4567/sso/login"
+    }
   }
 }
 JSON
