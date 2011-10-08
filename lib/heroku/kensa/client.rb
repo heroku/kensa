@@ -28,7 +28,8 @@ module Heroku
       end
 
       def clone_url(name)
-        name = "heroku/#{name}" unless name.include? "/"
+        prefix = ENV['REPO_PREFIX'] || "heroku"
+        name = "#{prefix}/#{name}" unless name.include? "/"
         "git://github.com/#{name}"
       end
     end
