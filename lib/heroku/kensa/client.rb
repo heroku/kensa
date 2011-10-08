@@ -3,6 +3,37 @@ require 'term/ansicolor'
 require 'launchy'
 
 module Heroku
+  class Git
+    class << self
+      def verify_create(app_name, template)
+        raise CommandInvalid.new("template #{clone_url(template)} does not exist") unless template_exists?(template)
+        raise CommandInvalid.new("Need git to clone repository") unless git_installed?
+      end
+
+      def template_exists?(template)
+        true
+      end
+
+      def git_installed?
+        `git` rescue false
+      end
+
+      def clone(app_name, template)
+        verify_create(app_name, template)
+        cmd = "git clone #{clone_url(template)} #{app_name}" 
+        puts cmd
+        `#{cmd}`
+        raise Exception.new("couldn't clone the repository from #{clone_url(template)}") unless File.directory?("./#{app_name}")
+        puts "Created #{app_name} from #{template} template"
+      end
+
+      def clone_url(name)
+        name = "heroku/#{name}" unless name.include? "/"
+        "git://github.com/#{name}"
+      end
+    end
+  end
+
   module Kensa
     class Client
       def initialize(args, options)
@@ -14,7 +45,10 @@ module Heroku
         @options[:filename]
       end
 
+      #you fucked up
       class CommandInvalid < Exception; end
+      #we fucked up
+      class CommandFailed  < Exception; end
 
       def run!
         command = @args.shift || @options[:command]
@@ -27,38 +61,22 @@ module Heroku
         Screen.new.message "Initialized new addon manifest in #{filename}\n"
       end
 
-      def verify_create(app_name, template)
-        raise CommandInvalid.new("Need git to supply a template") \
-          unless template
-        raise CommandInvalid.new("template #{clone_url(template)} does not exist") \
-          unless template_exists?(template)
-        raise CommandInvalid.new("Need git to clone repository") \
-          unless git_installed?
-      end
-
       def create
         app_name = @args.shift
         template = @options[:template]
-        verify_create(app_name, template)
-        cmd = "git clone #{clone_url(template)} #{app_name}" 
-        `#{cmd}`
+        raise CommandInvalid.new("Need git to supply a template") unless template
+        raise CommandInvalid.new("Need git to supply an application name") unless app_name
+
+        begin
+          Git.clone(app_name, template)
+        rescue Exception => e
+          raise CommandFailed.new("error cloning #{Git.clone_url(template)} into #{app_name}") 
+        end
+
         Dir.chdir("./#{app_name}")
         `./after_clone #{app_name}` if File.exist?('./after_clone')
-        puts "Created #{app_name} from #{template} template"
       end
 
-      def clone_url(name)
-        name = "heroku/#{name}" unless name.include? "/"
-        "git://github.com/#{name}"
-      end
-
-      def template_exists?(template)
-        true
-      end
-
-      def git_installed?
-        `git` rescue false
-      end
 
       def test
         case check = @args.shift

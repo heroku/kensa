@@ -34,6 +34,8 @@ begin
   args = ARGV.dup
   ARGV.clear
   Client.new(args, options).run!
+rescue Client::CommandFailed => e
+  puts "We're sorry, but #{e.message} "
 rescue Client::CommandInvalid
   abort File.read(__FILE__).split('__END__').last
 end
