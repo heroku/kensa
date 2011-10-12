@@ -5,8 +5,9 @@ class SsoTest < Test::Unit::TestCase
   def setup
     super
     @user_id ||= manifest["user_id"] || 123
-    @params = { :timestamp => Time.now.to_i,
-                :token => make_token(@user_id, manifest["sso_salt"], Time.now.to_i.to_s),
+    @time = Time.now.to_i
+    @params = { :timestamp => @time,
+                :token => make_token(@user_id, manifest['api']["sso_salt"], @time.to_s),
                 "nav-data" => "some-nav-data"
               }
   end
@@ -55,7 +56,10 @@ class SsoTest < Test::Unit::TestCase
   end
 
   def test_creates_the_heroku_nav_data_cookie
-    response = sso_login
+    response = sso_login  
+    puts "Hello"
+    puts response.cookies.inspect
+
     assert response.cookies, "SSO sign in should set the heroku-nav-data cookie to the value of the passed nav-data parameter."
     assert_equal @params["nav-data"], response.cookies["heroku-nav-data"], "SSO sign in should set the heroku-nav-data cookie to the value of the passed nav-data parameter."
   end
