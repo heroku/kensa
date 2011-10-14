@@ -1,36 +1,51 @@
+$:.unshift(File.expand_path("../..",__FILE__))
 require 'test/helper'
-
 class ManifestTest < Test::Unit::TestCase
-  include Heroku::Kensa
 
-  context 'manifest' do
-    setup { @manifest = Manifest.new }
+  def test_has_an_id
+    assert manifest["id"], "Manifest needs to specify the ID of the add-on."
+  end
 
-    test 'have sso salt' do
-      assert_not_nil @manifest.skeleton['api']['sso_salt']
+  def test_has_a_hash_of_api_settings
+    assert manifest["api"], "Manifest needs to contain a Hash of API settings."
+    assert manifest["api"].is_a?(Hash), "Manifest needs to contain a Hash of API settings."
+  end
+
+  def test_api_has_a_password
+    assert manifest["api"]["password"], "Manifest must define a password within the API settings."
+  end
+
+  def test_api_contains_test
+    assert manifest["api"]["test"], "Manifest must define a test environment with the API settings."
+  end
+
+  def test_api_contains_production
+    assert manifest["api"]["production"], "Manifest must define a production environment with the API settings."
+  end
+
+  def test_api_contains_production_of_https
+    if manifest["api"]["production"].is_a?(Hash)
+      url = manifest["api"]["production"]["base_url"]
+    else
+      url = manifest["api"]["production"]
     end
+    assert url.match(%r{\Ahttps://}), "Production environment must communicate over HTTPS."
+  end
 
-    test 'generates a new sso salt every time' do
-      assert @manifest.skeleton['api']['ssl_salt'] != Manifest.new.skeleton['api']['sso_salt']
-    end
-
-    test 'has an api password' do
-      assert_not_nil @manifest.skeleton['api']['password']
-    end
-
-    test 'generates a new password every time' do
-      assert @manifest.skeleton['api']['password'] != Manifest.new.skeleton['api']['password']
+  def test_all_config_vars_are_in_upper_case
+    manifest["api"]["config_vars"].each do |var|
+      assert_equal var.upcase, var, "All config vars must be uppercase, #{var} is not."
     end
   end
 
-  context 'manifest without sso' do
-    setup do
-      options = { :sso => false }
-      @manifest = Manifest.new 'test.txt', options
+  def test_assert_config_var_prefixes_match_addon_id
+    id = manifest["id"].upcase.gsub("-", "_")
+    manifest["api"]["config_vars"].each do |var|
+      assert var.match(%r{\A#{id}_}), "All config vars must be prefixed with the add-on ID (#{id}), #{var} is not."
     end
+  end
 
-    test 'exclude sso salt' do
-      assert_nil @manifest.skeleton['api']['sso_salt']
-    end
+  def test_username_is_deprecated
+    assert !manifest["api"]["username"], "Username has been deprecated."
   end
 end

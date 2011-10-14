@@ -2,3 +2,4 @@ addon-manifest.json
 pkg/
 .rvmrc
 tags
+bundle/
