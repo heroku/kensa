@@ -29,7 +29,12 @@ module Heroku
 
       def clone_url(name)
         prefix = ENV['REPO_PREFIX'] || "heroku"
-        name = "#{prefix}/#{name}" unless name.include? "/"
+        if name.include? "/" #its a non-heroku repo
+          name = "#{prefix}/#{name}" 
+        else #its one of our templates
+          name = "#{prefix}/kensa-create-#{name}" 
+        end
+
         "git://github.com/#{name}"
       end
     end
