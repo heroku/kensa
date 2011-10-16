@@ -29,4 +29,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0.6"])
   s.add_runtime_dependency(%q<launchy>, ["~> 2.0.5"])
   s.add_runtime_dependency(%q<mechanize>, ["~> 1.0.0"])
+  s.add_runtime_dependency(%q<grit>, ["~> 2.4.1"])
 end

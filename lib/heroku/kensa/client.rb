@@ -5,7 +5,6 @@ require 'launchy'
 module Heroku
   module Kensa
     class Client
-
       def initialize(args, options)
         @args    = args
         @options = options
@@ -26,6 +25,39 @@ module Heroku
       def init
         Manifest.new(filename, @options).write
         Screen.new.message "Initialized new addon manifest in #{filename}\n"
+      end
+
+      def verify_create(app_name, template)
+        raise CommandInvalid.new("Need git to supply a template") \
+          unless template
+        raise CommandInvalid.new("template #{clone_url(template)} does not exist") \
+          unless template_exists?(template)
+        raise CommandInvalid.new("Need git to clone repository") \
+          unless git_installed?
+      end
+
+      def create
+        app_name = @args.shift
+        template = @options[:template]
+        verify_create(app_name, template)
+        cmd = "git clone #{clone_url(template)} #{app_name}" 
+        `#{cmd}`
+        Dir.chdir("./#{app_name}")
+        `./after_clone #{app_name}` if File.exist?('./after_clone')
+        puts "Created #{app_name} from #{template} template"
+      end
+
+      def clone_url(name)
+        name = "heroku/#{name}" unless name.include? "/"
+        "git://github.com/#{name}"
+      end
+
+      def template_exists?(template)
+        true
+      end
+
+      def git_installed?
+        `git` rescue false
       end
 
       def test
