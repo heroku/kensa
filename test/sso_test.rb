@@ -57,8 +57,6 @@ class SsoTest < Test::Unit::TestCase
 
   def test_creates_the_heroku_nav_data_cookie
     response = sso_login  
-    puts "Hello"
-    puts response.cookies.inspect
 
     assert response.cookies, "SSO sign in should set the heroku-nav-data cookie to the value of the passed nav-data parameter."
     assert_equal @params["nav-data"], response.cookies["heroku-nav-data"], "SSO sign in should set the heroku-nav-data cookie to the value of the passed nav-data parameter."

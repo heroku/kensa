@@ -19,7 +19,7 @@ class ProviderServer < Sinatra::Base
     end
 
     def check_token!
-      salt = @manifest && @manifest["sso_salt"]
+      salt = @manifest && @manifest['api']["sso_salt"]
       token = Digest::SHA1.hexdigest([params[:id], salt, params[:timestamp]].join(':'))
       unauthorized! if params[:token] != token
     end
