@@ -117,12 +117,12 @@ module Heroku
       end
 
       def version
-        puts "Kensa #{VERSION}"
+        puts "Kensa #{Kensa::VERSION}"
       end
 
       private
         def headers
-          { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
+          { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{Kensa::VERSION}" }
         end
 
         def heroku_host
