@@ -23,15 +23,17 @@ module Heroku
         cmd = "git clone #{clone_url(template)} #{app_name}" 
         puts cmd
         `#{cmd}`
-        raise Exception.new("couldn't clone the repository from #{clone_url(template)}") unless File.directory?("./#{app_name}")
+        raise Exception.new("couldn't clone the repository from #{clone_url(template)}") unless File.directory?("#{app_name}")
         puts "Created #{app_name} from #{template} template"
       end
 
       def clone_url(name)
         prefix = ENV['REPO_PREFIX'] || "heroku"
-        if name.include? "/" #its a non-heroku repo
+        if name.include? "://"  #its a full url
+          return name
+        elsif name.include? "/" #its a non-heroku repo
           name = "#{prefix}/#{name}" 
-        else #its one of our templates
+        else                    #its one of ours 
           name = "#{prefix}/kensa-create-#{name}" 
         end
 
