@@ -13,10 +13,9 @@ module Test
 
       private
       def add_error(exception)
-        if exception.class == Errno::ECONNREFUSED
+        if exception.is_a? Heroku::Kensa::UserError
           @test_passed = false
-          message = "Unable to connect to your API."
-          @_result.add_failure(Failure.new(name, filter_backtrace(caller()), message))
+          @_result.add_failure(Failure.new(name, filter_backtrace(caller()), exception.message))
         else
           add_error_with_connection_exception(exception)
         end

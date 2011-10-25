@@ -4,8 +4,9 @@ require 'launchy'
 
 module Heroku
   module Kensa
-    class Client
+    class UserError < RuntimeError; end
 
+    class Client
       def initialize(args, options)
         @args    = args
         @options = options

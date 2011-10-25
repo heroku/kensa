@@ -78,5 +78,4 @@ class ProviderServer < Sinatra::Base
     session[:heroku] = true
     haml :index
   end
-
 end
