@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kensa (1.2.0rc6)
+    kensa (1.2.0rc7)
       artifice (~> 0.6.0)
       launchy (~> 2.0.5)
       mechanize (~> 1.0.0)
