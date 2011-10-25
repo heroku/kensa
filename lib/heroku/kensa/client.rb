@@ -43,11 +43,8 @@ module Heroku
   end
 
   module Kensa
-<<<<<<< HEAD
     class UserError < RuntimeError; end
 
-=======
->>>>>>> kensa_create
     class Client
       def initialize(args, options)
         @args    = args
