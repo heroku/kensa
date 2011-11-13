@@ -68,7 +68,7 @@ OPTIONS
 
   -t, --template name    
     Desired template to clone for create command from:
-    git://github.com/heroku/kensa-template-<name>
+    git://github.com/heroku/kensa-create-<name>
     try sinatra, clojure, or node 
 
 COMMANDS
