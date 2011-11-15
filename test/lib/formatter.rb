@@ -13,7 +13,7 @@ module Test
 
       private
       def add_error(exception)
-        if exception.is_a? Heroku::Kensa::UserError
+        if defined? Heroku::Kensa::UserError and exception.is_a? Heroku::Kensa::UserError
           @test_passed = false
           @_result.add_failure(Failure.new(name, filter_backtrace(caller()), exception.message))
         else

@@ -26,7 +26,7 @@ module Heroku::Kensa::HTTPTest
   rescue RestClient::Unauthorized
     Response.new(401)
   rescue RestClient::InternalServerError
-    raise UserError.new("HTTP 500 Internal Server Error")
+    raise Heroku::Kensa::UserError.new("HTTP 500 Internal Server Error")
   end
 
   def get(path, params = {})

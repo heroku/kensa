@@ -8,7 +8,8 @@ class DeprovisionTest < Test::Unit::TestCase
   end
 
   def deprovision(auth = nil)
-    delete "/heroku/resources/123", auth
+    id = manifest['user_id'] || '123'
+    delete "/heroku/resources/#{id}", auth
   end
 
   def test_working_deprovision_call
