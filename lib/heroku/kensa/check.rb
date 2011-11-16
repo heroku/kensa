@@ -113,7 +113,14 @@ module Heroku
           data["api"].has_key?("production")
         end
         check "production url uses SSL" do
-          data["api"]["production"] =~ /^https:/
+          sso = Sso.new(data.merge(:env => 'production'))
+          https = /^https:/
+          if sso.POST?
+            sso.full_url =~ https 
+            data['api']['production']['base_url'] =~ https
+          else
+            data['api']['production'] =~ https
+          end
         end
         check "contains config_vars array" do
           data["api"].has_key?("config_vars") && data["api"]["config_vars"].is_a?(Array)
