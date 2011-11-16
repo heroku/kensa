@@ -2,11 +2,17 @@ module Heroku
   module Kensa
     class Manifest
 
-      def initialize(filename = 'addon-manifest.json', options = {})
-        @filename, @options = filename, options
+      def initialize(options = {})
+        @method   = options.fetch(:method, 'get').to_sym
+        @filename = options.fetch(:filename, 'addons-manifest.json')
+        @options  = options
       end
 
       def skeleton_json
+        (@method == :get) ? get_skeleton : post_skeleton
+      end
+
+      def get_skeleton
         <<-JSON
 {
   "id": "myaddon",
@@ -18,6 +24,27 @@ module Heroku
   }
 }
 JSON
+      end
+
+      def post_skeleton
+        <<-JSON
+{
+  "id": "myaddon",
+  "api": {
+    "config_vars": [ "MYADDON_URL" ],
+    "password": "#{generate_password(16)}",#{ sso_key }
+    "production": {
+      "base_url": "https://yourapp.com/heroku/resources",
+      "sso_url": "https://yourapp.com/sso/login"
+    },
+    "test": {
+      "base_url": "http://localhost:4567/heroku/resources",
+      "sso_url": "http://localhost:4567/sso/login"
+    }
+  }
+}
+JSON
+
       end
 
       def skeleton
@@ -32,7 +59,7 @@ JSON
 
         def sso_key
           unless @options[:sso] === false
-            %{\n    "sso_salt": #{ generate_password(16).inspect },}
+            %{\n    "sso_salt": "#{ generate_password(16) }",}
           end
         end
 
