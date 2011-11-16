@@ -3,49 +3,9 @@ require 'term/ansicolor'
 require 'launchy'
 
 module Heroku
-  class Git
-    class << self
-      def verify_create(app_name, template)
-        raise CommandInvalid.new("template #{clone_url(template)} does not exist") unless template_exists?(template)
-        raise CommandInvalid.new("Need git to clone repository") unless git_installed?
-      end
-
-      def template_exists?(template)
-        true
-      end
-
-      def git_installed?
-        `git` rescue false
-      end
-
-      def clone(app_name, template)
-        verify_create(app_name, template)
-        cmd = "git clone #{clone_url(template)} #{app_name}" 
-        puts cmd
-        `#{cmd}`
-        raise Exception.new("couldn't clone the repository from #{clone_url(template)}") unless File.directory?("#{app_name}")
-        puts "Created #{app_name} from #{template} template"
-      end
-
-      def clone_url(name)
-        prefix = ENV['REPO_PREFIX'] || "heroku"
-        if name.include? "://"  #its a full url
-          return name
-        elsif name.include? "/" #its a non-heroku repo
-          name = "#{prefix}/#{name}" 
-        else                    #its one of ours 
-          name = "#{prefix}/kensa-create-#{name}" 
-        end
-
-        "git://github.com/#{name}"
-      end
-    end
-  end
-
   module Kensa
-    class UserError < RuntimeError; end
-
     class Client
+
       def initialize(args, options)
         @args    = args
         @options = options
@@ -55,10 +15,7 @@ module Heroku
         @options[:filename]
       end
 
-      #you fucked up
       class CommandInvalid < Exception; end
-      #we fucked up
-      class CommandFailed  < Exception; end
 
       def run!
         command = @args.shift || @options[:command]
@@ -71,59 +28,22 @@ module Heroku
         Screen.new.message "Initialized new addon manifest in #{filename}\n"
       end
 
-      def create
-        app_name = @args.shift
-        template = @options[:template]
-        raise CommandInvalid.new("Need git to supply a template") unless template
-        raise CommandInvalid.new("Need git to supply an application name") unless app_name
-
-        begin
-          Git.clone(app_name, template)
-        rescue Exception => e
-          raise CommandFailed.new("error cloning #{Git.clone_url(template)} into #{app_name}") 
-        end
-
-        Dir.chdir("./#{app_name}")
-        `./after_clone #{app_name}` if File.exist?('./after_clone')
-      end
-
-
       def test
         case check = @args.shift
           when "manifest"
-            require "#{File.dirname(__FILE__)}/../../../test/manifest_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(ManifestTest.suite).start
+            run_check ManifestCheck
           when "provision"
-            require "#{File.dirname(__FILE__)}/../../../test/provision_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(ProvisionTest.suite).start
+            run_check ManifestCheck, ProvisionCheck
           when "deprovision"
             id = @args.shift || abort("! no id specified; see usage")
-            require "#{File.dirname(__FILE__)}/../../../test/deprovision_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(DeprovisionTest.suite).start
+            run_check ManifestCheck, DeprovisionCheck, :id => id
           when "planchange"
             id   = @args.shift || abort("! no id specified; see usage")
             plan = @args.shift || abort("! no plan specified; see usage")
-            require "#{File.dirname(__FILE__)}/../../../test/plan_change_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(PlanChangeTest.suite).start
+            run_check ManifestCheck, PlanChangeCheck, :id => id, :plan => plan
           when "sso"
             id = @args.shift || abort("! no id specified; see usage")
-            require "#{File.dirname(__FILE__)}/../../../test/sso_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(SsoTest.suite).start
+            run_check ManifestCheck, SsoCheck, :id => id
           else
             abort "! Unknown test '#{check}'; see usage"
         end
@@ -177,12 +97,12 @@ module Heroku
       end
 
       def version
-        puts "Kensa #{Kensa::VERSION}"
+        puts "Kensa #{VERSION}"
       end
 
       private
         def headers
-          { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{Kensa::VERSION}" }
+          { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
         end
 
         def heroku_host

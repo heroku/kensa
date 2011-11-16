@@ -24,7 +24,6 @@ ARGV.options do |o|
   o.on("-h", "--help") { command = "help" }
   o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
   o.on("-v", "--version") { options[:command] = "version" }
-  o.on("-t template", "--template")  { |t| options[:template] = t }
   o.parse!
 end
 
@@ -34,8 +33,6 @@ begin
   args = ARGV.dup
   ARGV.clear
   Client.new(args, options).run!
-rescue Client::CommandFailed => e
-  puts "We're sorry, but #{e.message} "
 rescue Client::CommandInvalid
   abort File.read(__FILE__).split('__END__').last
 end
@@ -66,16 +63,9 @@ OPTIONS
   --post
     Use HTTP POST for single sign-on instead of GET
 
-  -t, --template name    
-    Desired template to clone for create command from:
-    git://github.com/heroku/kensa-create-<name>
-    try sinatra, clojure, or node 
-
 COMMANDS
 
   init            Creates a skeleton manifest
-
-  create <name>   Creates a skeleton application from --template
 
   test <type>     Simulate call from Heroku (provision or deprovision)
 
@@ -103,3 +93,4 @@ TEST TYPES
 
   manifest
     Confirm that the manifest is valid.  Automatically runs before all tests.
+

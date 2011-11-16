@@ -1,6 +1,9 @@
-source "http://rubygems.org"
+source :gemcutter
 gemspec
-group :development do
-  gem 'ruby-debug', :platform => :mri_18
-  gem 'ruby-debug19', :platform => :mri_19
+group :development do 
+  gem 'json'
+  gem 'contest'
+  gem 'haml'
+  gem 'jeweler'
+  gem 'rr'
 end
