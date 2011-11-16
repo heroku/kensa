@@ -6,18 +6,24 @@ require 'rr'
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
 
+  #this prepends a prefix for the provider server
+  #in test/resources/server.rb
   def use_provider_endpoint(name, type = 'base')
     if @data['api']['test'].is_a? Hash 
-      #this winds up appending b.c we no longer add to the url 
-      @data['api']['test']["#{type}_url"] += "/#{name}"
+      url = @data['api']['test']["#{type}_url"]
+      path = URI.parse(url).path
+      @data['api']['test']["#{type}_url"] = url.sub(path, "/#{name}#{path}")
     else
-      #this winds up prepending b.c we no longer add to the url 
       @data['api']['test'] += "#{name}"
     end
   end
+  
+  def trace!
+    @screen = Heroku::Kensa::STDOUTScreen.new
+  end
 
-  # in your test, do 
-  # @screen = STDOUTScreen.new
+  # call trace! in your test before the 
+  # assert to see the output
   def assert_valid(data=@data, &blk)
     check = create_check(data, &blk)
     check.screen = @screen if @screen

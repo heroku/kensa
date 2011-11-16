@@ -77,6 +77,16 @@ module Heroku
         Proc.new { me.call! }
       end
 
+      def url(env = 'test')
+        if data['api'][env].is_a? Hash
+          url = data['api'][env]['base_url']
+          uri = URI.parse(url)
+          url.sub!(uri.query, '') if uri.query
+          url.sub(uri.path, '')
+        else
+          data['api'][env]
+        end
+      end
     end
 
 
@@ -113,15 +123,15 @@ module Heroku
           data["api"].has_key?("production")
         end
         check "production url uses SSL" do
-          sso = Sso.new(data.merge(:env => 'production'))
-          https = /^https:/
-          if sso.POST?
-            sso.full_url =~ https 
-            data['api']['production']['base_url'] =~ https
-          else
-            data['api']['production'] =~ https
+          url('production') =~ /^https:/
+        end
+=begin
+        if (sso = Sso.new(data)) && sso.POST?
+          check "sso url uses SSL" do
+            sso.full_url =~ /^https:/
           end
         end
+=end
         check "contains config_vars array" do
           data["api"].has_key?("config_vars") && data["api"]["config_vars"].is_a?(Array)
         end
@@ -214,9 +224,12 @@ module Heroku
 
 
     class ApiCheck < Check
-      def url
-        env = data[:env] || 'test'
-        data["api"][env].chomp("/")
+      def base_path(env = 'test')
+        if data['api'][env].is_a? Hash
+          URI.parse(data['api'][env]['base_url']).path
+        else
+          '/heroku/resources'
+        end
       end
 
       def credentials
@@ -237,7 +250,6 @@ module Heroku
 
         code = nil
         json = nil
-        path = "/heroku/resources"
         callback = "http://localhost:7779/callback/999"
         reader, writer = nil
 
@@ -266,7 +278,7 @@ module Heroku
             sleep(1)
           end
 
-          code, json = post(credentials, path, payload)
+          code, json = post(credentials, base_path, payload)
 
           if code == 200
             # noop
@@ -297,7 +309,7 @@ module Heroku
 
         check "authentication" do
           wrong_credentials = ['wrong', 'secret']
-          code, _ = post(wrong_credentials, path, payload)
+          code, _ = post(wrong_credentials, base_path, payload)
           error("expected 401, got #{code}") if code != 401
           true
         end
@@ -320,7 +332,7 @@ module Heroku
         id = data[:id]
         raise ArgumentError, "No id specified" if id.nil?
 
-        path = "/heroku/resources/#{CGI::escape(id.to_s)}"
+        path = "#{base_path}/#{CGI::escape(id.to_s)}"
 
         test "DELETE #{path}"
         check "response" do
@@ -356,7 +368,7 @@ module Heroku
         new_plan = data[:plan]
         raise ArgumentError, "No plan specified" if new_plan.nil?
 
-        path = "/heroku/resources/#{CGI::escape(id.to_s)}"
+        path = "#{base_path}/#{CGI::escape(id.to_s)}"
 
         test "PUT #{path}"
         check "response" do

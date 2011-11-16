@@ -6,4 +6,5 @@ group :development do
   gem 'haml'
   gem 'jeweler'
   gem 'rr'
+  gem 'ruby-debug'
 end
