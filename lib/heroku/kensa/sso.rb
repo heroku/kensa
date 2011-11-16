@@ -1,4 +1,5 @@
 require 'restclient'
+require 'uri'
 
 module Heroku
   module Kensa
@@ -10,16 +11,22 @@ module Heroku
         @salt = data['api']['sso_salt']
 
         env   = data.fetch :env, 'test'
-        @url  = data["api"][env].chomp('/')
-        @use_post   = data['api']['sso'].to_s.match(/post/i)
-        @proxy_port = find_available_port
+        if @url = data['api'][env]['sso_url']
+          @use_post   = true
+          @proxy_port = find_available_port
+        else
+          @url  = data["api"][env].chomp('/')
+        end 
         @timestamp  = Time.now.to_i
         @token      = make_token(@timestamp)
       end
 
       def path
-        extra = self.POST? ? '/sso' : ''
-        "/heroku/resources/#{id}#{extra}"
+        if self.POST? 
+          URI.parse(url).path
+        else
+          "/heroku/resources/#{id}"
+        end
       end
 
       def POST?
@@ -40,7 +47,7 @@ module Heroku
       alias get_url full_url
 
       def post_url
-        [ url, path ].join
+        url
       end
 
       def timestamp=(other)
@@ -65,7 +72,10 @@ module Heroku
         { 'token' => @token,  
           'timestamp' => @timestamp.to_s,
           'nav-data' => sample_nav_data,
-          'user'     => 'username@example.com' }
+          'user'     => 'username@example.com' 
+        }.tap do |params|
+          params.merge!('id' => @id) if self.POST?
+        end
       end
 
       def sample_nav_data
