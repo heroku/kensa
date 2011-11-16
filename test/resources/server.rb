@@ -97,7 +97,8 @@ get '/working/heroku/resources/:id' do
   sso
 end
 
-post '/working/heroku/resources/:id/sso' do
+post '/sso/login/working' do
+  puts params.inspect
   sso
 end
 
@@ -112,7 +113,7 @@ get '/notoken/heroku/resources/:id' do
   notoken
 end
 
-post '/notoken/heroku/resources/:id/sso' do
+post '/sso/login/notoken' do
   notoken
 end
 
@@ -127,7 +128,7 @@ get '/notimestamp/heroku/resources/:id' do
   notimestamp
 end
 
-post '/notimestamp/heroku/resources/:id/sso' do
+post '/sso/login/notimestamp' do
   notimestamp
 end
 
@@ -143,7 +144,7 @@ get '/nolayout/heroku/resources/:id' do
   nolayout
 end
 
-post '/nolayout/heroku/resources/:id/sso' do
+post '/sso/login/nolayout' do
   nolayout
 end
 
@@ -158,7 +159,7 @@ get '/nocookie/heroku/resources/:id' do
   nocookie
 end
 
-post '/nocookie/heroku/resources/:id/sso' do
+post '/sso/login/nocookie' do
   nocookie
 end
 
@@ -174,7 +175,7 @@ get '/badcookie/heroku/resources/:id' do
   badcookie
 end
 
-post '/badcookie/heroku/resources/:id/sso' do
+post '/sso/login/badcookie' do
   badcookie
 end
 
@@ -187,7 +188,7 @@ get '/user/heroku/resources/:id' do
   sso_user
 end
 
-post '/user/heroku/resources/:id/sso' do
+post '/sso/login/user' do
   sso_user
 end
 
