@@ -6,6 +6,16 @@ require 'rr'
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
 
+  def use_provider_endpoint(name, type = 'base')
+    if @data['api']['test'].is_a? Hash 
+      #this winds up appending b.c we no longer add to the url 
+      @data['api']['test']["#{type}_url"] += "/#{name}"
+    else
+      #this winds up prepending b.c we no longer add to the url 
+      @data['api']['test'] += "#{name}"
+    end
+  end
+
   # in your test, do 
   # @screen = STDOUTScreen.new
   def assert_valid(data=@data, &blk)
