@@ -1,13 +1,15 @@
 require 'test/helper'
-require 'fakefs'
+require 'fakefs/safe'
 
 class InitTest < Test::Unit::TestCase
   def setup
+    FakeFS.activate!
     @filename = 'addon-manifest.json'
   end
 
   def teardown
     File.unlink(@filename) if @filename && File.exist?(@filename)
+    FakeFS.deactivate!
   end
   
   def test_init_default_so_sso_post
