@@ -6,9 +6,9 @@ require 'optparse'
 module Heroku
   module Kensa
     class Client
-      def initialize(args)
+      def initialize(args, options = {})
         @args    = args
-        @options = OptParser.parse(args)
+        @options = OptParser.parse(args).merge(options)
       end
 
       def filename
@@ -25,7 +25,7 @@ module Heroku
 
       def init
         Manifest.new(@options).write
-        Screen.new.message "Initialized new addon manifest in #{filename}\n"
+        Screen.new.message "Initialized new addon manifest in #{filename}\n" unless @options[:silent]
       end
 
       def test

@@ -9,7 +9,7 @@ class Test::Unit::TestCase
   include RR::Adapters::TestUnit
 
   def kensa(command)
-    Heroku::Kensa::Client.new(command.split).run!
+    Heroku::Kensa::Client.new(command.split, :silent => true).run!
   end
 
   def read_json(filename)
