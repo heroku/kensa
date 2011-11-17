@@ -52,6 +52,13 @@ class ManifestCheckTest < Test::Unit::TestCase
         assert_invalid
       end
 
+      if method == 'post'
+        test "sso contains production of https" do
+          @data["api"]["production"]['sso_url'] = "http://foo.com"
+          assert_invalid
+        end
+      end
+
       test "api contains config_vars array" do
         @data["api"]["config_vars"] = "test"
         assert_invalid

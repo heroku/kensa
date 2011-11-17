@@ -101,13 +101,11 @@ module Heroku
         check "production url uses SSL" do
           url('production') =~ /^https:/
         end
-=begin
-        if (sso = Sso.new(data)) && sso.POST?
-          check "sso url uses SSL" do
-            sso.full_url =~ /^https:/
+        if data['api']['production'].is_a? Hash
+          check "sso url uses SSL #{data.inspect}" do
+            Sso.new(data.merge(:env => 'production')).full_url =~ /^https:/
           end
         end
-=end
         check "contains config_vars array" do
           data["api"].has_key?("config_vars") && data["api"]["config_vars"].is_a?(Array)
         end
