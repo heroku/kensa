@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency(%q<contest>, [">= 0"])
   s.add_development_dependency(%q<haml>, [">= 0"])
   s.add_development_dependency(%q<rr>, [">= 0"])
+  s.add_development_dependency(%q<fakefs>, [">= 0"])
   s.add_runtime_dependency(%q<rest-client>, ["< 1.7.0", ">= 1.4.0"])
   s.add_runtime_dependency(%q<yajl-ruby>, ["~> 0.6"])
   s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0"])
