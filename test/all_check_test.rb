@@ -13,12 +13,12 @@ class AllCheckTest < Test::Unit::TestCase
   def check; AllCheck; end
 
   test "valid on script exit 0" do
-    @data[:args] = "ruby #{@file}"
+    @data[:args] = ["ruby #{@file}"]
     assert_valid
   end
 
   test "invalid on script exit non 0" do
-    @data[:args] = "ruby #{@file} fail"
+    @data[:args] = ["ruby #{@file} fail"]
     assert_invalid
   end
 
