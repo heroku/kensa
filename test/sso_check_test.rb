@@ -5,7 +5,7 @@ class SsoCheckTest < Test::Unit::TestCase
 
 
   def check ; SsoCheck ; end
-  [:get, :post].each do |method| 
+  %w{get post}.each do |method| 
     context "via #{method}" do
       setup do
         @data = Manifest.new(:sso => true, :method => method).
