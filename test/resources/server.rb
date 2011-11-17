@@ -24,6 +24,13 @@ helpers do
   def make_token
     Digest::SHA1.hexdigest([params[:id], 'SSO_SALT', params[:timestamp]].join(':'))
   end
+
+  def json_must_include(keys)
+    params = JSON.parse(request.body.read)
+    keys.each do |param|
+      raise "#{param} not included with request" unless params.keys.include? param
+    end
+  end
   
   def login(heroku_user=true)
     session.clear
@@ -34,11 +41,7 @@ helpers do
 end
 
 post '/working/heroku/resources' do
-  params = JSON.parse(request.body.read)
-  puts params.inspect
-  %w{heroku_id plan callback_url logplex_token options}.each do |param|
-    raise "#{param} not included with request" unless params.keys.include? param
-  end
+  json_must_include(%w{heroku_id plan callback_url logplex_token options})
   heroku_only!
   { :id => 123 }.to_json
 end
@@ -75,6 +78,7 @@ end
 
 
 put '/working/heroku/resources/:id' do
+  json_must_include(%w{heroku_id plan})
   heroku_only!
   {}.to_json
 end

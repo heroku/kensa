@@ -208,6 +208,10 @@ module Heroku
         end
       end
 
+      def heroku_id
+        "app#{rand(10000)}@kensa.heroku.com"
+      end
+
       def credentials
         [ data['id'], data['api']['password'] ]
       end
@@ -217,10 +221,6 @@ module Heroku
       include HTTP
 
       READLEN = 1024 * 10
-
-      def app_id
-        "app#{rand(10000)}@kensa.heroku.com"
-      end
 
       def call!
         json = nil
@@ -232,7 +232,7 @@ module Heroku
         reader, writer = nil
 
         payload = {
-          :heroku_id => app_id,
+          :heroku_id => heroku_id,
           :plan => data[:plan] || 'test',
           :callback_url => callback, 
           :logplex_token => nil,
@@ -352,7 +352,7 @@ module Heroku
 
         test "PUT #{path}"
         check "response" do
-          code, _ = put(credentials, path, { :plan => new_plan})
+          code, _ = put(credentials, path, {:plan => new_plan, :heroku_id => heroku_id})
           if code == 200
             true
           elsif code == -1
