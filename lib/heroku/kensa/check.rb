@@ -167,6 +167,15 @@ module Heroku
             true
           end
 
+          check "all keys in the manifest are present" do
+            difference = data['api']['config_vars'] - response['config'].keys 
+            unless difference.empty?
+              verb = (difference.size == 1) ? "is" : "are"
+              error "#{difference.join(', ')} #{verb} missing from the manifest"
+            end
+            true
+          end
+
           check "all config values are strings" do
             response["config"].each do |k, v|
               if v.is_a?(String)
