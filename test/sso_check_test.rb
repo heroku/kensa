@@ -49,7 +49,7 @@ class SsoCheckTest < Test::Unit::TestCase
         assert_invalid
       end
 
-      test "sends user param" do
+      test "sends email param" do
         use_provider_endpoint("user", 'sso')
         assert_valid
       end

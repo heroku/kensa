@@ -194,7 +194,7 @@ post '/badcookie/sso/login' do
 end
 
 def sso_user
-  head 404 unless params[:user] == 'username@example.com'
+  head 404 unless params[:email] == 'username@example.com'
   sso
 end
 

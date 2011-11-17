@@ -69,10 +69,10 @@ module Heroku
       end
 
       def query_params
-        { 'token' => @token,  
+        { 'token'     => @token,  
           'timestamp' => @timestamp.to_s,
-          'nav-data' => sample_nav_data,
-          'user'     => 'username@example.com' 
+          'nav-data'  => sample_nav_data,
+          'email'     => 'username@example.com' 
         }.tap do |params|
           params.merge!('id' => @id) if self.POST?
         end
