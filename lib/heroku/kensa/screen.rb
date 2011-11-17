@@ -26,7 +26,7 @@ module Heroku
       end
 
       def to_s
-        @output == STDOUT ? '' : @output.read
+        @output.closed_read? ? '' : @output.tap{|o| o.rewind }.read
       end
 
       [:test, :check, :error, :result, :message].each do |method|

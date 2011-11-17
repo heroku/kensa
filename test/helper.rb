@@ -19,25 +19,29 @@ class Test::Unit::TestCase
   end
   
   def trace!
-    @screen = Heroku::Kensa::STDOUTScreen.new
+    @screen = Heroku::Kensa::IOScreen.new(STDOUT)
+  end
+
+  def screen
+    @screen ||= Heroku::Kensa::IOScreen.new(StringIO.new("", 'w+'))
   end
 
   # call trace! in your test before the 
   # assert to see the output
   def assert_valid(data=@data, &blk)
     check = create_check(data, &blk)
-    check.screen = @screen if @screen
-    assert check.call
+    result = check.call
+    assert result, screen.to_s
   end
 
   def assert_invalid(data=@data, &blk)
     check = create_check(data, &blk)
-    check.screen = @screen if @screen
-    assert !check.call
+    result = check.call
+    assert !result, screen.to_s
   end
 
   def create_check(data, &blk)
-    check = self.check.new(data)
+    check = self.check.new(data, screen)
     blk.call(check) if blk
     check
   end
