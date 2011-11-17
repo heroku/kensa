@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{Tool to help Heroku add-on providers integrating their services}
 
-  s.add_development_dependency(%q<turn>, [">= 0"])
   s.add_development_dependency(%q<contest>, [">= 0"])
   s.add_development_dependency(%q<timecop>, [">= 0.3.5"])
   s.add_development_dependency(%q<sinatra>, [">= 0.9"])
