@@ -1,3 +1,5 @@
+require 'bundler/gem_tasks'
+
 desc 'Run all unit tests'
 task :test do
   fork do
