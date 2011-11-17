@@ -11,14 +11,6 @@ module Heroku
         @options = OptParser.parse(args).merge(options)
       end
 
-      def filename
-        @options[:filename]
-      end
-
-      def screen
-        @screen ||= @options.fetch(:screen, Screen.new)
-      end
-
       class CommandInvalid < Exception; end
 
       def run!
@@ -105,6 +97,14 @@ module Heroku
       end
 
       private
+        def filename
+          @options[:filename]
+        end
+
+        def screen
+          @screen ||= @options.fetch(:screen, Screen.new)
+        end
+
         def headers
           { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
         end
