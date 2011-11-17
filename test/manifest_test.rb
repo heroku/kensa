@@ -4,7 +4,7 @@ class ManifestTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   context 'GET manifest' do
-    setup { @manifest = Manifest.new }
+    setup { @manifest = Manifest.new(:method => :get) }
 
     test 'have sso salt' do
       assert_not_nil @manifest.skeleton['api']['sso_salt']

@@ -4,7 +4,7 @@ class AllCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   setup do
-    @data = Manifest.new.skeleton
+    @data = Manifest.new(:method => :get).skeleton
     @data['api']['password'] = 'secret'
     @data['api']['test'] += "working"
     @file = File.dirname(__FILE__) + "/resources/runner.rb"
