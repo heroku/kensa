@@ -15,15 +15,17 @@ begin
   args = ARGV.dup
   ARGV.clear
   Client.new(args).run!
-rescue Client::CommandInvalid
+rescue Client::CommandInvalid => e
+  puts e.message unless e.message.empty?
   abort File.read(__FILE__).split('__END__').last
 end
 
 __END__
 Usage: kensa [OPTIONS] command
        kensa init
-       kensa test <type> [arg1 arg2 ...]
-       kensa run <command> [arg1 arg1 ...]
+       kensa create <app_name> --template
+       kensa test   <type> [arg1 arg2 ...]
+       kensa run    <command> [arg1 arg1 ...]
 
 OPTIONS
 
@@ -45,9 +47,14 @@ OPTIONS
   --post
     Use HTTP POST for single sign-on instead of GET
 
+  --template
+    Name of git template on github or full url of git repo.
+
 COMMANDS
 
   init            Creates a skeleton manifest
+
+  create <app>    Clone a git repo that contains a template add-on
 
   test <type>     Simulate call from Heroku (provision or deprovision)
 

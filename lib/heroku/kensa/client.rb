@@ -21,7 +21,19 @@ module Heroku
 
       def init
         Manifest.new(@options).write
-        screen.message "Initialized new addon manifest in #{filename}\n" unless @options[:silent]
+        screen.message "Initialized new addon manifest in #{filename}\n" 
+      end
+
+      def create
+        app_name = @args.shift
+        template = @options[:template]
+        raise CommandInvalid.new("Need to supply an application name") unless app_name
+        raise CommandInvalid.new("Need to supply a template") unless template
+        begin
+          Git.clone(app_name, template) and screen.message "Created #{app_name} from #{template} template\n"
+        rescue Exception => e
+          raise CommandInvalid.new("error cloning #{Git.clone_url(template)} into #{app_name}") 
+        end
       end
 
       def test
@@ -102,7 +114,7 @@ module Heroku
         end
 
         def screen
-          @screen ||= @options.fetch(:screen, Screen.new)
+          @screen ||= @options[:silent] ? NilScreen.new : Screen.new
         end
 
         def headers
@@ -243,6 +255,9 @@ module Heroku
               o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
               o.on("-v", "--version")   { options[:command] = "version" }
               o.on("-s sso", "--sso")   { |method| options[:method] = method }
+              o.on("-t name", "--template") do |template|
+                options[:template] = template
+              end
               o.parse!(args)
             end
           end
