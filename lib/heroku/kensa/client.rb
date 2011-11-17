@@ -1,14 +1,14 @@
 require 'restclient'
 require 'term/ansicolor'
 require 'launchy'
+require 'optparse'
 
 module Heroku
   module Kensa
     class Client
-
-      def initialize(args, options)
+      def initialize(args)
         @args    = args
-        @options = options
+        @options = OptParser.parse(args)
       end
 
       def filename
@@ -218,6 +218,32 @@ module Heroku
           $stdout.puts "done."
         end
       end
+
+
+      class OptParser
+        def self.defaults
+          {
+            :filename => 'addon-manifest.json',
+            :env      => "test",
+            :async    => false,
+          }
+        end
+        
+        def self.parse(args)
+          self.defaults.tap do |options|
+            OptionParser.new do |o|
+              o.on("-f file", "--file") { |filename| options[:filename] = filename }
+              o.on("--async")           { options[:async] = true }
+              o.on("--production")      { options[:env] = "production" }
+              o.on("--without-sso")     { options[:sso] = false }
+              o.on("-h", "--help")      { command = "help" }
+              o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
+              o.on("-v", "--version")   { options[:command] = "version" }
+              o.parse!(args)
+            end
+          end
+        end
+      end 
     end
   end
 end

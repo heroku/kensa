@@ -4,35 +4,17 @@ lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
 $LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
 
 require 'rubygems'
-require 'optparse'
 require 'heroku/kensa'
 require 'heroku/kensa/client'
 
 $stdout.sync = true
-
-options = {
-  :filename => 'addon-manifest.json',
-  :env      => "test",
-  :async    => false,
-}
-
-ARGV.options do |o|
-  o.on("-f file", "--file") {|filename| options[:filename] = filename }
-  o.on("--async") { options[:async] = true }
-  o.on("--production") { options[:env] = "production" }
-  o.on("--without-sso") { options[:sso] = false }
-  o.on("-h", "--help") { command = "help" }
-  o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
-  o.on("-v", "--version") { options[:command] = "version" }
-  o.parse!
-end
 
 include Heroku::Kensa
 
 begin
   args = ARGV.dup
   ARGV.clear
-  Client.new(args, options).run!
+  Client.new(args).run!
 rescue Client::CommandInvalid
   abort File.read(__FILE__).split('__END__').last
 end
