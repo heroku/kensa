@@ -24,7 +24,7 @@ module Heroku
       end
 
       def init
-        Manifest.new(:get, @options).write
+        Manifest.new(@options).write
         Screen.new.message "Initialized new addon manifest in #{filename}\n"
       end
 
@@ -239,6 +239,7 @@ module Heroku
               o.on("-h", "--help")      { command = "help" }
               o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
               o.on("-v", "--version")   { options[:command] = "version" }
+              o.on("-s sso", "--sso")   { |method| options[:method] = method }
               o.parse!(args)
             end
           end

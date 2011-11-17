@@ -1,10 +1,20 @@
 require 'heroku/kensa'
+require 'heroku/kensa/client'
 require 'contest'
 require 'timecop'
 require 'rr'
+require 'yajl'
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
+
+  def kensa(command)
+    Heroku::Kensa::Client.new(command.split).run!
+  end
+
+  def read_json(filename)
+    Yajl::Parser.parse(File.open(filename).read)
+  end
 
   #this prepends a prefix for the provider server
   #in test/resources/server.rb
