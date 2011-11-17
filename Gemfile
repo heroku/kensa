@@ -1,10 +1,6 @@
-source :gemcutter
+source :rubygems
 gemspec
 group :development do 
-  gem 'json'
-  gem 'contest'
-  gem 'haml'
-  gem 'jeweler'
-  gem 'rr'
-  gem 'ruby-debug'
+  gem 'ruby-debug',   :platforms => [:ruby_18]
+  gem 'ruby-debug19', :platforms => [:ruby_19]
 end
