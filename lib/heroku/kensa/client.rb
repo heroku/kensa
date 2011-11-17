@@ -15,6 +15,10 @@ module Heroku
         @options[:filename]
       end
 
+      def screen
+        @screen ||= @options.fetch(:screen, Screen.new)
+      end
+
       class CommandInvalid < Exception; end
 
       def run!
@@ -25,7 +29,7 @@ module Heroku
 
       def init
         Manifest.new(@options).write
-        Screen.new.message "Initialized new addon manifest in #{filename}\n" unless @options[:silent]
+        screen.message "Initialized new addon manifest in #{filename}\n" unless @options[:silent]
       end
 
       def test
@@ -126,7 +130,6 @@ module Heroku
           options = args.pop if args.last.is_a?(Hash)
 
           args.each do |klass|
-            screen = Screen.new
             data   = Yajl::Parser.parse(resolve_manifest)
             check  = klass.new(data.merge(@options.merge(options)), screen)
             result = check.call

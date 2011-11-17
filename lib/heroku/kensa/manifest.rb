@@ -4,7 +4,7 @@ module Heroku
 
       def initialize(options = {})
         @method   = options.fetch(:method, 'post').to_sym
-        @filename = options.fetch(:filename, 'addons-manifest.json')
+        @filename = options.fetch(:filename, 'addon-manifest.json')
         @options  = options
       end
 
@@ -52,7 +52,7 @@ JSON
       end
 
       def write
-        open(@filename, 'w') { |f| f << skeleton_json }
+        File.open(@filename, 'w') { |f| f << skeleton_json }
       end
 
       private

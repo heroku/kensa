@@ -1,4 +1,5 @@
 require 'test/helper'
+require 'fakefs'
 
 class InitTest < Test::Unit::TestCase
   def setup
