@@ -34,6 +34,16 @@ helpers do
 end
 
 post '/working/heroku/resources' do
+  params = JSON.parse(request.body.read)
+  puts params.inspect
+  %w{heroku_id plan callback_url logplex_token options}.each do |param|
+    raise "#{param} not included with request" unless params.keys.include? param
+  end
+  heroku_only!
+  { :id => 123 }.to_json
+end
+
+post '/cmd-line-options/heroku/resources' do
   heroku_only!
   { :id => 123 }.to_json
 end

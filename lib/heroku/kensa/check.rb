@@ -217,8 +217,10 @@ module Heroku
       include HTTP
 
       READLEN = 1024 * 10
-      APPID = "app#{rand(10000)}@kensa.heroku.com"
-      APPNAME = "myapp"
+
+      def app_id
+        "app#{rand(10000)}@kensa.heroku.com"
+      end
 
       def call!
         json = nil
@@ -230,9 +232,11 @@ module Heroku
         reader, writer = nil
 
         payload = {
-          :heroku_id => APPID,
+          :heroku_id => app_id,
           :plan => data[:plan] || 'test',
-          :callback_url => callback
+          :callback_url => callback, 
+          :logplex_token => nil,
+          :options => {}
         }
 
         if data[:async]
