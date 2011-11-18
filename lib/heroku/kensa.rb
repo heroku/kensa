@@ -1,10 +1,8 @@
-require 'yajl'
-require 'mechanize'
-require 'socket'
-require 'timeout'
-require 'uri'
-base_path = File.dirname(__FILE__)
-%w{http manifest sso post_proxy}.each do |lib|
-  require "#{base_path}/kensa/#{lib}"
-end
 require 'heroku/kensa/version'
+require 'heroku/kensa/http'
+require 'heroku/kensa/manifest'
+require 'heroku/kensa/check'
+require 'heroku/kensa/sso'
+require 'heroku/kensa/post_proxy'
+require 'heroku/kensa/screen'
+require 'heroku/kensa/git'

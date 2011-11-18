@@ -4,47 +4,28 @@ lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
 $LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
 
 require 'rubygems'
-require 'optparse'
 require 'heroku/kensa'
 require 'heroku/kensa/client'
 
 $stdout.sync = true
-
-options = {
-  :filename => 'addon-manifest.json',
-  :env      => "test",
-  :async    => false,
-}
-
-ARGV.options do |o|
-  o.on("-f file", "--file") {|filename| options[:filename] = filename }
-  o.on("--async") { options[:async] = true }
-  o.on("--production") { options[:env] = "production" }
-  o.on("--without-sso") { options[:sso] = false }
-  o.on("-h", "--help") { command = "help" }
-  o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
-  o.on("-v", "--version") { options[:command] = "version" }
-  o.on("-t template", "--template")  { |t| options[:template] = t }
-  o.parse!
-end
 
 include Heroku::Kensa
 
 begin
   args = ARGV.dup
   ARGV.clear
-  Client.new(args, options).run!
-rescue Client::CommandFailed => e
-  puts "We're sorry, but #{e.message} "
-rescue Client::CommandInvalid
+  Client.new(args).run!
+rescue Client::CommandInvalid => e
+  puts e.message unless e.message.empty?
   abort File.read(__FILE__).split('__END__').last
 end
 
 __END__
 Usage: kensa [OPTIONS] command
        kensa init
-       kensa test <type> [arg1 arg2 ...]
-       kensa run <command> [arg1 arg1 ...]
+       kensa create <app_name> --template
+       kensa test   <type> [arg1 arg2 ...]
+       kensa run    <command> [arg1 arg1 ...]
 
 OPTIONS
 
@@ -66,16 +47,14 @@ OPTIONS
   --post
     Use HTTP POST for single sign-on instead of GET
 
-  -t, --template name    
-    Desired template to clone for create command from:
-    git://github.com/heroku/kensa-create-<name>
-    try sinatra, clojure, or node 
+  --template
+    Name of git template on github or full url of git repo.
 
 COMMANDS
 
   init            Creates a skeleton manifest
 
-  create <name>   Creates a skeleton application from --template
+  create <app>    Clone a git repo that contains a template add-on
 
   test <type>     Simulate call from Heroku (provision or deprovision)
 
@@ -103,3 +82,4 @@ TEST TYPES
 
   manifest
     Confirm that the manifest is valid.  Automatically runs before all tests.
+

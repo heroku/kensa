@@ -2,28 +2,59 @@ module Heroku
   module Kensa
     class Manifest
 
-      def initialize(filename = 'addon-manifest.json', options = {})
-        @filename, @options = filename, options
+      def initialize(options = {})
+        @method   = options.fetch(:method, 'post').to_sym
+        @filename = options.fetch(:filename, 'addon-manifest.json')
+        @options  = options
       end
 
       def skeleton_json
+        @password = generate_password(16)
+        @port     = @options[:foreman] ? 5000 : 4567
+        (@method == :get) ? get_skeleton : post_skeleton
+      end
+
+      def get_skeleton
         <<-JSON
 {
   "id": "myaddon",
   "api": {
-    "config_vars": [ "MYADDON_USER", "MYADDON_URL" ],
-    "password": "#{generate_password(16)}",#{ sso_key }
+    "config_vars": [ "MYADDON_URL" ],
+    "password": "#{@password}",#{ sso_key }
+    "production": "https://yourapp.com/",
+    "test": "http://localhost:#{@port}/"
+  }
+}
+JSON
+      end
+
+      def post_skeleton
+        <<-JSON
+{
+  "id": "myaddon",
+  "api": {
+    "config_vars": [ "MYADDON_URL" ],
+    "password": "#{@password}",#{ sso_key }
     "production": {
       "base_url": "https://yourapp.com/heroku/resources",
       "sso_url": "https://yourapp.com/sso/login"
     },
     "test": {
-      "base_url": "http://localhost:4567/heroku/resources",
-      "sso_url": "http://localhost:4567/sso/login"
+      "base_url": "http://localhost:#{@port}/heroku/resources",
+      "sso_url": "http://localhost:#{@port}/sso/login"
     }
   }
 }
 JSON
+
+      end
+
+      def foreman
+        <<-ENV
+SSO_SALT=#{@sso_salt}
+HEROKU_USERNAME=myaddon
+HEROKU_PASSWORD=#{@password}
+ENV
       end
 
       def skeleton
@@ -31,14 +62,16 @@ JSON
       end
 
       def write
-        open(@filename, 'w') { |f| f << skeleton_json }
+        File.open(@filename, 'w') { |f| f << skeleton_json }
+        File.open('.env', 'w') { |f| f << foreman } if @options[:foreman]
       end
 
       private
 
         def sso_key
+          @sso_salt = generate_password(16) 
           unless @options[:sso] === false
-            %{\n    "sso_salt": #{ generate_password(16).inspect },}
+            %{\n    "sso_salt": "#{@sso_salt}",}
           end
         end
 
