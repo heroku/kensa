@@ -5,6 +5,10 @@ class CreateTest < Test::Unit::TestCase
 
   def setup
     stub(Git).run
+    any_instance_of Client do |client|
+      stub(client).init
+    end
+    stub(Dir).chdir
   end
 
   def test_requires_app_name

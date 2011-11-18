@@ -22,6 +22,9 @@ module Heroku
       def init
         Manifest.new(@options).write
         screen.message "Initialized new addon manifest in #{filename}\n" 
+        if @options[:foreman]
+          screen.message "Initialized new .env file for foreman"
+        end
       end
 
       def create
@@ -31,6 +34,9 @@ module Heroku
         raise CommandInvalid.new("Need to supply a template") unless template
         begin
           Git.clone(app_name, template) and screen.message "Created #{app_name} from #{template} template\n"
+          Dir.chdir(app_name)
+          @options[:foreman] = true
+          init
         rescue Exception => e
           raise CommandInvalid.new("error cloning #{Git.clone_url(template)} into #{app_name}") 
         end
@@ -259,7 +265,13 @@ module Heroku
               o.on("-t name", "--template") do |template|
                 options[:template] = template
               end
-              o.parse!(args)
+
+              begin
+                o.parse!(args)
+              rescue OptionParser::InvalidOption
+                #skip over invalid options
+                retry
+              end
             end
           end
         end
