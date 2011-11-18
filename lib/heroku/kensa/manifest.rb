@@ -9,6 +9,7 @@ module Heroku
       end
 
       def skeleton_json
+        @password = generate_password(16)
         (@method == :get) ? get_skeleton : post_skeleton
       end
 
@@ -18,7 +19,7 @@ module Heroku
   "id": "myaddon",
   "api": {
     "config_vars": [ "MYADDON_URL" ],
-    "password": "#{generate_password(16)}",#{ sso_key }
+    "password": "#{@password}",#{ sso_key }
     "production": "https://yourapp.com/",
     "test": "http://localhost:4567/"
   }
@@ -32,7 +33,7 @@ JSON
   "id": "myaddon",
   "api": {
     "config_vars": [ "MYADDON_URL" ],
-    "password": "#{generate_password(16)}",#{ sso_key }
+    "password": "#{@password}",#{ sso_key }
     "production": {
       "base_url": "https://yourapp.com/heroku/resources",
       "sso_url": "https://yourapp.com/sso/login"
@@ -47,19 +48,29 @@ JSON
 
       end
 
+      def foreman
+        <<-ENV
+SSO_SALT=#{@sso_salt}
+HEROKU_USERNAME=myaddon
+HEROKU_PASSWORD=#{@password}
+ENV
+      end
+
       def skeleton
         Yajl::Parser.parse skeleton_json
       end
 
       def write
         File.open(@filename, 'w') { |f| f << skeleton_json }
+        File.open('.env', 'w') { |f| f << foreman } if @options[:foreman]
       end
 
       private
 
         def sso_key
+          @sso_salt = generate_password(16) 
           unless @options[:sso] === false
-            %{\n    "sso_salt": "#{ generate_password(16) }",}
+            %{\n    "sso_salt": "#{@sso_salt}",}
           end
         end
 

@@ -255,6 +255,7 @@ module Heroku
               o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
               o.on("-v", "--version")   { options[:command] = "version" }
               o.on("-s sso", "--sso")   { |method| options[:method] = method }
+              o.on("--foreman")         { options[:foreman] = true }
               o.on("-t name", "--template") do |template|
                 options[:template] = template
               end
