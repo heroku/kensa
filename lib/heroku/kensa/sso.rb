@@ -1,43 +1,40 @@
 require 'restclient'
+require 'uri'
 
 module Heroku
   module Kensa
     class Sso
-      attr_accessor :id, :url, :proxy_port, :timestamp, :token, :sso_url
+      attr_accessor :id, :url, :proxy_port, :timestamp, :token
 
       def initialize(data)
         @id   = data[:id]
         @salt = data['api']['sso_salt']
 
         env   = data.fetch :env, 'test'
-        if data["api"][env].is_a?(Hash)
-          @url  = data["api"][env]["base_url"].chomp('/')
-          @sso_url = data["api"][env]["sso_url"].chomp('/')
-          @use_post = true
+        if @url = data['api'][env]['sso_url']
+          @use_post   = true
+          @proxy_port = find_available_port
         else
           @url  = data["api"][env].chomp('/')
-          @use_post = false
-        end
-        @proxy_port = find_available_port
+        end 
         @timestamp  = Time.now.to_i
         @token      = make_token(@timestamp)
       end
 
       def path
-        extra = self.post? ? '/sso' : ''
-        if self.post?
-          self.sso_url
+        if self.POST? 
+          URI.parse(url).path
         else
           "/heroku/resources/#{id}"
         end
       end
 
-      def post?
+      def POST?
         @use_post
       end
 
       def sso_url
-        if self.post?
+        if self.POST?
           "http://localhost:#{@proxy_port}/"
         else
           full_url
@@ -50,13 +47,13 @@ module Heroku
       alias get_url full_url
 
       def post_url
-        @sso_url
+        url
       end
 
       def timestamp=(other)
         @timestamp = other
         @token = make_token(@timestamp)
-      end
+      end 
 
       def make_token(t)
         Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
@@ -64,7 +61,7 @@ module Heroku
 
       def querystring
         return '' unless @salt
-        '?' + query_data
+        '?' + query_data 
       end
 
       def query_data
@@ -72,10 +69,13 @@ module Heroku
       end
 
       def query_params
-        { 'token' => @token,
+        { 'token'     => @token,  
           'timestamp' => @timestamp.to_s,
-          'nav-data' => sample_nav_data,
-          'user'     => 'username@example.com' }
+          'nav-data'  => sample_nav_data,
+          'email'     => 'username@example.com' 
+        }.tap do |params|
+          params.merge!('id' => @id) if self.POST?
+        end
       end
 
       def sample_nav_data
@@ -97,7 +97,7 @@ module Heroku
       end
 
       def message
-        if self.post?
+        if self.POST?
           "POSTing #{query_data} to #{post_url} via proxy on port #{@proxy_port}"
         else
           "Opening #{full_url}"
@@ -117,13 +117,13 @@ module Heroku
       end
 
       def run_proxy
-        return unless self.post?
+        return unless self.POST?
         server = PostProxy.new self
         @proxy = server
 
         trap("INT") { server.stop }
         pid = fork do
-          server.start
+          server.start 
         end
         at_exit { server.stop; Process.waitpid pid }
       end

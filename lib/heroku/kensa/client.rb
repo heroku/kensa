@@ -1,64 +1,17 @@
 require 'restclient'
 require 'term/ansicolor'
 require 'launchy'
+require 'optparse'
 
 module Heroku
-  class Git
-    class << self
-      def verify_create(app_name, template)
-        raise CommandInvalid.new("template #{clone_url(template)} does not exist") unless template_exists?(template)
-        raise CommandInvalid.new("Need git to clone repository") unless git_installed?
-      end
-
-      def template_exists?(template)
-        true
-      end
-
-      def git_installed?
-        `git` rescue false
-      end
-
-      def clone(app_name, template)
-        verify_create(app_name, template)
-        cmd = "git clone #{clone_url(template)} #{app_name}" 
-        puts cmd
-        `#{cmd}`
-        raise Exception.new("couldn't clone the repository from #{clone_url(template)}") unless File.directory?("#{app_name}")
-        puts "Created #{app_name} from #{template} template"
-      end
-
-      def clone_url(name)
-        prefix = ENV['REPO_PREFIX'] || "heroku"
-        if name.include? "://"  #its a full url
-          return name
-        elsif name.include? "/" #its a non-heroku repo
-          name = "#{prefix}/#{name}" 
-        else                    #its one of ours 
-          name = "#{prefix}/kensa-create-#{name}" 
-        end
-
-        "git://github.com/#{name}"
-      end
-    end
-  end
-
   module Kensa
-    class UserError < RuntimeError; end
-
     class Client
-      def initialize(args, options)
+      def initialize(args, options = {})
         @args    = args
-        @options = options
+        @options = OptParser.parse(args).merge(options)
       end
 
-      def filename
-        @options[:filename]
-      end
-
-      #you fucked up
       class CommandInvalid < Exception; end
-      #we fucked up
-      class CommandFailed  < Exception; end
 
       def run!
         command = @args.shift || @options[:command]
@@ -67,63 +20,44 @@ module Heroku
       end
 
       def init
-        Manifest.new(filename, @options).write
-        Screen.new.message "Initialized new addon manifest in #{filename}\n"
+        Manifest.new(@options).write
+        screen.message "Initialized new addon manifest in #{filename}\n" 
+        if @options[:foreman]
+          screen.message "Initialized new .env file for foreman\n"
+        end
       end
 
       def create
         app_name = @args.shift
         template = @options[:template]
-        raise CommandInvalid.new("Need git to supply a template") unless template
-        raise CommandInvalid.new("Need git to supply an application name") unless app_name
-
+        raise CommandInvalid.new("Need to supply an application name") unless app_name
+        raise CommandInvalid.new("Need to supply a template") unless template
         begin
-          Git.clone(app_name, template)
+          Git.clone(app_name, template) and screen.message "Created #{app_name} from #{template} template\n"
+          Dir.chdir(app_name)
+          @options[:foreman] = true
+          init
         rescue Exception => e
-          raise CommandFailed.new("error cloning #{Git.clone_url(template)} into #{app_name}") 
+          raise CommandInvalid.new("error cloning #{Git.clone_url(template)} into #{app_name}") 
         end
-
-        Dir.chdir("./#{app_name}")
-        `./after_clone #{app_name}` if File.exist?('./after_clone')
       end
-
 
       def test
         case check = @args.shift
           when "manifest"
-            require "#{File.dirname(__FILE__)}/../../../test/manifest_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(ManifestTest.suite).start
+            run_check ManifestCheck
           when "provision"
-            require "#{File.dirname(__FILE__)}/../../../test/provision_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(ProvisionTest.suite).start
+            run_check ManifestCheck, ProvisionCheck
           when "deprovision"
             id = @args.shift || abort("! no id specified; see usage")
-            require "#{File.dirname(__FILE__)}/../../../test/deprovision_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(DeprovisionTest.suite).start
+            run_check ManifestCheck, DeprovisionCheck, :id => id
           when "planchange"
             id   = @args.shift || abort("! no id specified; see usage")
             plan = @args.shift || abort("! no plan specified; see usage")
-            require "#{File.dirname(__FILE__)}/../../../test/plan_change_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(PlanChangeTest.suite).start
+            run_check ManifestCheck, PlanChangeCheck, :id => id, :plan => plan
           when "sso"
             id = @args.shift || abort("! no id specified; see usage")
-            require "#{File.dirname(__FILE__)}/../../../test/sso_test"
-            require 'test/unit/ui/console/testrunner'
-            $manifest = Yajl::Parser.parse(resolve_manifest).merge("user_id" => id)
-            Test::Unit.run = true
-            Test::Unit::UI::Console::TestRunner.new(SsoTest.suite).start
+            run_check ManifestCheck, SsoCheck, :id => id
           else
             abort "! Unknown test '#{check}'; see usage"
         end
@@ -177,12 +111,20 @@ module Heroku
       end
 
       def version
-        puts "Kensa #{Kensa::VERSION}"
+        puts "Kensa #{VERSION}"
       end
 
       private
+        def filename
+          @options[:filename]
+        end
+
+        def screen
+          @screen ||= @options[:silent] ? NilScreen.new : Screen.new
+        end
+
         def headers
-          { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{Kensa::VERSION}" }
+          { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
         end
 
         def heroku_host
@@ -206,7 +148,6 @@ module Heroku
           options = args.pop if args.last.is_a?(Hash)
 
           args.each do |klass|
-            screen = Screen.new
             data   = Yajl::Parser.parse(resolve_manifest)
             check  = klass.new(data.merge(@options.merge(options)), screen)
             result = check.call
@@ -298,6 +239,43 @@ module Heroku
           $stdout.puts "done."
         end
       end
+
+
+      class OptParser
+        def self.defaults
+          {
+            :filename => 'addon-manifest.json',
+            :env      => "test",
+            :async    => false,
+          }
+        end
+        
+        def self.parse(args)
+          self.defaults.tap do |options|
+            OptionParser.new do |o|
+              o.on("-f file", "--file") { |filename| options[:filename] = filename }
+              o.on("--async")           { options[:async] = true }
+              o.on("--production")      { options[:env] = "production" }
+              o.on("--without-sso")     { options[:sso] = false }
+              o.on("-h", "--help")      { command = "help" }
+              o.on("-p plan", "--plan") { |plan| options[:plan] = plan }
+              o.on("-v", "--version")   { options[:command] = "version" }
+              o.on("-s sso", "--sso")   { |method| options[:method] = method }
+              o.on("--foreman")         { options[:foreman] = true }
+              o.on("-t name", "--template") do |template|
+                options[:template] = template
+              end
+
+              begin
+                o.parse!(args)
+              rescue OptionParser::InvalidOption
+                #skip over invalid options
+                retry
+              end
+            end
+          end
+        end
+      end 
     end
   end
 end

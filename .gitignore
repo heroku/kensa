@@ -2,4 +2,4 @@ addon-manifest.json
 pkg/
 .rvmrc
 tags
-bundle/
+test_log.txt
