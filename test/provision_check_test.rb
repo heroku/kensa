@@ -3,6 +3,8 @@ require 'test/helper'
 class ProvisionCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
 
+  def check ; ProvisionCheck ; end
+
   ['get', 'post'].each do |method| 
     context "with sso #{method}" do
       setup do
@@ -10,7 +12,10 @@ class ProvisionCheckTest < Test::Unit::TestCase
         @data['api']['password'] = 'secret'
       end
 
-      def check ; ProvisionCheck ; end
+      test "trims url" do
+        c = check.new(@data)
+        assert_equal c.url, 'http://localhost:4567' 
+      end
 
       test "working provision call" do
         use_provider_endpoint "working"

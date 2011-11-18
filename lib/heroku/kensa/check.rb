@@ -16,6 +16,10 @@ module Heroku
         @screen = screen
       end
 
+      def env
+        @data.fetch(:env, 'test')
+      end
+
       def test(msg)
         screen.test msg
       end
@@ -53,14 +57,14 @@ module Heroku
         Proc.new { me.call! }
       end
 
-      def url(env = 'test')
+      def url
         if data['api'][env].is_a? Hash
-          url = data['api'][env]['base_url']
-          uri = URI.parse(url)
-          url.sub!(uri.query, '') if uri.query
-          url.sub(uri.path, '')
+          base = data['api'][env]['base_url']
+          uri = URI.parse(base)
+          base.sub!(uri.query, '') if uri.query
+          base.sub(uri.path, '')
         else
-          data['api'][env]
+          data['api'][env].chomp("/")
         end
       end
     end
@@ -98,12 +102,16 @@ module Heroku
         check "contains production url" do
           data["api"].has_key?("production")
         end
-        check "production url uses SSL" do
-          url('production') =~ /^https:/
-        end
         if data['api']['production'].is_a? Hash
+          check "production url uses SSL" do
+            data['api']['production']['base_url'] =~ /^https:/
+          end
           check "sso url uses SSL #{data.inspect}" do
-            Sso.new(data.merge(:env => 'production')).full_url =~ /^https:/
+            data['api']['production']['sso_url'] =~ /^https:/
+          end
+        else
+          check "production url uses SSL" do
+            data['api']['production'] =~ /^https:/
           end
         end
         check "contains config_vars array" do
@@ -138,7 +146,6 @@ module Heroku
           true
         end
       end
-
     end
 
 
@@ -193,7 +200,7 @@ module Heroku
                 uri = URI.parse(value)
                 error "#{value} is not a valid URI - missing host" unless uri.host
                 error "#{value} is not a valid URI - missing scheme" unless uri.scheme
-                error "#{value} is not a valid URI - pointing to localhost" if @data[:env] == 'production' && uri.host == 'localhost'
+                error "#{value} is not a valid URI - pointing to localhost" if env == 'production' && uri.host == 'localhost'
               rescue URI::Error
                 error "#{value} is not a valid URI"
               end
@@ -207,7 +214,7 @@ module Heroku
 
 
     class ApiCheck < Check
-      def base_path(env = 'test')
+      def base_path
         if data['api'][env].is_a? Hash
           URI.parse(data['api'][env]['base_url']).path
         else
