@@ -106,7 +106,7 @@ module Heroku
           check "production url uses SSL" do
             data['api']['production']['base_url'] =~ /^https:/
           end
-          check "sso url uses SSL #{data.inspect}" do
+          check "sso url uses SSL" do
             data['api']['production']['sso_url'] =~ /^https:/
           end
         else
