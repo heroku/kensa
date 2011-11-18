@@ -10,6 +10,7 @@ module Heroku
 
       def skeleton_json
         @password = generate_password(16)
+        @port     = @options[:foreman] ? 5000 : 4567
         (@method == :get) ? get_skeleton : post_skeleton
       end
 
@@ -21,7 +22,7 @@ module Heroku
     "config_vars": [ "MYADDON_URL" ],
     "password": "#{@password}",#{ sso_key }
     "production": "https://yourapp.com/",
-    "test": "http://localhost:4567/"
+    "test": "http://localhost:#{@port}/"
   }
 }
 JSON
@@ -39,8 +40,8 @@ JSON
       "sso_url": "https://yourapp.com/sso/login"
     },
     "test": {
-      "base_url": "http://localhost:4567/heroku/resources",
-      "sso_url": "http://localhost:4567/sso/login"
+      "base_url": "http://localhost:#{@port}/heroku/resources",
+      "sso_url": "http://localhost:#{@port}/sso/login"
     }
   }
 }

@@ -45,6 +45,8 @@ class InitTest < Test::Unit::TestCase
     kensa "init --foreman"
     env = File.open(".env").read
     manifest = read_json(@filename)
+    assert manifest['api']['test']['base_url'] =~ /:5000/
+    assert manifest['api']['test']['sso_url'] =~ /:5000/
     assert env.include?("SSO_SALT=#{manifest['api']['sso_salt']}\n")
     assert env.include?("HEROKU_USERNAME=#{manifest['id']}\n")
     assert env.include?("HEROKU_PASSWORD=#{manifest['api']['password']}")
