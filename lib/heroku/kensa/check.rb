@@ -363,10 +363,11 @@ module Heroku
         raise ArgumentError, "No plan specified" if new_plan.nil?
 
         path = "#{base_path}/#{CGI::escape(id.to_s)}"
+        payload = {:plan => new_plan, :heroku_id => heroku_id}
 
         test "PUT #{path}"
         check "response" do
-          code, _ = put(credentials, path, {:plan => new_plan, :heroku_id => heroku_id})
+          code, _ = put(credentials, path, payload)
           if code == 200
             true
           elsif code == -1
@@ -378,7 +379,7 @@ module Heroku
 
         check "authentication" do
           wrong_credentials = ['wrong', 'secret']
-          code, _ = delete(wrong_credentials, path, nil)
+          code, _ = put(wrong_credentials, path, payload)
           error("expected 401, got #{code}") if code != 401
           true
         end
