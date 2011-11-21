@@ -27,7 +27,7 @@ class Heroku::Kensa::PostProxy < WEBrick::HTTPServer
         </body>
       </html>
     HTML
-    res["Content-Lengh"] = res.body.size
+    res["Content-Length"] = res.body.size
     @status = :Shutdown
   end
 end

@@ -2,6 +2,7 @@ require 'test/helper'
 
 class PlanChangeCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
+  include ProviderMock
 
   %w{get post}.each do |method|
     context "with sso #{method}" do

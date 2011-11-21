@@ -2,7 +2,7 @@ require 'test/helper'
 
 class SsoCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
-
+  include ProviderMock
 
   def check ; SsoCheck ; end
   %w{get post}.each do |method| 

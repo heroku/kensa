@@ -1,9 +1,8 @@
 require 'rubygems'
-require 'sinatra'
+require 'sinatra/base'
 require 'json'
 
-enable :sessions
-
+class ProviderServer < Sinatra::Base
 helpers do
   def heroku_only!
     unless auth_heroku?
@@ -33,10 +32,15 @@ helpers do
   end
   
   def login(heroku_user=true)
-    session.clear
-    session[:logged_in] = true
-    session[:heroku]    = heroku_user
-    redirect '/'
+  @header = heroku_user
+  haml <<-HAML
+%html
+%body
+  - if @header
+    #heroku-header
+      %h1 Heroku
+  %h1 Sample Addon
+HAML
   end
 end
 
@@ -117,7 +121,7 @@ get '/working/heroku/resources/:id' do
 end
 
 post '/working/sso/login' do
-  puts params.inspect
+  #puts params.inspect
   sso
 end
 
@@ -213,15 +217,9 @@ end
 
 get '/' do
   unauthorized! unless session[:logged_in]
-  haml :index
 end
 
-__END__
-
-@@ index
-%html
-  %body
-    - if session[:heroku]
-      #heroku-header
-        %h1 Heroku
-    %h1 Sample Addon
+if $0 == __FILE__
+ self.run!
+end
+end

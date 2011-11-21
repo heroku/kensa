@@ -2,6 +2,7 @@ require 'test/helper'
 
 class AllCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
+  include ProviderMock
 
   setup do
     @data = Manifest.new(:method => :get).skeleton
