@@ -4,9 +4,21 @@ require 'contest'
 require 'timecop'
 require 'rr'
 require 'yajl'
+require 'artifice'
+require 'test/resources/server'
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
+
+  module ProviderMock
+    def setup
+      Artifice.activate_with(ProviderServer)
+    end
+
+    def teardown
+      Artifice.deactivate
+    end
+  end
 
   def kensa(command)
     Heroku::Kensa::Client.new(command.split, :silent => true).run!
