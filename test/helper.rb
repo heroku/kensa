@@ -3,7 +3,6 @@ require 'heroku/kensa/client'
 require 'contest'
 require 'timecop'
 require 'rr'
-require 'yajl'
 require 'artifice'
 require 'test/resources/server'
 
@@ -25,7 +24,7 @@ class Test::Unit::TestCase
   end
 
   def read_json(filename)
-    Yajl::Parser.parse(File.open(filename).read)
+    OkJson.decode(File.open(filename).read)
   end
 
   #this prepends a prefix for the provider server
@@ -73,7 +72,7 @@ class Test::Unit::TestCase
   end
 
   def to_json(data, headers={})
-    body = Yajl::Encoder.encode(data)
+    body = OkJson.encode(data)
     add_headers(body, headers)
   end
 

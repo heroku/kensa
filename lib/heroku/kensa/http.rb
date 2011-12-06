@@ -27,7 +27,7 @@ module Heroku
 
         begin
           args = [
-            (Yajl::Encoder.encode(payload) if payload),
+            (OkJson.encode(payload) if payload),
             {
               :accept => "application/json",
               :content_type => "application/json"

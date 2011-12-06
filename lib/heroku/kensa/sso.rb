@@ -79,7 +79,7 @@ module Heroku
       end
 
       def sample_nav_data
-        json = Yajl::Encoder.encode({
+        json = OkJson.encode({
           :addon => 'Your Addon',
           :appname => 'myapp',
           :addons => [

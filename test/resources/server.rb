@@ -1,6 +1,12 @@
 require 'rubygems'
 require 'sinatra/base'
-require 'json'
+require File.expand_path('../../../lib/heroku/kensa/okjson', __FILE__)
+
+class Hash
+  def to_json
+    OkJson.encode(self)
+  end
+end
 
 class ProviderServer < Sinatra::Base
 helpers do
@@ -25,7 +31,7 @@ helpers do
   end
 
   def json_must_include(keys)
-    params = JSON.parse(request.body.read)
+    params = OkJson.decode(request.body.read)
     keys.each do |param|
       raise "#{param} not included with request" unless params.keys.include? param
     end
@@ -67,7 +73,7 @@ end
 
 post '/invalid-response/heroku/resources' do
   heroku_only!
-  nil.to_json
+  'null'
 end
 
 post '/invalid-status/heroku/resources' do
