@@ -581,18 +581,19 @@ module OkJson
 end
 
 class Hash
-  def stringify_keys!
+  def stringify_keys
+    new_hash = {}
     self.each do |key, value|
       case value
       when Hash
-        value.stringify_keys! 
+        value = value.stringify_keys 
       when Array
-        value.each { |v| v.stringify_keys! if v.is_a? Hash } 
+        value = value.map { |v| v.stringify_keys if v.is_a? Hash } 
       end
 
-      self[key.to_s] = delete(key)
+      new_hash[key.to_s] = value
     end
-    self
+    new_hash
   end
 end
 
@@ -600,6 +601,6 @@ module OkJson
   alias encode_without_stringify encode
 
   def encode(x)
-    encode_without_stringify(x.stringify_keys!)
+    encode_without_stringify(x.stringify_keys)
   end  
 end
