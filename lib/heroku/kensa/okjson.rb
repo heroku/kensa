@@ -583,7 +583,7 @@ end
 class Hash
   def stringify_keys
     new_hash = {}
-    self.each do |key, value|
+    each do |key, value|
       case value
       when Hash
         value = value.stringify_keys 
