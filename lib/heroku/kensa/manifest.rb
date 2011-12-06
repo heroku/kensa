@@ -58,7 +58,7 @@ ENV
       end
 
       def skeleton
-        Yajl::Parser.parse skeleton_json
+        OkJson.decode skeleton_json
       end
 
       def write

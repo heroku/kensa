@@ -1,4 +1,3 @@
-require 'yajl'
 require 'mechanize'
 require 'socket'
 require 'timeout'
@@ -294,8 +293,8 @@ module Heroku
 
         check "valid JSON" do
           begin
-            response = Yajl::Parser.parse(json)
-          rescue Yajl::ParseError => boom
+            response = OkJson.decode(json)
+          rescue OkJson::Error => boom
             error boom.message
           end
           true

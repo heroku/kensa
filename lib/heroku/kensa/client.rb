@@ -71,7 +71,7 @@ module Heroku
 
       def sso
         id = @args.shift || abort("! no id specified; see usage")
-        data = Yajl::Parser.parse(resolve_manifest).merge(:id => id)
+        data = OkJson.decode(resolve_manifest).merge(:id => id)
         sso = Sso.new(data.merge(@options)).start
         puts sso.message
         Launchy.open sso.sso_url
@@ -80,7 +80,7 @@ module Heroku
       def push
         user, password = ask_for_credentials
         host     = heroku_host
-        data     = Yajl::Parser.parse(resolve_manifest)
+        data     = OkJson.decode(resolve_manifest)
         resource = RestClient::Resource.new(host, user, password)
         resource['provider/addons'].post(resolve_manifest, headers)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
@@ -148,7 +148,7 @@ module Heroku
           options = args.pop if args.last.is_a?(Hash)
 
           args.each do |klass|
-            data   = Yajl::Parser.parse(resolve_manifest)
+            data   = OkJson.decode(resolve_manifest)
             check  = klass.new(data.merge(@options.merge(options)), screen)
             result = check.call
             screen.finish
