@@ -1,6 +1,8 @@
 Kensa
 =====
 
+<img src="https://secure.travis-ci.org/heroku/kensa.png" />
+
 Kensa is a command-line utility to help Heroku add-on providers integrating
 their services to Heroku. It offers commands to create and validate manifests,
 and to run the same API calls Heroku runs on your service to provision and
