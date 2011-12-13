@@ -101,6 +101,7 @@ module Heroku
         check "contains production url" do
           data["api"].has_key?("production")
         end
+
         if data['api']['production'].is_a? Hash
           check "production url uses SSL" do
             data['api']['production']['base_url'] =~ /^https:/
@@ -113,31 +114,35 @@ module Heroku
             data['api']['production'] =~ /^https:/
           end
         end
-        check "contains config_vars array" do
-          data["api"].has_key?("config_vars") && data["api"]["config_vars"].is_a?(Array)
-        end
-        check "containst at least one config var" do
-          !data["api"]["config_vars"].empty?
-        end
-        check "all config vars are uppercase strings" do
-          data["api"]["config_vars"].each do |k, v|
-            if k =~ /^[A-Z][0-9A-Z_]+$/
-              true
-            else
-              error "#{k.inspect} is not a valid ENV key"
+
+        if data["api"].has_key?("config_vars") 
+          check "contains config_vars array" do
+            data["api"]["config_vars"].is_a?(Array)
+          end
+          check "containst at least one config var" do
+            !data["api"]["config_vars"].empty?
+          end
+          check "all config vars are uppercase strings" do
+            data["api"]["config_vars"].each do |k, v|
+              if k =~ /^[A-Z][0-9A-Z_]+$/
+                true
+              else
+                error "#{k.inspect} is not a valid ENV key"
+              end
+            end
+          end
+          check "all config vars are prefixed with the addon id" do
+            data["api"]["config_vars"].each do |k|
+              addon_key = data['id'].upcase.gsub('-', '_')
+              if k =~ /^#{addon_key}_/
+                true
+              else
+                error "#{k} is not a valid ENV key - must be prefixed with #{addon_key}_"
+              end
             end
           end
         end
-        check "all config vars are prefixed with the addon id" do
-          data["api"]["config_vars"].each do |k|
-            addon_key = data['id'].upcase.gsub('-', '_')
-            if k =~ /^#{addon_key}_/
-              true
-            else
-              error "#{k} is not a valid ENV key - must be prefixed with #{addon_key}_"
-            end
-          end
-        end
+
         check "deprecated fields" do
           if data["api"].has_key?("username")
             error "username is deprecated: Please authenticate using the add-on id."
