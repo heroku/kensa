@@ -63,6 +63,8 @@ end
 
 post '/cmd-line-options/heroku/resources' do
   heroku_only!
+  options = OkJson.decode(request.body.read)['options']
+  raise "Where are my options?" unless options['foo'] && options['bar']
   { :id => 123 }.to_json
 end
 

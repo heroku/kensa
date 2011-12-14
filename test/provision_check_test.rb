@@ -23,6 +23,12 @@ class ProvisionCheckTest < Test::Unit::TestCase
         assert_valid
       end
 
+      test "provision call with extra params" do
+        use_provider_endpoint "cmd-line-options"
+        @data[:options] = {:foo => 'bar', :bar => 'baz'}
+        assert_valid
+      end
+
       test "detects invalid JSON" do
         use_provider_endpoint "invalid-json"
         assert_invalid
