@@ -16,12 +16,23 @@ class InitTest < Test::Unit::TestCase
     kensa "init"
     manifest = read_json(@filename)
     %w{test production}.each do |env|
+      assert manifest['api'][env] =~ /^http/
+    end
+    assert !File.exist?('.env')
+  end
+
+=begin
+  def test_init_default_so_sso_post
+    kensa "init"
+    manifest = read_json(@filename)
+    %w{test production}.each do |env|
       %w{base_url sso_url}.each do |url|
         assert manifest['api'][env][url] =~ /^http/
       end
     end
     assert !File.exist?('.env')
   end
+=end
 
   def test_init_uses_file_flag
     @filename = 'foo.json'
@@ -41,14 +52,27 @@ class InitTest < Test::Unit::TestCase
     assert !File.exist?('.env')
   end
 
-  def test_init_with_env_flag
-    kensa "init --foreman"
+  def assert_foreman_env(env, manifest)
+    assert env.include?("SSO_SALT=#{manifest['api']['sso_salt']}\n")
+    assert env.include?("HEROKU_USERNAME=#{manifest['id']}\n")
+    assert env.include?("HEROKU_PASSWORD=#{manifest['api']['password']}")
+  end
+
+  def test_init_with_foreman_flag_and_get
+    kensa "init --foreman --sso get"
+    env = File.open(".env").read
+    manifest = read_json(@filename)
+    assert manifest['api']['test'] =~ /:5000/
+    assert manifest['api']['test'] =~ /:5000/
+    assert_foreman_env env, manifest
+  end
+
+  def test_init_with_foreman_flag_and_post
+    kensa "init --foreman --sso post"
     env = File.open(".env").read
     manifest = read_json(@filename)
     assert manifest['api']['test']['base_url'] =~ /:5000/
     assert manifest['api']['test']['sso_url'] =~ /:5000/
-    assert env.include?("SSO_SALT=#{manifest['api']['sso_salt']}\n")
-    assert env.include?("HEROKU_USERNAME=#{manifest['id']}\n")
-    assert env.include?("HEROKU_PASSWORD=#{manifest['api']['password']}")
+    assert_foreman_env env, manifest
   end
 end
