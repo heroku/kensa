@@ -68,8 +68,11 @@ COMMANDS
 
 TEST TYPES
 
-  provision
+  provision [optional params] 
     Simulate a provision call from Heroku.
+    [optional params]
+      accepts extra command options and passes them on to the provision request
+      ie: kensa test provision --foo bar
 
   deprovision <id>
     Simulate a deprovision call from Heroku.
