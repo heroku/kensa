@@ -249,7 +249,7 @@ module Heroku
           :plan => data[:plan] || 'test',
           :callback_url => callback, 
           :logplex_token => nil,
-          :options => {}
+          :options => data[:options] || {}
         }
 
         if data[:async]
