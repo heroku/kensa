@@ -16,6 +16,9 @@ module Heroku
 
       def message(msg)
       end
+
+      def finish
+      end
     end
 
     class IOScreen

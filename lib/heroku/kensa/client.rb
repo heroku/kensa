@@ -6,6 +6,8 @@ require 'optparse'
 module Heroku
   module Kensa
     class Client
+      attr_accessor :options
+
       def initialize(args, options = {})
         @args    = args
         @options = OptParser.parse(args).merge(options)
@@ -152,7 +154,7 @@ module Heroku
             check  = klass.new(data.merge(@options.merge(options)), screen)
             result = check.call
             screen.finish
-            exit 1 if !result
+            exit 1 if !result && !(@options[:test])
           end
         end
 
@@ -242,6 +244,10 @@ module Heroku
 
 
       class OptParser
+        def self.parse(args)
+          defaults.merge(self.parse_options(args))
+        end
+
         def self.defaults
           {
             :filename => 'addon-manifest.json',
@@ -249,9 +255,31 @@ module Heroku
             :async    => false,
           }
         end
-        
-        def self.parse(args)
-          self.defaults.tap do |options|
+
+        # OptionParser errors out on unnamed options so we have to pull out all the --flags and --flag=somethings
+        KNOWN_ARGS = %w{file async production without-sso help plan version sso foreman template}
+        def self.pre_parse(args)
+          args.partition do |token| 
+            token.match(/^--/) && !token.match(/^--(#{KNOWN_ARGS.join('|')})/)
+          end.reverse
+        end
+
+        def self.parse_provision(flags, args)
+          {}.tap do |options|
+            flags.each do |arg|
+              key, value = arg.split('=')
+              unless value
+                peek = args[args.index(key) + 1]
+                value = peek && !peek.match(/^--/) ? peek : 'true'
+              end
+              key = key.sub(/^--/,'')
+              options[key] = value 
+            end
+          end
+        end
+
+        def self.parse_command_line(args)
+          {}.tap do |options|
             OptionParser.new do |o|
               o.on("-f file", "--file") { |filename| options[:filename] = filename }
               o.on("--async")           { options[:async] = true }
@@ -265,14 +293,26 @@ module Heroku
               o.on("-t name", "--template") do |template|
                 options[:template] = template
               end
+              #note: have to add these to KNOWN_ARGS
 
               begin
                 o.parse!(args)
-              rescue OptionParser::InvalidOption
-                #skip over invalid options
-                retry
+              rescue OptionParser::InvalidOption => e
+                raise CommandInvalid, e.message
               end
             end
+          end
+        end
+        
+        def self.parse(args)
+          if args[0] == 'test' && args[1] == 'provision'
+            safe_args, extra_params = self.pre_parse(args)
+            self.defaults.tap do |options| 
+              options.merge! self.parse_command_line(safe_args)
+              options.merge! :options => self.parse_provision(extra_params, args)
+            end
+          else
+            self.defaults.merge(self.parse_command_line(args))
           end
         end
       end 

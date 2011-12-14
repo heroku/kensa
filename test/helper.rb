@@ -20,7 +20,7 @@ class Test::Unit::TestCase
   end
 
   def kensa(command)
-    Heroku::Kensa::Client.new(command.split, :silent => true).run!
+    Heroku::Kensa::Client.new(command.split, :silent => true, :test => true).run!
   end
 
   def read_json(filename)
