@@ -254,10 +254,9 @@ module Heroku
           }
         end
 
+        # OptionParser errors out on unnamed options so we have to pull out all the --flags and --flag=somethings
         KNOWN_ARGS = %w{file async production without-sso help plan version sso foreman template}
-        # OptionParser errors out on unnamed options
         def self.pre_parse(args)
-          return [args, []] unless args[0] == 'test' && args[1] == 'provision'
           args.partition do |token| 
             token.match(/^--/) && !token.match(/^--(#{KNOWN_ARGS.join('|')})/)
           end.reverse
@@ -300,10 +299,14 @@ module Heroku
         end
         
         def self.parse(args)
-          safe_args, extra_params = self.pre_parse(args)
-          self.defaults.tap do |options| 
-            options.merge! self.parse_command_line(safe_args)
-            options.merge! :options => self.parse_provision(extra_params)
+          if args[0] == 'test' && args[1] == 'provision'
+            safe_args, extra_params = self.pre_parse(args)
+            self.defaults.tap do |options| 
+              options.merge! self.parse_command_line(safe_args)
+              options.merge! :options => self.parse_provision(extra_params)
+            end
+          else
+            self.defaults.merge(self.parse_command_line(args))
           end
         end
       end 
