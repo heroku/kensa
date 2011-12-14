@@ -26,6 +26,6 @@ http://provider.heroku.com/resources/technical/build/provisioning
 
 ## Meta #######################################################################
 
-Maintained by Pedro Belo.
+Maintained by Glenn Gillen and csquared.
 
 Released under the MIT license. http://github.com/heroku/kensa
