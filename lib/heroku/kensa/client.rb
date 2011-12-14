@@ -256,39 +256,26 @@ module Heroku
           }
         end
 
+        # OptionParser errors out on unnamed options so we have to pull out all the --flags and --flag=somethings
         KNOWN_ARGS = %w{file async production without-sso help plan version sso foreman template}
-        #this is copy-pasted from the heroku gem until we figure out
-        #a way to share our option-parsing code
-        def self.parse_provision(_args)
-          args = _args.dup
-          args.shift and args.shift
-          options = {}.tap do |config|
-            flag = /^--/
-            args.size.times do
-              peek = args.first
-              next unless peek && (peek.match(flag) || peek.match(/=/))
-              arg  = args.shift
-              peek = args.first
-              key  = arg.sub(flag,'')
-              if key.match(/=/)
-                key, value = key.split('=', 2)
-              elsif peek.nil? || peek.match(flag)
-                value = 'true'
-              else
-                value = args.shift
+        def self.pre_parse(args)
+          args.partition do |token| 
+            token.match(/^--/) && !token.match(/^--(#{KNOWN_ARGS.join('|')})/)
+          end.reverse
+        end
+
+        def self.parse_provision(flags, args)
+          {}.tap do |options|
+            flags.each do |arg|
+              key, value = arg.split('=')
+              unless value
+                peek = args[args.index(key) + 1]
+                value = peek && !peek.match(/^--/) ? peek : 'true'
               end
-              config[key] = value
+              key = key.sub(/^--/,'')
+              options[key] = value 
             end
           end
-
-          cmd_opts, provision_opts = options.partition do |k,v|
-            KNOWN_ARGS.include?(k)
-          end
-          #so provision params look like OptionParser params
-          cmd_opts = Hash[cmd_opts.map{ |k,v| [k.to_sym, v == 'true' ? true : v] }]
-          cmd_opts[:env] = 'production' if cmd_opts.delete :production 
-          cmd_opts[:filename] = cmd_opts.delete :file if cmd_opts[:file] 
-          cmd_opts.merge(:options => Hash[provision_opts])
         end
 
         def self.parse_command_line(args)
@@ -319,7 +306,11 @@ module Heroku
         
         def self.parse(args)
           if args[0] == 'test' && args[1] == 'provision'
-            self.defaults.merge(self.parse_provision(args))
+            safe_args, extra_params = self.pre_parse(args)
+            self.defaults.tap do |options| 
+              options.merge! self.parse_command_line(safe_args)
+              options.merge! :options => self.parse_provision(extra_params, args)
+            end
           else
             self.defaults.merge(self.parse_command_line(args))
           end

@@ -22,14 +22,22 @@ class OptionParsingTest < Test::Unit::TestCase
     end
   end
 
-  test "leaves normal args alone" do
-    cmd = "test provision --foo --production --async --file foo.json --plan foo"
-    options = Client.new(cmd.split).options
+  def assert_normal_options(options)
     assert_equal true,   options[:async]
     assert_equal 'true', options[:options]['foo']
     assert_equal 'foo',  options[:plan]
     assert_equal 'foo.json',   options[:filename]
     assert_equal 'production', options[:env] 
+  end
+
+  test "leaves normal args alone" do
+    cmd = "test provision --foo --production --async --file foo.json --plan foo"
+    assert_normal_options Client.new(cmd.split).options
+  end
+
+  test "works with single dash -s tyle flags" do
+    cmd = "test provision --foo --production --async -f foo.json -p foo"
+    assert_normal_options Client.new(cmd.split).options
   end
 
   test "parsing --flag" do
@@ -46,7 +54,6 @@ class OptionParsingTest < Test::Unit::TestCase
     options = options_for_cmd("test provision --foo bar")
     assert_equal 'bar', options['foo']
   end
-
 
   test "parsing mixed" do
     options = options_for_cmd("test provision --foo --bar foo --baz")
