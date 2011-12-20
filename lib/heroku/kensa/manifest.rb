@@ -4,7 +4,7 @@ module Heroku
 
       def initialize(options = {})
         @method   = options.fetch(:method, 'get').to_sym
-        @filename = options.fetch(:filename, 'addon-manifest.json')
+        @filename = options[:filename]
         @options  = options
       end
 
