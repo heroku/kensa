@@ -61,7 +61,7 @@ module Heroku
             id = @args.shift || abort("! no id specified; see usage")
             run_check ManifestCheck, SsoCheck, :id => id
           when "all"
-            run_check All
+            run_check AllCheck
           else
             abort "! Unknown test '#{check}'; see usage"
         end
