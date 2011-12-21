@@ -23,4 +23,9 @@ class AllCheckTest < Test::Unit::TestCase
     assert_invalid
   end
 
+  test "all runs" do
+    assert_nothing_raised do
+      kensa "test all"
+    end
+  end
 end
