@@ -86,3 +86,7 @@ TEST TYPES
   manifest
     Confirm that the manifest is valid.  Automatically runs before all tests.
 
+  all
+    runs provision, planchange, and deprovision tests.  
+    defaults to using 'foo' for planchange plan.
+
