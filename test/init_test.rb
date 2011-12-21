@@ -4,7 +4,16 @@ class InitTest < Test::Unit::TestCase
   include FsMock
 
   def test_init_doesnt_overwite_addon_manifest
-    # this uses abort -- if we stub abort it falls through
+    File.open(@filename, 'w') { |f| f << '{}' }
+    any_instance_of(Heroku::Kensa::Client) do |client|
+      stub(client).gets { 'n' }
+      stub(client).print
+      stub(client).puts
+    end
+
+    assert_raises SystemExit do
+      kensa "init"
+    end
   end
   
   def test_init_default_so_sso_post
