@@ -3,6 +3,7 @@ require 'test/helper'
 class AllCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
   include ProviderMock
+  include FsMock
 
   setup do
     @data = Manifest.new(:method => :get).skeleton
@@ -25,6 +26,7 @@ class AllCheckTest < Test::Unit::TestCase
 
   test "all runs" do
     assert_nothing_raised do
+      kensa "init"
       kensa "test all"
     end
   end
