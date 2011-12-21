@@ -22,7 +22,9 @@ module Heroku
       end
 
       def init
-        Manifest.new(@options).write
+        manifest = Manifest.new(@options)
+        protect_current_manifest!
+        manifest.write
         screen.message "Initialized new addon manifest in #{filename}\n" 
         if @options[:foreman]
           screen.message "Initialized new .env file for foreman\n"
@@ -60,6 +62,8 @@ module Heroku
           when "sso"
             id = @args.shift || abort("! no id specified; see usage")
             run_check ManifestCheck, SsoCheck, :id => id
+          when "all"
+            run_check AllCheck
           else
             abort "! Unknown test '#{check}'; see usage"
         end
@@ -97,12 +101,7 @@ module Heroku
 
       def pull
         addon = @args.first || abort('usage: kensa pull <add-on name>')
-
-        if manifest_exists?
-          print "Manifest already exists. Replace it? (y/n) "
-          abort unless gets.strip.downcase == 'y'
-          puts
-        end
+        protect_current_manifest!
 
         user, password = ask_for_credentials
         host     = heroku_host
@@ -117,6 +116,14 @@ module Heroku
       end
 
       private
+        def protect_current_manifest!
+          if manifest_exists?
+            print "Manifest already exists. Replace it? (y/n) "
+            abort unless gets.strip.downcase == 'y'
+            puts
+          end
+        end
+        
         def filename
           @options[:filename]
         end
