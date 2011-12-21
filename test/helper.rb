@@ -5,6 +5,7 @@ require 'timecop'
 require 'rr'
 require 'artifice'
 require 'test/resources/server'
+require 'fakefs/safe'
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
@@ -12,10 +13,26 @@ class Test::Unit::TestCase
   module ProviderMock
     def setup
       Artifice.activate_with(ProviderServer)
+      super
     end
 
     def teardown
       Artifice.deactivate
+      super
+    end
+  end
+
+  module FsMock
+    def setup
+      FakeFS.activate!
+      @filename = 'addon-manifest.json'
+      super
+    end
+
+    def teardown
+      File.unlink(@filename) if @filename && File.exist?(@filename)
+      FakeFS.deactivate!
+      super
     end
   end
 

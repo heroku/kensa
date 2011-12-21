@@ -1,15 +1,10 @@
 require 'test/helper'
-require 'fakefs/safe'
 
 class InitTest < Test::Unit::TestCase
-  def setup
-    FakeFS.activate!
-    @filename = 'addon-manifest.json'
-  end
+  include FsMock
 
-  def teardown
-    File.unlink(@filename) if @filename && File.exist?(@filename)
-    FakeFS.deactivate!
+  def test_init_doesnt_overwite_addon_manifest
+    # this uses abort -- if we stub abort it falls through
   end
   
   def test_init_default_so_sso_post
