@@ -488,6 +488,8 @@ module Heroku
           screen.message "End of #{args.first}\n"
         end
 
+        data[:plan] ||= 'foo'
+        run PlanChangeCheck, data
         run DeprovisionCheck, data
       end
 
