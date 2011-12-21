@@ -1,4 +1,4 @@
- 'restclient'
+require 'restclient'
 require 'term/ansicolor'
 require 'launchy'
 require 'optparse'
@@ -61,7 +61,7 @@ module Heroku
             id = @args.shift || abort("! no id specified; see usage")
             run_check ManifestCheck, SsoCheck, :id => id
           when "all"
-            run_check AllCheck
+            run_check All
           else
             abort "! Unknown test '#{check}'; see usage"
         end
