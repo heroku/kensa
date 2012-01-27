@@ -3,7 +3,7 @@ module Heroku
     class Manifest
 
       def initialize(options = {})
-        @method   = options.fetch(:method, 'get').to_sym
+        @method   = options.fetch(:method, 'post').to_sym
         @filename = options[:filename]
         @options  = options
       end

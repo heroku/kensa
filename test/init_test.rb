@@ -16,17 +16,7 @@ class InitTest < Test::Unit::TestCase
     end
   end
   
-  def test_init_default_so_sso_post
-    kensa "init"
-    manifest = read_json(@filename)
-    %w{test production}.each do |env|
-      assert manifest['api'][env] =~ /^http/
-    end
-    assert !File.exist?('.env')
-  end
-
-=begin
-  def test_init_default_so_sso_post
+  def test_init_defaults_to_sso_post
     kensa "init"
     manifest = read_json(@filename)
     %w{test production}.each do |env|
@@ -36,7 +26,6 @@ class InitTest < Test::Unit::TestCase
     end
     assert !File.exist?('.env')
   end
-=end
 
   def test_init_uses_file_flag
     @filename = 'foo.json'
