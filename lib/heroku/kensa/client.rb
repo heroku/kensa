@@ -77,7 +77,7 @@ module Heroku
 
       def sso
         id = @args.shift || abort("! no id specified; see usage")
-        data = OkJson.decode(resolve_manifest).merge(:id => id)
+        data = decoded_manifest
         sso = Sso.new(data.merge(@options)).start
         puts sso.message
         Launchy.open sso.sso_url
@@ -86,7 +86,7 @@ module Heroku
       def push
         user, password = ask_for_credentials
         host     = heroku_host
-        data     = OkJson.decode(resolve_manifest)
+        data     = decoded_manifest
         resource = RestClient::Resource.new(host, user, password)
         resource['provider/addons'].post(resolve_manifest, headers)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
@@ -148,6 +148,12 @@ module Heroku
           end
         end
 
+        def decoded_manifest
+          OkJson.decode(resolve_manifest)
+        rescue OkJson::Error => e
+          raise CommandInvalid, "#{filename} includes invalid JSON"
+        end
+
         def manifest_exists?
           File.exists?(filename)
         end
@@ -157,7 +163,7 @@ module Heroku
           options = args.pop if args.last.is_a?(Hash)
 
           args.each do |klass|
-            data   = OkJson.decode(resolve_manifest)
+            data   = decoded_manifest
             check  = klass.new(data.merge(@options.merge(options)), screen)
             result = check.call
             screen.finish

@@ -16,8 +16,8 @@ begin
   ARGV.clear
   Client.new(args).run!
 rescue Client::CommandInvalid => e
-  puts e.message unless e.message.empty?
   abort File.read(__FILE__).split('__END__').last
+  puts e.message unless e.message.empty?
 end
 
 __END__

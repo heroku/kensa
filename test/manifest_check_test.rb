@@ -5,6 +5,13 @@ class ManifestCheckTest < Test::Unit::TestCase
 
   def check ; ManifestCheck ; end
 
+  test "doesn't barf on OkJson errors" do
+    File.open("addon-manifest.json", 'w') { |f| f << "{,a" }
+    assert_raises Client::CommandInvalid, "addon-manifest.json includes invalid JSON" do
+      kensa "test provision"
+    end
+  end
+
   %w{get post}.each do |method|  
     context "with sso #{method}" do 
       setup { @data = Manifest.new(:method => method).skeleton }
