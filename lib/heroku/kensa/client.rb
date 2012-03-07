@@ -78,7 +78,7 @@ module Heroku
       def sso
         id = @args.shift || abort("! no id specified; see usage")
         data = decoded_manifest
-        sso = Sso.new(data.merge(@options)).start
+        sso = Sso.new(data.merge(@options).merge(:id => id)).start
         puts sso.message
         Launchy.open sso.sso_url
       end
