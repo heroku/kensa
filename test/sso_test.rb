@@ -93,12 +93,19 @@ class SsoTest < Test::Unit::TestCase
   context "via POST" do
     setup do
       Timecop.freeze Time.utc(2010, 1)
-      @data = Manifest.new(:method => :post).skeleton.merge(:id => 1)
+      @data = Manifest.new(:method => :post).skeleton
       @data['api']['sso_salt'] = 'SSO_SALT'
     end
 
+    test "command line" do
+=begin
+      kensa "init"
+      kensa "sso 1234"
+=end
+    end
+
     test "it starts the proxy server" do
-      @sso = Sso.new(@data).start
+      @sso = Sso.new(@data.merge(:id => 1)).start
       body = RestClient.get(@sso.sso_url)
 
       assert body.include? @sso.path

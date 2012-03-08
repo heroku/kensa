@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'sinatra/base'
 require File.expand_path('../../../lib/heroku/kensa/okjson', __FILE__)
+require File.expand_path('../../../lib/heroku/kensa/okjson-support', __FILE__)
 
 class Hash
   def to_json
