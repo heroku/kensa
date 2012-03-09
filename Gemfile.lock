@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kensa (1.4.0)
+    kensa (1.4.1)
       launchy (>= 0.3.2)
       mechanize (~> 1.0.0)
       rest-client (>= 1.4.0, < 1.7.0)
