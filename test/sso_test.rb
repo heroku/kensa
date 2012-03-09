@@ -99,7 +99,7 @@ class SsoTest < Test::Unit::TestCase
     end
 
     test "command line" do
-      any_instance_of(Client, :puts => true)
+      any_instance_of(Client) { |c| stub(c).puts }
       stub(Launchy).open
       start = Object.new
       stub(start).message
