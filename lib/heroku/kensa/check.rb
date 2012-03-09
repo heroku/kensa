@@ -301,6 +301,8 @@ module Heroku
             response = OkJson.decode(json)
           rescue OkJson::Error => boom
             error boom.message
+          rescue NoMethodError => boom
+            error "error parsing JSON"
           end
           true
         end

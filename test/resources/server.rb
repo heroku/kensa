@@ -69,6 +69,11 @@ post '/cmd-line-options/heroku/resources' do
   { :id => 123 }.to_json
 end
 
+post '/foo/heroku/resources' do
+  heroku_only!
+  'foo'
+end
+
 post '/invalid-json/heroku/resources' do
   heroku_only!
   'invalidjson'

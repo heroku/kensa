@@ -29,6 +29,12 @@ class ProvisionCheckTest < Test::Unit::TestCase
         assert_valid
       end
 
+      # OkJson doesn't handle short strings correctly
+      test "doesn't choke on foo" do
+        use_provider_endpoint "foo"
+        assert_invalid
+      end
+
       test "detects invalid JSON" do
         use_provider_endpoint "invalid-json"
         assert_invalid
