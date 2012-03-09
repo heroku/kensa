@@ -91,6 +91,7 @@ class SsoTest < Test::Unit::TestCase
   end
 
   context "via POST" do
+    include FsMock
     setup do
       Timecop.freeze Time.utc(2010, 1)
       @data = Manifest.new(:method => :post).skeleton
@@ -98,10 +99,17 @@ class SsoTest < Test::Unit::TestCase
     end
 
     test "command line" do
-=begin
+      any_instance_of(Client, :puts => true)
+      stub(Launchy).open
+      start = Object.new
+      stub(start).message
+      stub(start).sso_url
+      stub(Sso).new.stub!.start.returns(start)
+
       kensa "init"
       kensa "sso 1234"
-=end
+
+      assert_received(Sso) { |sso| sso.new(hash_including(:id => '1234')) }
     end
 
     test "it starts the proxy server" do
