@@ -236,11 +236,11 @@ module Heroku
         end
 
         def error(msg)
-          $stdout.print "\n", magenta("    ! #{msg}")
+          $stdout.print "\n", red("    #{msg}")
         end
 
         def result(status)
-          msg = status ? bold("[PASS]") : red(bold("[FAIL]"))
+          msg = status ? green("[PASS]") : red(bold("[FAIL]"))
           $stdout.print " #{msg}"
         end
 
