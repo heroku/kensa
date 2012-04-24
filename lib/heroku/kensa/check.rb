@@ -490,8 +490,10 @@ module Heroku
           screen.message "End of #{args.first}\n"
         end
 
-        data[:plan] ||= 'foo'
-        run PlanChangeCheck, data
+        # Only run the plan change if a plan is specified.
+        if data[:plan]
+          run PlanChangeCheck, data
+        end
         run DeprovisionCheck, data
       end
 
