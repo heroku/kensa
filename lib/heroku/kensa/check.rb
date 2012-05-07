@@ -115,11 +115,29 @@ module Heroku
           end
         end
 
+        if data["api"].has_key?("default_config_var")
+          check "default_config_var is an uppercase string" do
+            if data["api"]["default_config_var"] =~ /^[A-Z][0-9A-Z_]+$/
+              true
+            else
+              error "default_config_var #{data["api"]["default_config_var"]} is not a valid ENV key"
+            end
+          end
+          check "default_config_var is prefixed with the addon id" do
+            addon_key = data['id'].upcase.gsub('-', '_')
+            if data["api"]["default_config_var"] =~ /^#{addon_key}_/
+              true
+            else
+              error "default_config_var #{data["api"]["default_config_var"]} is not a valid ENV key - must be prefixed with #{addon_key}_"
+            end
+          end
+        end
+
         if data["api"].has_key?("config_vars") 
           check "contains config_vars array" do
             data["api"]["config_vars"].is_a?(Array)
           end
-          check "containst at least one config var" do
+          check "contains at least one config var" do
             !data["api"]["config_vars"].empty?
           end
           check "all config vars are uppercase strings" do
@@ -127,7 +145,7 @@ module Heroku
               if k =~ /^[A-Z][0-9A-Z_]+$/
                 true
               else
-                error "#{k.inspect} is not a valid ENV key"
+                error "config var #{k.inspect} is not a valid ENV key"
               end
             end
           end
@@ -137,7 +155,7 @@ module Heroku
               if k =~ /^#{addon_key}_/
                 true
               else
-                error "#{k} is not a valid ENV key - must be prefixed with #{addon_key}_"
+                error "config var #{k} is not a valid ENV key - must be prefixed with #{addon_key}_"
               end
             end
           end

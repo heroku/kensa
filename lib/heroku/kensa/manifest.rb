@@ -19,7 +19,7 @@ module Heroku
 {
   "id": "myaddon",
   "api": {
-    "config_vars": [ "MYADDON_URL" ],
+    "default_config_var" : "MYADDON_URL",
     "password": "#{@password}",#{ sso_key }
     "production": "https://yourapp.com/",
     "test": "http://localhost:#{@port}/"
@@ -33,7 +33,7 @@ JSON
 {
   "id": "myaddon",
   "api": {
-    "config_vars": [ "MYADDON_URL" ],
+    "default_config_var" : "MYADDON_URL",
     "password": "#{@password}",#{ sso_key }
     "production": {
       "base_url": "https://yourapp.com/heroku/resources",

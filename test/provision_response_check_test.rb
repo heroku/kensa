@@ -12,7 +12,7 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
                     "MYADDON_CONFIG" => "value" 
                 }}
     @data = Manifest.new.skeleton.merge(:provision_response => @response)
-    @data['api']['config_vars'] << "MYADDON_CONFIG"
+    @data['api']['config_vars'] = [ "MYADDON_URL", "MYADDON_CONFIG" ]
   end
 
   test "is valid if no errors" do

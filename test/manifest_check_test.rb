@@ -71,7 +71,32 @@ class ManifestCheckTest < Test::Unit::TestCase
         assert_valid
       end
 
+      describe "default_config_var" do
+        setup { @data["api"].delete(["config_vars"]) }
+
+        test "all config vars are in upper case" do
+          @data["api"]["default_config_var"] = "MYADDON_invalid_var"
+          assert_invalid
+        end
+
+        test "assert config var prefixes match addon id" do
+          @data["api"]["default_config_var"] = "MONGO_URL"
+          assert_invalid
+        end
+
+        test "replaces dashes for underscores on the default_config_var check" do
+          @data["id"] = "MY-ADDON"
+          @data["api"]["default_config_var"] = "MY_ADDON_URL"
+          assert_valid
+        end
+      end
+
       context "with config vars" do
+        setup do
+          @data["api"]["config_vars"] = [ "MYADDON_URL" ]
+          @data["api"].delete("default_config_var")
+        end
+
         test "api contains config_vars array" do
           @data["api"]["config_vars"] = "test"
           assert_invalid
