@@ -27,12 +27,13 @@ module Heroku
 
         begin
           args = [
-            (OkJson.encode(payload) if payload),
-            {
-              :accept => "application/json",
-              :content_type => "application/json"
-            }
-          ].compact
+            { :accept => "application/json" }
+          ]
+          
+          if payload
+            args.first[:content_type] = "application/json"
+            args.unshift OkJson.encode(payload)
+          end
 
           user, pass = credentials
           body = RestClient::Resource.new(url, user, pass)[path].send(
