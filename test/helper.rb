@@ -6,7 +6,6 @@ require 'rr'
 require 'artifice'
 require 'test/resources/server'
 require 'fakefs/safe'
-require 'pry'
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
