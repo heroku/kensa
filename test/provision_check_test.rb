@@ -18,6 +18,12 @@ class ProvisionCheckTest < Test::Unit::TestCase
         assert_equal c.url, 'http://localhost:4567' 
       end
 
+      test "supports subdomains with the same name as path" do
+        @data['api']['test'] = {'base_url' => 'http://heroku.myhost.dev/heroku'}
+        c = check.new(@data)
+        assert_equal c.url, 'http://heroku.myhost.dev' 
+      end
+
       test "working provision call" do
         use_provider_endpoint "working"
         assert_valid
