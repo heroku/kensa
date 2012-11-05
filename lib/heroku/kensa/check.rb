@@ -60,8 +60,9 @@ module Heroku
         if data['api'][env].is_a? Hash
           base = data['api'][env]['base_url']
           uri = URI.parse(base)
-          base.sub!(uri.query, '') if uri.query
-          base.sub(uri.path, '')
+          uri.query = nil
+          uri.path = ''
+          uri.to_s
         else
           data['api'][env].chomp("/")
         end
