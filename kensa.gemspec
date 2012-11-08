@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "heroku/kensa/version"
+require "action/kensa/version"
 
 Gem::Specification.new do |s|
   s.name = %q{kensa}
-  s.version = Heroku::Kensa::VERSION
+  s.version = Action::Kensa::VERSION
   s.platform = Gem::Platform::RUBY
 
   s.authors = ["Blake Mizerany", "Pedro Belo", "Adam Wiggins", 'Glenn Gillen', 'Chris Continanza']

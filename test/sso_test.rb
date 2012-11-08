@@ -1,8 +1,8 @@
-require 'test/helper'
+require './test/helper'
 require 'cgi'
 
 class SsoTest < Test::Unit::TestCase
-  include Heroku::Kensa
+  include Action::Kensa
 
   context "with GET" do
     setup do

@@ -1,7 +1,7 @@
-require 'test/helper'
+require './test/helper'
 
 class ProvisionResponseCheckTest < Test::Unit::TestCase
-  include Heroku::Kensa
+  include Action::Kensa
 
   def check ; ProvisionResponseCheck ; end
 

@@ -1,7 +1,7 @@
-require 'test/helper'
+require './test/helper'
 
 class ManifestTest < Test::Unit::TestCase
-  include Heroku::Kensa
+  include Action::Kensa
 
   context 'GET manifest' do
     setup { @manifest = Manifest.new(:method => :get) }

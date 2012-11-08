@@ -1,7 +1,7 @@
-require 'test/helper'
+require './test/helper'
 
-class OptionParsingTest < Test::Unit::TestCase 
-  include Heroku::Kensa
+class OptionParsingTest < Test::Unit::TestCase
+  include Action::Kensa
   include FsMock
 
   def options_for_cmd(string)
@@ -17,7 +17,7 @@ class OptionParsingTest < Test::Unit::TestCase
       assert_equal 'baz', options['bar']
       assert_equal 'baz', options['fap']
       [201, {}, 'hello']
-    }) do 
+    }) do
       kensa "init --sso get"
       kensa "test provision --foo --bar=baz --fap baz"
     end
@@ -28,7 +28,7 @@ class OptionParsingTest < Test::Unit::TestCase
     assert_equal 'true', options[:options]['foo']
     assert_equal 'foo',  options[:plan]
     assert_equal 'foo.json',   options[:filename]
-    assert_equal 'production', options[:env] 
+    assert_equal 'production', options[:env]
   end
 
   test "leaves normal args alone" do

@@ -1,11 +1,11 @@
-require 'test/helper'
+require './test/helper'
 
 class InitTest < Test::Unit::TestCase
   include FsMock
 
   def test_init_doesnt_overwite_addon_manifest
     File.open(@filename, 'w') { |f| f << '{}' }
-    any_instance_of(Heroku::Kensa::Client) do |client|
+    any_instance_of(Action::Kensa::Client) do |client|
       stub(client).gets { 'n' }
       stub(client).print
       stub(client).puts
@@ -15,7 +15,7 @@ class InitTest < Test::Unit::TestCase
       kensa "init"
     end
   end
-  
+
   def test_init_defaults_to_sso_post
     kensa "init"
     manifest = read_json(@filename)

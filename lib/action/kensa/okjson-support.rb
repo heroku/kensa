@@ -4,9 +4,9 @@ class Hash
     each do |key, value|
       case value
       when Hash
-        value = value.stringify_keys 
+        value = value.stringify_keys
       when Array
-        value = value.map { |v| v.stringify_keys if v.is_a? Hash } 
+        value = value.map { |v| v.stringify_keys if v.is_a? Hash }
       end
 
       new_hash[key.to_s] = value
@@ -20,5 +20,5 @@ module OkJson
 
   def encode(x)
     encode_without_stringify(x.stringify_keys)
-  end  
+  end
 end

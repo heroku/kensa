@@ -1,7 +1,7 @@
-require 'test/helper'
+require './test/helper'
 
 class AllCheckTest < Test::Unit::TestCase
-  include Heroku::Kensa
+  include Action::Kensa
   include ProviderMock
   include FsMock
 

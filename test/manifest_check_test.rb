@@ -1,7 +1,7 @@
-require 'test/helper'
+require './test/helper'
 
 class ManifestCheckTest < Test::Unit::TestCase
-  include Heroku::Kensa
+  include Action::Kensa
 
   def check ; ManifestCheck ; end
 
@@ -12,8 +12,8 @@ class ManifestCheckTest < Test::Unit::TestCase
     end
   end
 
-  %w{get post}.each do |method|  
-    context "with sso #{method}" do 
+  %w{get post}.each do |method|
+    context "with sso #{method}" do
       setup { @data = Manifest.new(:method => method).skeleton }
 
       test "is valid if no errors" do

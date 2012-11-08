@@ -35,7 +35,7 @@ helpers do
       raise "#{param} not included with request" unless params.keys.include? param
     end
   end
-  
+
   def login(heroku_user=true)
   @header = heroku_user
   haml <<-HAML

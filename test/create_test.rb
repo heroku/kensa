@@ -1,7 +1,7 @@
-require 'test/helper'
+require './test/helper'
 
 class CreateTest < Test::Unit::TestCase
-  include Heroku::Kensa
+  include Action::Kensa
 
   def setup
     stub(Git).run

@@ -3,7 +3,7 @@ require 'term/ansicolor'
 require 'launchy'
 require 'optparse'
 
-module Heroku
+module Action
   module Kensa
     class Client
       attr_accessor :options
@@ -25,7 +25,7 @@ module Heroku
         manifest = Manifest.new(@options)
         protect_current_manifest!
         manifest.write
-        screen.message "Initialized new addon manifest in #{filename}\n" 
+        screen.message "Initialized new addon manifest in #{filename}\n"
         if @options[:foreman]
           screen.message "Initialized new .env file for foreman\n"
         end
@@ -42,7 +42,7 @@ module Heroku
           @options[:foreman] = true
           init
         rescue Exception => e
-          raise CommandInvalid.new("error cloning #{Git.clone_url(template)} into #{app_name}") 
+          raise CommandInvalid.new("error cloning #{Git.clone_url(template)} into #{app_name}")
         end
       end
 
@@ -123,7 +123,7 @@ module Heroku
             puts
           end
         end
-        
+
         def filename
           @options[:filename]
         end
@@ -272,7 +272,7 @@ module Heroku
         # OptionParser errors out on unnamed options so we have to pull out all the --flags and --flag=somethings
         KNOWN_ARGS = %w{file async production without-sso help plan version sso foreman template}
         def self.pre_parse(args)
-          args.partition do |token| 
+          args.partition do |token|
             token.match(/^--/) && !token.match(/^--(#{KNOWN_ARGS.join('|')})/)
           end.reverse
         end
@@ -286,7 +286,7 @@ module Heroku
                 value = peek && !peek.match(/^--/) ? peek : 'true'
               end
               key = key.sub(/^--/,'')
-              options[key] = value 
+              options[key] = value
             end
           end
         end
@@ -316,11 +316,11 @@ module Heroku
             end
           end
         end
-        
+
         def self.parse(args)
           if args[0] == 'test' && args[1] == 'provision'
             safe_args, extra_params = self.pre_parse(args)
-            self.defaults.tap do |options| 
+            self.defaults.tap do |options|
               options.merge! self.parse_command_line(safe_args)
               options.merge! :options => self.parse_provision(extra_params, args)
             end
@@ -328,7 +328,7 @@ module Heroku
             self.defaults.merge(self.parse_command_line(args))
           end
         end
-      end 
+      end
     end
   end
 end
