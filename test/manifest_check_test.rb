@@ -100,7 +100,7 @@ class ManifestCheckTest < Test::Unit::TestCase
       end
 
       test "username is deprecated" do
-        @data["api"]["username"] = "heroku"
+        @data["api"]["username"] = "action"
         assert_invalid
       end
     end

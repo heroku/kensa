@@ -85,12 +85,12 @@ module Action
 
       def push
         user, password = ask_for_credentials
-        host     = heroku_host
+        host     = action_host
         data     = decoded_manifest
         resource = RestClient::Resource.new(host, user, password)
         resource['provider/addons'].post(resolve_manifest, headers)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
-        puts "       Continue at #{(heroku_host)}/provider/addons/#{data['id']}"
+        puts "       Continue at #{(action_host)}/provider/addons/#{data['id']}"
       rescue RestClient::UnprocessableEntity => e
         abort("FAILED: #{e.http_body}")
       rescue RestClient::Unauthorized
@@ -104,7 +104,7 @@ module Action
         protect_current_manifest!
 
         user, password = ask_for_credentials
-        host     = heroku_host
+        host     = action_host
         resource = RestClient::Resource.new(host, user, password)
         manifest = resource["provider/addons/#{addon}"].get(headers)
         File.open(filename, 'w') { |f| f.puts manifest }
@@ -136,8 +136,8 @@ module Action
           { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
         end
 
-        def heroku_host
-          ENV['ADDONS_URL'] || 'https://addons.heroku.com'
+        def action_host
+          ENV['ADDONS_URL'] || 'https://addons.action.io'
         end
 
         def resolve_manifest

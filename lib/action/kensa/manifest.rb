@@ -36,11 +36,11 @@ JSON
     "config_vars": [ "MYADDON_URL" ],
     "password": "#{@password}",#{ sso_key }
     "production": {
-      "base_url": "https://yourapp.com/heroku/resources",
+      "base_url": "https://yourapp.com/aio/resources",
       "sso_url": "https://yourapp.com/sso/login"
     },
     "test": {
-      "base_url": "http://localhost:#{@port}/heroku/resources",
+      "base_url": "http://localhost:#{@port}/aio/resources",
       "sso_url": "http://localhost:#{@port}/sso/login"
     }
   }

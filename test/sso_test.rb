@@ -18,7 +18,7 @@ class SsoTest < Test::Unit::TestCase
       data = CGI.parse(query)
 
 
-      assert_equal "#{@data['api'][env]}heroku/resources/1", url 
+      assert_equal "#{@data['api'][env]}aio/resources/1", url
       assert_equal 'b6010f6fbb850887a396c2bc0ab23974003008f6', data['token'].first
       assert_equal '1262304000', data['timestamp'].first
       assert_equal 'username@example.com', data['email'].first
@@ -27,11 +27,11 @@ class SsoTest < Test::Unit::TestCase
     context 'sso' do
       setup do
         Timecop.freeze Time.utc(2010, 1)
-        @sso = Sso.new @data 
+        @sso = Sso.new @data
       end
 
       test 'builds path' do
-        assert_equal '/heroku/resources/1', @sso.path
+        assert_equal '/aio/resources/1', @sso.path
       end
 
       test 'builds full url' do
@@ -68,7 +68,7 @@ class SsoTest < Test::Unit::TestCase
       end
 
       test 'builds full url' do
-        expected = 'http://localhost:4567/heroku/resources/1'
+        expected = 'http://localhost:4567/aio/resources/1'
 
         assert @sso.full_url.include?(expected)
       end
@@ -124,7 +124,7 @@ class SsoTest < Test::Unit::TestCase
     end
 
     context "with the proxy working" do
-      setup do 
+      setup do
         any_instance_of(Sso, :run_proxy => false)
         @sso = Sso.new(@data).start
       end

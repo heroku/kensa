@@ -34,7 +34,7 @@ class SsoCheckTest < Test::Unit::TestCase
         assert_invalid
       end
 
-      test "reject missing heroku layout" do
+      test "reject missing action layout" do
         use_provider_endpoint("nolayout", 'sso')
         assert_invalid
       end

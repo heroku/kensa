@@ -25,7 +25,7 @@ module Action
         if self.POST?
           URI.parse(url).path
         else
-          "/heroku/resources/#{id}"
+          "/aio/resources/#{id}"
         end
       end
 

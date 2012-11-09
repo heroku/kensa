@@ -1,5 +1,5 @@
 module Action
   module Kensa
-    VERSION = '1.4.1'
+    VERSION = '0.0.1'
   end
 end
