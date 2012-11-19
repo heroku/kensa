@@ -47,8 +47,8 @@ class InitTest < Test::Unit::TestCase
 
   def assert_foreman_env(env, manifest)
     assert env.include?("SSO_SALT=#{manifest['api']['sso_salt']}\n")
-    assert env.include?("HEROKU_USERNAME=#{manifest['id']}\n")
-    assert env.include?("HEROKU_PASSWORD=#{manifest['api']['password']}")
+    assert env.include?("AIO_USERNAME=#{manifest['id']}\n")
+    assert env.include?("AIO_PASSWORD=#{manifest['api']['password']}")
   end
 
   def test_init_with_foreman_flag_and_get

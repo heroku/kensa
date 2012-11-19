@@ -52,8 +52,8 @@ JSON
       def foreman
         <<-ENV
 SSO_SALT=#{@sso_salt}
-HEROKU_USERNAME=myaddon
-HEROKU_PASSWORD=#{@password}
+AIO_USERNAME=myaddon
+AIO_PASSWORD=#{@password}
 ENV
       end
 
