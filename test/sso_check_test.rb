@@ -1,18 +1,18 @@
-require 'test/helper'
+require './test/helper'
 
 class SsoCheckTest < Test::Unit::TestCase
-  include Heroku::Kensa
+  include Action::Kensa
   include ProviderMock
 
   def check ; SsoCheck ; end
-  %w{get post}.each do |method| 
+  %w{get post}.each do |method|
     context "via #{method}" do
       setup do
         @data = Manifest.new(:sso => true, :method => method).
           skeleton.merge :id => 123
         @data['api']['sso_salt'] = 'SSO_SALT'
       end
-      
+
       test "working sso request" do
         use_provider_endpoint('working', 'sso')
         assert_valid
@@ -34,7 +34,7 @@ class SsoCheckTest < Test::Unit::TestCase
         assert_invalid
       end
 
-      test "reject missing heroku layout" do
+      test "reject missing action layout" do
         use_provider_endpoint("nolayout", 'sso')
         assert_invalid
       end

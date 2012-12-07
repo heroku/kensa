@@ -1,4 +1,4 @@
-module Heroku
+module Action
   module Kensa
 
     class NilScreen

@@ -9,14 +9,14 @@ end
 
 class ProviderServer < Sinatra::Base
 helpers do
-  def heroku_only!
-    unless auth_heroku?
+  def action_only!
+    unless auth_action?
       response['WWW-Authenticate'] = %(Basic realm="Kensa Test Server")
       unauthorized!(401)
     end
   end
 
-  def auth_heroku?
+  def auth_action?
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
     @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ['myaddon', 'secret']
   end
@@ -35,88 +35,88 @@ helpers do
       raise "#{param} not included with request" unless params.keys.include? param
     end
   end
-  
-  def login(heroku_user=true)
-  @header = heroku_user
+
+  def login(action_user=true)
+  @header = action_user
   haml <<-HAML
 %html
 %body
   - if @header
-    #heroku-header
-      %h1 Heroku
+    #aio-header
+      %h1 Action.IO
   %h1 Sample Addon
 HAML
   end
 end
 
-post '/heroku/resources' do
-  heroku_only!
+post '/aio/resources' do
+  action_only!
   { :id => 123 }.to_json
 end
 
-post '/working/heroku/resources' do
-  json_must_include(%w{heroku_id plan callback_url logplex_token options})
-  heroku_only!
+post '/working/aio/resources' do
+  json_must_include(%w{action_id plan callback_url logplex_token options})
+  action_only!
   { :id => 123 }.to_json
 end
 
-post '/cmd-line-options/heroku/resources' do
-  heroku_only!
+post '/cmd-line-options/aio/resources' do
+  action_only!
   options = OkJson.decode(request.body.read)['options']
   raise "Where are my options?" unless options['foo'] && options['bar']
   { :id => 123 }.to_json
 end
 
-post '/foo/heroku/resources' do
-  heroku_only!
+post '/foo/aio/resources' do
+  action_only!
   'foo'
 end
 
-post '/invalid-json/heroku/resources' do
-  heroku_only!
+post '/invalid-json/aio/resources' do
+  action_only!
   'invalidjson'
 end
 
-post '/invalid-response/heroku/resources' do
-  heroku_only!
+post '/invalid-response/aio/resources' do
+  action_only!
   'null'
 end
 
-post '/invalid-status/heroku/resources' do
-  heroku_only!
+post '/invalid-status/aio/resources' do
+  action_only!
   status 422
   { :id => 123 }.to_json
 end
 
-post '/invalid-missing-id/heroku/resources' do
-  heroku_only!
+post '/invalid-missing-id/aio/resources' do
+  action_only!
   { :noid => 123 }.to_json
 end
 
-post '/invalid-missing-auth/heroku/resources' do
+post '/invalid-missing-auth/aio/resources' do
   { :id => 123 }.to_json
 end
 
 
-put '/working/heroku/resources/:id' do
-  json_must_include(%w{heroku_id plan})
-  heroku_only!
+put '/working/aio/resources/:id' do
+  json_must_include(%w{action_id plan})
+  action_only!
   {}.to_json
 end
 
-put '/invalid-missing-auth/heroku/resources/:id' do
+put '/invalid-missing-auth/aio/resources/:id' do
   { :id => 123 }.to_json
 end
 
-put '/invalid-status/heroku/resources/:id' do
-  heroku_only!
+put '/invalid-status/aio/resources/:id' do
+  action_only!
   status 422
   {}.to_json
 end
 
 
-delete '/working/heroku/resources/:id' do
-  heroku_only!
+delete '/working/aio/resources/:id' do
+  action_only!
   "Ok"
 end
 
@@ -124,11 +124,11 @@ def sso
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
-  response.set_cookie('heroku-nav-data', params['nav-data'])
+  response.set_cookie('aio-nav-data', params['nav-data'])
   login
 end
 
-get '/working/heroku/resources/:id' do
+get '/working/aio/resources/:id' do
   sso
 end
 
@@ -140,11 +140,11 @@ end
 def notoken
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
-  response.set_cookie('heroku-nav-data', params['nav-data'])
+  response.set_cookie('aio-nav-data', params['nav-data'])
   login
 end
 
-get '/notoken/heroku/resources/:id' do
+get '/notoken/aio/resources/:id' do
   notoken
 end
 
@@ -155,11 +155,11 @@ end
 def notimestamp
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:token] == make_token
-  response.set_cookie('heroku-nav-data', params['nav-data'])
+  response.set_cookie('aio-nav-data', params['nav-data'])
   login
 end
 
-get '/notimestamp/heroku/resources/:id' do
+get '/notimestamp/aio/resources/:id' do
   notimestamp
 end
 
@@ -171,11 +171,11 @@ def nolayout
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
-  response.set_cookie('heroku-nav-data', params['nav-data'])
+  response.set_cookie('aio-nav-data', params['nav-data'])
   login(false)
 end
 
-get '/nolayout/heroku/resources/:id' do
+get '/nolayout/aio/resources/:id' do
   nolayout
 end
 
@@ -190,7 +190,7 @@ def nocookie
   login
 end
 
-get '/nocookie/heroku/resources/:id' do
+get '/nocookie/aio/resources/:id' do
   nocookie
 end
 
@@ -202,11 +202,11 @@ def badcookie
   unauthorized! unless params[:id] && params[:token]
   unauthorized! unless params[:timestamp].to_i > (Time.now-60*2).to_i
   unauthorized! unless params[:token] == make_token
-  response.set_cookie('heroku-nav-data', 'wrong value')
+  response.set_cookie('aio-nav-data', 'wrong value')
   login
 end
 
-get '/badcookie/heroku/resources/:id' do
+get '/badcookie/aio/resources/:id' do
   badcookie
 end
 
@@ -219,7 +219,7 @@ def sso_user
   sso
 end
 
-get '/user/heroku/resources/:id' do
+get '/user/aio/resources/:id' do
   sso_user
 end
 

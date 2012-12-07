@@ -3,7 +3,7 @@ require 'socket'
 require 'timeout'
 require 'uri'
 
-module Heroku
+module Action
   module Kensa
     class Check
       attr_accessor :screen, :data
@@ -115,7 +115,7 @@ module Heroku
           end
         end
 
-        if data["api"].has_key?("config_vars") 
+        if data["api"].has_key?("config_vars")
           check "contains config_vars array" do
             data["api"]["config_vars"].is_a?(Array)
           end
@@ -179,7 +179,7 @@ module Heroku
           end
 
           check "all keys in the manifest are present" do
-            difference = data['api']['config_vars'] - response['config'].keys 
+            difference = data['api']['config_vars'] - response['config'].keys
             unless difference.empty?
               verb = (difference.size == 1) ? "is" : "are"
               error "#{difference.join(', ')} #{verb} missing from the manifest"
@@ -222,12 +222,12 @@ module Heroku
         if data['api'][env].is_a? Hash
           URI.parse(data['api'][env]['base_url']).path
         else
-          '/heroku/resources'
+          '/aio/resources'
         end
       end
 
-      def heroku_id
-        "app#{rand(10000)}@kensa.heroku.com"
+      def action_id
+        "app#{rand(10000)}@kensa.action.io"
       end
 
       def credentials
@@ -250,9 +250,9 @@ module Heroku
         reader, writer = nil
 
         payload = {
-          :heroku_id => heroku_id,
+          :action_id => action_id,
           :plan => data[:plan] || 'test',
-          :callback_url => callback, 
+          :callback_url => callback,
           :logplex_token => nil,
           :options => data[:options] || {}
         }
@@ -261,7 +261,7 @@ module Heroku
           reader, writer = IO.pipe
         end
 
-        test "POST /heroku/resources"
+        test "POST /aio/resources"
         check "response" do
           if data[:async]
             child = fork do
@@ -369,7 +369,7 @@ module Heroku
         raise ArgumentError, "No plan specified" if new_plan.nil?
 
         path = "#{base_path}/#{CGI::escape(id.to_s)}"
-        payload = {:plan => new_plan, :heroku_id => heroku_id}
+        payload = {:plan => new_plan, :action_id => action_id}
 
         test "PUT #{path}"
         check "response" do
@@ -427,7 +427,7 @@ module Heroku
 
         check "validates token" do
           @sso.token = 'invalid'
-          page, respcode = mechanize_get 
+          page, respcode = mechanize_get
           error("expected 403, got #{respcode}") unless respcode == 403
           true
         end
@@ -441,20 +441,20 @@ module Heroku
 
         page_logged_in = nil
         check "logs in" do
-          page_logged_in, respcode = mechanize_get 
+          page_logged_in, respcode = mechanize_get
           error("expected 200, got #{respcode}") unless respcode == 200
           true
         end
 
-        check "creates the heroku-nav-data cookie" do
-          cookie = agent.cookie_jar.cookies(URI.parse(@sso.full_url)).detect { |c| c.name == 'heroku-nav-data' }
-          error("could not find cookie heroku-nav-data") unless cookie
+        check "creates the aio-nav-data cookie" do
+          cookie = agent.cookie_jar.cookies(URI.parse(@sso.full_url)).detect { |c| c.name == 'aio-nav-data' }
+          error("could not find cookie aio-nav-data") unless cookie
           error("expected #{@sso.sample_nav_data}, got #{cookie.value}") unless cookie.value == @sso.sample_nav_data
           true
         end
 
-        check "displays the heroku layout" do
-          error("could not find Heroku layout") if page_logged_in.search('div#heroku-header').empty?
+        check "displays the action.io layout" do
+          error("could not find Action.IO layout") if page_logged_in.search('div#aio-header').empty?
           true
         end
       end

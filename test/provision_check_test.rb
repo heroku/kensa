@@ -1,12 +1,12 @@
-require 'test/helper'
+require './test/helper'
 
 class ProvisionCheckTest < Test::Unit::TestCase
-  include Heroku::Kensa
+  include Action::Kensa
   include ProviderMock
 
   def check ; ProvisionCheck ; end
 
-  ['get', 'post'].each do |method| 
+  ['get', 'post'].each do |method|
     context "with sso #{method}" do
       setup do
         @data = Manifest.new(:method => method).skeleton
@@ -15,7 +15,7 @@ class ProvisionCheckTest < Test::Unit::TestCase
 
       test "trims url" do
         c = check.new(@data)
-        assert_equal c.url, 'http://localhost:4567' 
+        assert_equal c.url, 'http://localhost:4567'
       end
 
       test "working provision call" do

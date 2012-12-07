@@ -3,3 +3,4 @@ pkg/
 .rvmrc
 tags
 test_log.txt
+*.gem

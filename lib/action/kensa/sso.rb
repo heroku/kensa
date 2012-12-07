@@ -1,7 +1,7 @@
 require 'restclient'
 require 'uri'
 
-module Heroku
+module Action
   module Kensa
     class Sso
       attr_accessor :id, :url, :proxy_port, :timestamp, :token
@@ -16,16 +16,16 @@ module Heroku
           @proxy_port = find_available_port
         else
           @url  = data["api"][env].chomp('/')
-        end 
+        end
         @timestamp  = Time.now.to_i
         @token      = make_token(@timestamp)
       end
 
       def path
-        if self.POST? 
+        if self.POST?
           URI.parse(url).path
         else
-          "/heroku/resources/#{id}"
+          "/aio/resources/#{id}"
         end
       end
 
@@ -53,7 +53,7 @@ module Heroku
       def timestamp=(other)
         @timestamp = other
         @token = make_token(@timestamp)
-      end 
+      end
 
       def make_token(t)
         Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
@@ -61,7 +61,7 @@ module Heroku
 
       def querystring
         return '' unless @salt
-        '?' + query_data 
+        '?' + query_data
       end
 
       def query_data
@@ -69,10 +69,10 @@ module Heroku
       end
 
       def query_params
-        { 'token'     => @token,  
+        { 'token'     => @token,
           'timestamp' => @timestamp.to_s,
           'nav-data'  => sample_nav_data,
-          'email'     => 'username@example.com' 
+          'email'     => 'username@example.com'
         }.tap do |params|
           params.merge!('id' => @id) if self.POST?
         end
@@ -123,7 +123,7 @@ module Heroku
 
         trap("INT") { server.stop }
         pid = fork do
-          server.start 
+          server.start
         end
         at_exit { server.stop; Process.waitpid pid }
       end

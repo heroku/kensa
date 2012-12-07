@@ -2,8 +2,10 @@ require 'restclient'
 require 'term/ansicolor'
 require 'launchy'
 require 'optparse'
+require 'json'
+require File.expand_path(File.dirname(__FILE__) + '/oauth_client')
 
-module Heroku
+module Action
   module Kensa
     class Client
       attr_accessor :options
@@ -11,6 +13,7 @@ module Heroku
       def initialize(args, options = {})
         @args    = args
         @options = OptParser.parse(args).merge(options)
+        @oauth_client = OauthClient.new
       end
 
       class CommandInvalid < Exception; end
@@ -25,7 +28,7 @@ module Heroku
         manifest = Manifest.new(@options)
         protect_current_manifest!
         manifest.write
-        screen.message "Initialized new addon manifest in #{filename}\n" 
+        screen.message "Initialized new addon manifest in #{filename}\n"
         if @options[:foreman]
           screen.message "Initialized new .env file for foreman\n"
         end
@@ -42,7 +45,7 @@ module Heroku
           @options[:foreman] = true
           init
         rescue Exception => e
-          raise CommandInvalid.new("error cloning #{Git.clone_url(template)} into #{app_name}") 
+          raise CommandInvalid.new("error cloning #{Git.clone_url(template)} into #{app_name}")
         end
       end
 
@@ -84,19 +87,25 @@ module Heroku
       end
 
       def push
-        user, password = ask_for_credentials
-        host     = heroku_host
-        data     = decoded_manifest
-        resource = RestClient::Resource.new(host, user, password)
-        resource['provider/addons'].post(resolve_manifest, headers)
-        puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
-        puts "       Continue at #{(heroku_host)}/provider/addons/#{data['id']}"
-      rescue RestClient::UnprocessableEntity => e
-        abort("FAILED: #{e.http_body}")
-      rescue RestClient::Unauthorized
-        abort("Authentication failure")
-      rescue RestClient::Forbidden
-        abort("Not authorized to push this manifest. Please make sure you have permissions to push it")
+        if !@oauth_client.authenticated?
+          user, password = ask_for_credentials
+          @oauth_client.authenticate!(user, password)
+        end
+
+        payload = { addon: { payload: JSON.dump(decoded_manifest) } }
+        @oauth_client.request(:post, '/providers/addons', params: payload)
+
+        puts "-----> Manifest for \"#{decoded_manifest['id']}\" was pushed successfully"
+        puts "       Continue at #{(action_host)}/provider/addons/#{decoded_manifest['id']}"
+
+      rescue OAuth2::Error => err
+        if /invalid_resource_owner/ =~ err.message
+          abort 'Authentication failure'
+        elsif /invalid_scope/ =~ err.message
+          abort 'Not authorized to push this manifest. Please make sure you have permissions to push it'
+        else
+          abort err.message
+        end
       end
 
       def pull
@@ -104,7 +113,7 @@ module Heroku
         protect_current_manifest!
 
         user, password = ask_for_credentials
-        host     = heroku_host
+        host     = action_host
         resource = RestClient::Resource.new(host, user, password)
         manifest = resource["provider/addons/#{addon}"].get(headers)
         File.open(filename, 'w') { |f| f.puts manifest }
@@ -123,7 +132,7 @@ module Heroku
             puts
           end
         end
-        
+
         def filename
           @options[:filename]
         end
@@ -136,8 +145,8 @@ module Heroku
           { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
         end
 
-        def heroku_host
-          ENV['ADDONS_URL'] || 'https://addons.heroku.com'
+        def action_host
+          ENV['ADDONS_URL'] || 'https://addons.action.io'
         end
 
         def resolve_manifest
@@ -184,7 +193,7 @@ module Heroku
         end
 
         def ask_for_credentials
-          puts "Enter your Heroku Provider credentials."
+          puts "Enter your Action.IO Provider credentials."
 
           print "Email: "
           user = gets.strip
@@ -272,7 +281,7 @@ module Heroku
         # OptionParser errors out on unnamed options so we have to pull out all the --flags and --flag=somethings
         KNOWN_ARGS = %w{file async production without-sso help plan version sso foreman template}
         def self.pre_parse(args)
-          args.partition do |token| 
+          args.partition do |token|
             token.match(/^--/) && !token.match(/^--(#{KNOWN_ARGS.join('|')})/)
           end.reverse
         end
@@ -286,7 +295,7 @@ module Heroku
                 value = peek && !peek.match(/^--/) ? peek : 'true'
               end
               key = key.sub(/^--/,'')
-              options[key] = value 
+              options[key] = value
             end
           end
         end
@@ -316,11 +325,11 @@ module Heroku
             end
           end
         end
-        
+
         def self.parse(args)
           if args[0] == 'test' && args[1] == 'provision'
             safe_args, extra_params = self.pre_parse(args)
-            self.defaults.tap do |options| 
+            self.defaults.tap do |options|
               options.merge! self.parse_command_line(safe_args)
               options.merge! :options => self.parse_provision(extra_params, args)
             end
@@ -328,7 +337,7 @@ module Heroku
             self.defaults.merge(self.parse_command_line(args))
           end
         end
-      end 
+      end
     end
   end
 end

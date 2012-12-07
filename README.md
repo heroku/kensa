@@ -1,11 +1,11 @@
-Kensa
-=====
+Action Kensa
+============
 
-<img src="https://secure.travis-ci.org/heroku/kensa.png" />
+<img src="https://secure.travis-ci.org/action-io/action-kensa.png" />
 
-Kensa is a command-line utility to help Heroku add-on providers integrating
-their services to Heroku. It offers commands to create and validate manifests,
-and to run the same API calls Heroku runs on your service to provision and
+Kensa is a command-line utility to help Action.IO add-on providers integrating
+their services to Action.IO. It offers commands to create and validate manifests,
+and to run the same API calls Action.IO runs on your service to provision and
 deprovision resources.
 
 
@@ -13,19 +13,15 @@ deprovision resources.
 
 Install it like any Ruby Gem:
 
-    $ gem install kensa
-
-
-## Usage ######################################################################
-
-Refer to the Heroku Add-ons Resource Center for more information on usage, and
-how to build your Heroku add-on:
-
-http://provider.heroku.com/resources/technical/build/provisioning
+    $ gem install action-kensa
 
 
 ## Meta #######################################################################
 
-Maintained by Glenn Gillen and csquared.
+This is a fork of Heroku's Kensa project. Action Kensa maintains API
+compatability with the Heroku Add-Ons API.
 
-Released under the MIT license. http://github.com/heroku/kensa
+Oringally created by Glenn Gillen and csquared. Now maintained by
+action.io.
+
+Released under the MIT license. http://github.com/action-io/action-kensa

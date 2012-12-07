@@ -1,4 +1,4 @@
-module Heroku
+module Action
   module Kensa
     class Git
       class << self
@@ -20,15 +20,15 @@ module Heroku
           system(cmd)
         end
 
-        def heroku_prefix
-          ENV["REPO_PREFIX"] || "heroku/kensa-create-"
+        def action_prefix
+          ENV["REPO_PREFIX"] || "action-io/action-kensa-create-"
         end
 
         def clone_url(name)
           if name.include? "://" #its a full url not on github
             return name
-          elsif !name.include? "/" #its one of ours 
-            name = heroku_prefix + name
+          elsif !name.include? "/" #its one of ours
+            name = action_prefix + name
           end
 
           "git://github.com/#{name}"

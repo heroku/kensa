@@ -1,4 +1,4 @@
-module Heroku
+module Action
   module Kensa
     class Manifest
 
@@ -36,11 +36,11 @@ JSON
     "config_vars": [ "MYADDON_URL" ],
     "password": "#{@password}",#{ sso_key }
     "production": {
-      "base_url": "https://yourapp.com/heroku/resources",
+      "base_url": "https://yourapp.com/aio/resources",
       "sso_url": "https://yourapp.com/sso/login"
     },
     "test": {
-      "base_url": "http://localhost:#{@port}/heroku/resources",
+      "base_url": "http://localhost:#{@port}/aio/resources",
       "sso_url": "http://localhost:#{@port}/sso/login"
     }
   }
@@ -52,8 +52,8 @@ JSON
       def foreman
         <<-ENV
 SSO_SALT=#{@sso_salt}
-HEROKU_USERNAME=myaddon
-HEROKU_PASSWORD=#{@password}
+AIO_USERNAME=myaddon
+AIO_PASSWORD=#{@password}
 ENV
       end
 
