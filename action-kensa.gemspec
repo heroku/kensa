@@ -35,5 +35,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0"])
   s.add_runtime_dependency(%q<launchy>, [">= 0.3.2"])
   s.add_runtime_dependency(%q<mechanize>, ["~> 1.0.0"])
+  s.add_runtime_dependency(%q<oauth2>, ["~> 0.8.0"])
+  s.add_runtime_dependency(%q<netrc>, ["~> 0.7.7"])
 end
-

@@ -2,6 +2,8 @@ require 'restclient'
 require 'term/ansicolor'
 require 'launchy'
 require 'optparse'
+require 'json'
+require File.expand_path(File.dirname(__FILE__) + '/oauth_client')
 
 module Action
   module Kensa
@@ -11,6 +13,7 @@ module Action
       def initialize(args, options = {})
         @args    = args
         @options = OptParser.parse(args).merge(options)
+        @oauth_client = OauthClient.new
       end
 
       class CommandInvalid < Exception; end
@@ -84,19 +87,25 @@ module Action
       end
 
       def push
-        user, password = ask_for_credentials
-        host     = action_host
-        data     = decoded_manifest
-        resource = RestClient::Resource.new(host, user, password)
-        resource['provider/addons'].post(resolve_manifest, headers)
-        puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
-        puts "       Continue at #{(action_host)}/provider/addons/#{data['id']}"
-      rescue RestClient::UnprocessableEntity => e
-        abort("FAILED: #{e.http_body}")
-      rescue RestClient::Unauthorized
-        abort("Authentication failure")
-      rescue RestClient::Forbidden
-        abort("Not authorized to push this manifest. Please make sure you have permissions to push it")
+        if !@oauth_client.authenticated?
+          user, password = ask_for_credentials
+          @oauth_client.authenticate!(user, password)
+        end
+
+        payload = { addon: { payload: JSON.dump(decoded_manifest) } }
+        @oauth_client.request(:post, '/providers/addons', params: payload)
+
+        puts "-----> Manifest for \"#{decoded_manifest['id']}\" was pushed successfully"
+        puts "       Continue at #{(action_host)}/provider/addons/#{decoded_manifest['id']}"
+
+      rescue OAuth2::Error => err
+        if /invalid_resource_owner/ =~ err.message
+          abort 'Authentication failure'
+        elsif /invalid_scope/ =~ err.message
+          abort 'Not authorized to push this manifest. Please make sure you have permissions to push it'
+        else
+          abort err.message
+        end
       end
 
       def pull
@@ -184,7 +193,7 @@ module Action
         end
 
         def ask_for_credentials
-          puts "Enter your Heroku Provider credentials."
+          puts "Enter your Action.IO Provider credentials."
 
           print "Email: "
           user = gets.strip
