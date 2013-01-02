@@ -1,7 +1,6 @@
-Kensa
-=====
+# Kensa
 
-<img src="https://secure.travis-ci.org/heroku/kensa.png" />
+![](https://secure.travis-ci.org/heroku/kensa.png)
 
 Kensa is a command-line utility to help Heroku add-on providers integrating
 their services to Heroku. It offers commands to create and validate manifests,
@@ -21,11 +20,11 @@ Install it like any Ruby Gem:
 Refer to the Heroku Add-ons Resource Center for more information on usage, and
 how to build your Heroku add-on:
 
-http://provider.heroku.com/resources/technical/build/provisioning
+<http://provider.heroku.com/resources/technical/build/provisioning>
 
 
 ## Meta #######################################################################
 
 Maintained by Glenn Gillen and csquared.
 
-Released under the MIT license. http://github.com/heroku/kensa
+Released under the MIT license. <http://github.com/heroku/kensa>
