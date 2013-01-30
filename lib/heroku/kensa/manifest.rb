@@ -1,3 +1,5 @@
+require 'securerandom'
+
 module Heroku
   module Kensa
     class Manifest
@@ -75,9 +77,8 @@ ENV
           end
         end
 
-        PasswordChars = chars = ['a'..'z', 'A'..'Z', '0'..'9'].map { |r| r.to_a }.flatten
-        def generate_password(size=16)
-          Array.new(size) { PasswordChars[rand(PasswordChars.size)] }.join
+        def generate_password(size=8)
+          SecureRandom.hex(size)
         end
 
     end
