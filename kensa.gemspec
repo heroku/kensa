@@ -34,6 +34,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency(%q<rest-client>, ["< 1.7.0", ">= 1.4.0"])
   s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0"])
   s.add_runtime_dependency(%q<launchy>, [">= 0.3.2"])
-  s.add_runtime_dependency(%q<mechanize>, ["~> 1.0.0"])
+  s.add_runtime_dependency(%q<mechanize>, ["~> 2.6.0"])
 end
 
