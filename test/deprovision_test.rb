@@ -29,7 +29,7 @@ class DeprovisionTest < Test::Unit::TestCase
 
   test "requires quthentication" do
     assert_raises RestClient::Unauthorized do
-      resource.delete({})
+      resource.delete
     end
 
     assert_raises RestClient::Unauthorized do

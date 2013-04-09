@@ -68,6 +68,12 @@ delete '/heroku/resources/:id' do
   end
 end
 
+put '/heroku/resources/:id' do
+  heroku_only!
+  json_must_include(%w{heroku_id plan})
+  {}.to_json
+end
+
 post '/working/heroku/resources' do
   json_must_include(%w{heroku_id plan callback_url logplex_token options})
   heroku_only!
