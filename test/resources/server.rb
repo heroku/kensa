@@ -59,6 +59,15 @@ post '/heroku/resources' do
   end
 end
 
+delete '/heroku/resources/:id' do
+  begin
+    heroku_only!
+    { :id => 123 }.to_json
+  rescue Exception => ex
+    halt 422, { :message => ex.message}
+  end
+end
+
 post '/working/heroku/resources' do
   json_must_include(%w{heroku_id plan callback_url logplex_token options})
   heroku_only!
