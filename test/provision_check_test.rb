@@ -114,11 +114,6 @@ class ProvisionCheckTest < Test::Unit::TestCase
         use_provider_endpoint "invalid-missing-id"
         assert_invalid
       end
-
-      test "detects missing auth" do
-        use_provider_endpoint "invalid-missing-auth"
-        assert_invalid
-      end
     end
   end
 end
