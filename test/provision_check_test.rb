@@ -86,9 +86,18 @@ class ProvisionTest < Test::Unit::TestCase
   end
 
   test "returns JSON response" do
+    response = authed_resource.post(valid_provision_hash.to_json)
+    hash = OkJson.decode(response.body)
+    assert hash
   end
 
   test "returns Provider ID" do
+    response = authed_resource.post(valid_provision_hash.to_json)
+    hash = OkJson.decode(response.body)
+    assert hash.has_key?("id")
+  end
+
+  test "returns app config" do
   end
 
 end
