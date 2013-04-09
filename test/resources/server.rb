@@ -35,7 +35,7 @@ helpers do
       raise "#{param} not included with request" unless params.keys.include? param
     end
   end
-  
+
   def login(heroku_user=true)
   @header = heroku_user
   haml <<-HAML
@@ -50,8 +50,13 @@ HAML
 end
 
 post '/heroku/resources' do
-  heroku_only!
-  { :id => 123 }.to_json
+  begin
+    heroku_only!
+    json_must_include(%w{heroku_id plan callback_url})
+    { :id => 123 }.to_json
+  rescue Exception => ex
+    halt 422, { :message => ex.message}
+  end
 end
 
 post '/working/heroku/resources' do

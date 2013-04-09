@@ -23,6 +23,16 @@ class ProvisionTest < Test::Unit::TestCase
     RestClient::Resource.new(@uri.to_s, user, pass)
   end
 
+  def authed_resource
+    resource(@manifest['id'], @manifest['api']['password'])
+  end
+
+  def valid_provision_hash
+    {"heroku_id" => "app123@heroku.com",
+     "plan" => "test",
+     "callback_url" => "https://api.heroku.com/vendor/apps/app123%40heroku.com" }
+  end
+
   test "requires quthentication" do
     assert_raises RestClient::Unauthorized do
       resource.post({})
@@ -41,11 +51,32 @@ class ProvisionTest < Test::Unit::TestCase
     end
 
     assert_nothing_raised RestClient::Unauthorized do
-      resource(@manifest['id'], @manifest['api']['password']).post({})
+      authed_resource.post(valid_provision_hash.to_json)
     end
   end
 
   test "detects missing Heroku ID" do
+    assert_raises RestClient::UnprocessableEntity do
+      params = valid_provision_hash.dup
+      params.delete("heroku_id")
+      authed_resource.post(params.to_json)
+    end
+  end
+
+  test "detects missing plan" do
+    assert_raises RestClient::UnprocessableEntity do
+      params = valid_provision_hash.dup
+      params.delete("plan")
+      authed_resource.post(params.to_json)
+    end
+  end
+
+  test "detects callback URL" do
+    assert_raises RestClient::UnprocessableEntity do
+      params = valid_provision_hash.dup
+      params.delete("callback_url")
+      authed_resource.post(params.to_json)
+    end
   end
 
   test "returns JSON response" do
@@ -106,10 +137,6 @@ class ProvisionCheckTest < Test::Unit::TestCase
         assert_invalid
       end
 
-      test "detects missing id" do
-        use_provider_endpoint "invalid-missing-id"
-        assert_invalid
-      end
     end
   end
 end
