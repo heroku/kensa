@@ -48,6 +48,11 @@ class DeprovisionTest < Test::Unit::TestCase
       authed_resource.delete
     end
   end
+
+  test "returns 200 response" do
+    response = authed_resource.delete
+    assert_equal 200, response.code
+  end
 end
 
 class DeprovisionCheckTest < Test::Unit::TestCase

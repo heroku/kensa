@@ -62,7 +62,7 @@ end
 delete '/heroku/resources/:id' do
   begin
     heroku_only!
-    { :id => 123 }.to_json
+    status 200
   rescue Exception => ex
     halt 422, { :message => ex.message}
   end
