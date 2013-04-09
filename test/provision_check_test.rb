@@ -79,6 +79,12 @@ class ProvisionTest < Test::Unit::TestCase
     end
   end
 
+  test "detects invalid JSON" do
+    assert_raises RestClient::UnprocessableEntity do
+      authed_resource.post(valid_provision_hash.to_json[0..-3])
+    end
+  end
+
   test "returns JSON response" do
   end
 
