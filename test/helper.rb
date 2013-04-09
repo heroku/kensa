@@ -4,7 +4,7 @@ require 'contest'
 require 'timecop'
 require 'rr'
 require 'artifice'
-require 'test/resources/server'
+require_relative 'resources/server'
 require 'fakefs/safe'
 
 class Test::Unit::TestCase
@@ -47,7 +47,7 @@ class Test::Unit::TestCase
   #this prepends a prefix for the provider server
   #in test/resources/server.rb
   def use_provider_endpoint(name, type = 'base')
-    if @data['api']['test'].is_a? Hash 
+    if @data['api']['test'].is_a? Hash
       url = @data['api']['test']["#{type}_url"]
       path = URI.parse(url).path
       @data['api']['test']["#{type}_url"] = url.sub(path, "/#{name}#{path}")
@@ -55,7 +55,7 @@ class Test::Unit::TestCase
       @data['api']['test'] += "#{name}"
     end
   end
-  
+
   def trace!
     @screen = Heroku::Kensa::IOScreen.new(STDOUT)
   end
@@ -64,7 +64,7 @@ class Test::Unit::TestCase
     @screen ||= Heroku::Kensa::IOScreen.new(StringIO.new("", 'w+'))
   end
 
-  # call trace! in your test before the 
+  # call trace! in your test before the
   # assert to see the output
   def assert_valid(data=@data, &blk)
     check = create_check(data, &blk)

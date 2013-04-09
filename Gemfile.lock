@@ -36,6 +36,7 @@ GEM
       ntlm-http (~> 0.1, >= 0.1.1)
       webrobots (>= 0.0.9, < 0.2)
     mime-types (1.21)
+    minitest (2.5.1)
     net-http-digest_auth (1.2.1)
     net-http-persistent (2.8)
     nokogiri (1.5.9)
@@ -86,6 +87,7 @@ DEPENDENCIES
   fakefs
   haml
   kensa!
+  minitest
   rake
   rr
   ruby-debug

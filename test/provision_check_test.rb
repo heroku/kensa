@@ -1,4 +1,44 @@
-require 'test/helper'
+require_relative 'helper'
+
+class ProvisionTest < Test::Unit::TestCase
+  include Heroku::Kensa
+
+  def setup
+    @manifest = Manifest.new(:method => "post").skeleton
+    @manifest['api']['password'] = 'secret'
+    base_url = @manifest['api']['test']['base_url'].chomp("/")
+    base_url += "/heroku/resources" unless base_url =~ %r{/heroku/resources\z}
+    @uri = URI.parse(base_url)
+    Artifice.activate_with(ProviderServer)
+    super
+  end
+
+  def teardown
+    super
+    Artifice.deactivate
+  end
+
+
+  def resource
+    @resource = RestClient::Resource.new(@uri.to_s)
+  end
+
+  test "requires quthentication" do
+    assert_raises RestClient::Unauthorized do
+      resource.post({})
+    end
+  end
+
+  test "detects missing Heroku ID" do
+  end
+
+  test "returns JSON response" do
+  end
+
+  test "returns Provider ID" do
+  end
+
+end
 
 class ProvisionCheckTest < Test::Unit::TestCase
   include Heroku::Kensa
@@ -6,7 +46,7 @@ class ProvisionCheckTest < Test::Unit::TestCase
 
   def check ; ProvisionCheck ; end
 
-  ['get', 'post'].each do |method| 
+  ['get', 'post'].each do |method|
     context "with sso #{method}" do
       setup do
         @data = Manifest.new(:method => method).skeleton
@@ -15,7 +55,7 @@ class ProvisionCheckTest < Test::Unit::TestCase
 
       test "trims url" do
         c = check.new(@data)
-        assert_equal c.url, 'http://localhost:4567' 
+        assert_equal c.url, 'http://localhost:4567'
       end
 
       test "working provision call" do
