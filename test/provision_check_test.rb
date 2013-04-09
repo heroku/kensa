@@ -85,6 +85,11 @@ class ProvisionTest < Test::Unit::TestCase
     end
   end
 
+  test "returns 200 or 201 response" do
+    response = authed_resource.post(valid_provision_hash.to_json)
+    assert (response.code == (200 || 201))
+  end
+
   test "returns JSON response" do
     response = authed_resource.post(valid_provision_hash.to_json)
     hash = OkJson.decode(response.body)
@@ -114,16 +119,6 @@ class ProvisionCheckTest < Test::Unit::TestCase
       @data['api']['password'] = 'secret'
     end
 
-    test "trims url" do
-      c = check.new(@data)
-      assert_equal c.url, 'http://localhost:4567'
-    end
-
-    test "working provision call" do
-      use_provider_endpoint "working"
-      assert_valid
-    end
-
     test "provision call with extra params" do
       use_provider_endpoint "cmd-line-options"
       @data[:options] = {:foo => 'bar', :bar => 'baz'}
@@ -133,11 +128,6 @@ class ProvisionCheckTest < Test::Unit::TestCase
     # OkJson doesn't handle short strings correctly
     test "doesn't choke on foo" do
       use_provider_endpoint "foo"
-      assert_invalid
-    end
-
-    test "detects invalid JSON" do
-      use_provider_endpoint "invalid-json"
       assert_invalid
     end
 
