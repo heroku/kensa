@@ -19,8 +19,8 @@ class ProvisionTest < Test::Unit::TestCase
   end
 
 
-  def resource
-    RestClient::Resource.new(@uri.to_s)
+  def resource(user = nil, pass = nil)
+    RestClient::Resource.new(@uri.to_s, user, pass)
   end
 
   test "requires quthentication" do
@@ -29,23 +29,19 @@ class ProvisionTest < Test::Unit::TestCase
     end
 
     assert_raises RestClient::Unauthorized do
-      @uri.userinfo = ['incorrect-user', 'incorrect-pass']
-      resource.post({})
+      resource('incorrect-user', 'incorrect-pass').post({})
     end
 
     assert_raises RestClient::Unauthorized do
-      @uri.userinfo = [@manifest['id'], 'incorrect-pass']
-      resource.post({})
+      resource(@manifest['id'], 'incorrect-pass').post({})
     end
 
     assert_raises RestClient::Unauthorized do
-      @uri.userinfo = ['incorrect-user', @manifest['api']['password']]
-      resource.post({})
+      resource('incorrect-user', @manifest['api']['password']).post({})
     end
 
     assert_nothing_raised RestClient::Unauthorized do
-      @uri.userinfo = [@manifest['id'], @manifest['api']['password']]
-      resource.post({})
+      resource(@manifest['id'], @manifest['api']['password']).post({})
     end
   end
 
