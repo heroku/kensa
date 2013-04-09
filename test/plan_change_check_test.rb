@@ -59,6 +59,12 @@ class PlanChangeTest < Test::Unit::TestCase
     response = authed_resource.put(valid_planchange_hash.to_json)
     assert (response.code == (200 || 201))
   end
+
+  test "returns JSON" do
+    response = authed_resource.put(valid_planchange_hash.to_json)
+    hash = OkJson.decode(response.body)
+    assert hash
+  end
 end
 
 class PlanChangeCheckTest < Test::Unit::TestCase
@@ -72,11 +78,6 @@ class PlanChangeCheckTest < Test::Unit::TestCase
     end
 
     def check ; PlanChangeCheck ; end
-
-    test "working plan change call" do
-      use_provider_endpoint "working"
-      assert_valid
-    end
 
     test "detects invalid status" do
       use_provider_endpoint "invalid-status"
