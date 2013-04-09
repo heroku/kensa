@@ -66,22 +66,3 @@ class PlanChangeTest < Test::Unit::TestCase
     assert hash
   end
 end
-
-class PlanChangeCheckTest < Test::Unit::TestCase
-  include Heroku::Kensa
-  include ProviderMock
-
-  context "with sso post" do
-    setup do
-      @data = Manifest.new(:method => "post").skeleton.merge :id => 123, :plan => 'premium'
-      @data['api']['password'] = 'secret'
-    end
-
-    def check ; PlanChangeCheck ; end
-
-    test "detects invalid status" do
-      use_provider_endpoint "invalid-status"
-      assert_invalid
-    end
-  end
-end
