@@ -54,6 +54,11 @@ class PlanChangeTest < Test::Unit::TestCase
       authed_resource.put(valid_planchange_hash.to_json)
     end
   end
+
+  test "returns 200 or 201 response" do
+    response = authed_resource.put(valid_planchange_hash.to_json)
+    assert (response.code == (200 || 201))
+  end
 end
 
 class PlanChangeCheckTest < Test::Unit::TestCase
@@ -75,11 +80,6 @@ class PlanChangeCheckTest < Test::Unit::TestCase
 
     test "detects invalid status" do
       use_provider_endpoint "invalid-status"
-      assert_invalid
-    end
-
-    test "detects missing auth" do
-      use_provider_endpoint "invalid-missing-auth"
       assert_invalid
     end
   end
