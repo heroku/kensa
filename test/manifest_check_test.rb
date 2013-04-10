@@ -21,43 +21,48 @@ class ManifestCheckTest < Test::Unit::TestCase
   end
 
   test "has an id" do
-    @data.delete("id")
-    assert_invalid
+    refute_nil @data["id"]
+  end
+
+  test "id is a string" do
+    assert_kind_of String, @data["id"]
+  end
+
+  test "id is not blank" do
+    refute_empty @data["id"]
   end
 
   test "api key exists" do
-    @data.delete("api")
-    assert_invalid
+    refute_empty @data["api"]
   end
 
   test "api is a Hash" do
-    @data["api"] = ""
-    assert_invalid
+    assert_kind_of Hash, @data["api"]
   end
 
   test "api has a password" do
-    @data["api"].delete("password")
-    assert_invalid
+    refute_nil @data["api"]["password"]
+    refute_empty @data["api"]["password"]
   end
 
   test "api contains test" do
-    @data["api"].delete("test")
-    assert_invalid
+    refute_nil @data["api"]["test"]
+    refute_empty @data["api"]["test"]
+    assert_kind_of Hash, @data["api"]["test"]
   end
 
   test "api contains production" do
-    @data["api"].delete("production")
-    assert_invalid
+    refute_nil @data["api"]["production"]
+    refute_empty @data["api"]["production"]
+    assert_kind_of Hash, @data["api"]["production"]
   end
 
   test "api contains production of https" do
-    @data["api"]["production"]['base_url'] = "http://foo.com"
-    assert_invalid
+    assert_match %r{\Ahttps://}, @data["api"]["production"]["base_url"]
   end
 
   test "sso contains production of https" do
-    @data["api"]["production"]['sso_url'] = "http://foo.com"
-    assert_invalid
+    assert_match %r{\Ahttps://}, @data["api"]["production"]["sso_url"]
   end
 
   test "api does not require config_vars" do

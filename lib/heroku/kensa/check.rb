@@ -74,48 +74,7 @@ module Heroku
       ValidPriceUnits = %w[month dyno_hour]
 
       def call!
-        test "manifest id key"
-        check "if exists" do
-          data.has_key?("id")
-        end
-        check "is a string" do
-          data["id"].is_a?(String)
-        end
-        check "is not blank" do
-          !data["id"].empty?
-        end
-
-        test "manifest api key"
-        check "if exists" do
-          data.has_key?("api")
-        end
-        check "is a hash" do
-          data["api"].is_a?(Hash)
-        end
-        check "contains password" do
-          data["api"].has_key?("password") && data["api"]["password"] != ""
-        end
-        check "contains test url" do
-          data["api"].has_key?("test")
-        end
-        check "contains production url" do
-          data["api"].has_key?("production")
-        end
-
-        if data['api']['production'].is_a? Hash
-          check "production url uses SSL" do
-            data['api']['production']['base_url'] =~ /^https:/
-          end
-          check "sso url uses SSL" do
-            data['api']['production']['sso_url'] =~ /^https:/
-          end
-        else
-          check "production url uses SSL" do
-            data['api']['production'] =~ /^https:/
-          end
-        end
-
-        if data["api"].has_key?("config_vars") 
+        if data["api"].has_key?("config_vars")
           check "contains config_vars array" do
             data["api"]["config_vars"].is_a?(Array)
           end
@@ -179,7 +138,7 @@ module Heroku
           end
 
           check "all keys in the manifest are present" do
-            difference = data['api']['config_vars'] - response['config'].keys 
+            difference = data['api']['config_vars'] - response['config'].keys
             unless difference.empty?
               verb = (difference.size == 1) ? "is" : "are"
               error "#{difference.join(', ')} #{verb} missing from the manifest"
@@ -252,7 +211,7 @@ module Heroku
         payload = {
           :heroku_id => heroku_id,
           :plan => data[:plan] || 'test',
-          :callback_url => callback, 
+          :callback_url => callback,
           :logplex_token => nil,
           :options => data[:options] || {}
         }
@@ -427,7 +386,7 @@ module Heroku
 
         check "validates token" do
           @sso.token = 'invalid'
-          page, respcode = mechanize_get 
+          page, respcode = mechanize_get
           error("expected 403, got #{respcode}") unless respcode == 403
           true
         end
@@ -441,7 +400,7 @@ module Heroku
 
         page_logged_in = nil
         check "logs in" do
-          page_logged_in, respcode = mechanize_get 
+          page_logged_in, respcode = mechanize_get
           error("expected 200, got #{respcode}") unless respcode == 200
           true
         end
