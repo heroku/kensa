@@ -34,7 +34,6 @@ class ProvisionTest < Test::Unit::TestCase
   end
 
   test "requires quthentication" do
-    pending "Need to re-implement"
     assert_raises RestClient::Unauthorized do
       resource.post({})
     end
@@ -57,7 +56,6 @@ class ProvisionTest < Test::Unit::TestCase
   end
 
   test "detects missing Heroku ID" do
-    pending "Need to re-implement"
     assert_raises RestClient::UnprocessableEntity do
       params = valid_provision_hash.dup
       params.delete("heroku_id")
@@ -66,7 +64,6 @@ class ProvisionTest < Test::Unit::TestCase
   end
 
   test "detects missing plan" do
-    pending "Need to re-implement"
     assert_raises RestClient::UnprocessableEntity do
       params = valid_provision_hash.dup
       params.delete("plan")
@@ -75,7 +72,6 @@ class ProvisionTest < Test::Unit::TestCase
   end
 
   test "detects callback URL" do
-    pending "Need to re-implement"
     assert_raises RestClient::UnprocessableEntity do
       params = valid_provision_hash.dup
       params.delete("callback_url")
@@ -84,27 +80,23 @@ class ProvisionTest < Test::Unit::TestCase
   end
 
   test "detects invalid JSON" do
-    pending "Need to re-implement"
     assert_raises RestClient::UnprocessableEntity do
       authed_resource.post(valid_provision_hash.to_json[0..-3])
     end
   end
 
   test "returns 200 or 201 response" do
-    pending "Need to re-implement"
     response = authed_resource.post(valid_provision_hash.to_json)
     assert (response.code == (200 || 201))
   end
 
   test "returns JSON response" do
-    pending "Need to re-implement"
     response = authed_resource.post(valid_provision_hash.to_json)
     hash = OkJson.decode(response.body)
     assert hash
   end
 
   test "returns Provider ID" do
-    pending "Need to re-implement"
     response = authed_resource.post(valid_provision_hash.to_json)
     hash = OkJson.decode(response.body)
     assert hash.has_key?("id")
