@@ -1,6 +1,6 @@
 require_relative 'helper'
 
-class CreateTest < Test::Unit::TestCase
+class BootstrapTest < Test::Unit::TestCase
   include Heroku::Kensa
 
   def setup
