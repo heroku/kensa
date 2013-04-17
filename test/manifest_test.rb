@@ -3,8 +3,18 @@ require_relative 'helper'
 class ManifestTest < Test::Unit::TestCase
   include Heroku::Kensa
 
+  def self.manifest
+    @manifest
+  end
+
+  def self.manifest=(val)
+    @manfiest = val
+  end
+
   context "POST manifest" do
-    setup { @manifest = Manifest.new(:method => :post) }
+    setup do
+      @manifest = self.class.manifest || Manifest.new(:method => :post)
+    end
 
     test 'uses post format for test url' do
       assert_equal @manifest.skeleton['api']['test']['base_url'], 'http://localhost:4567/heroku/resources'
