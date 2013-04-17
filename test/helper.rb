@@ -10,6 +10,10 @@ require 'fakefs/safe'
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
 
+  def pending(msg = nil)
+    assert false, (msg || "not yet implemented")
+  end
+
   module ProviderMock
     def setup
       Artifice.activate_with(ProviderServer)
