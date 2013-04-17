@@ -11,40 +11,22 @@ module Heroku
         @salt = data['api']['sso_salt']
 
         env   = data.fetch :env, 'test'
-        if @url = data['api'][env]['sso_url']
-          @use_post   = true
-          @proxy_port = find_available_port
-        else
-          @url  = data["api"][env].chomp('/')
-        end 
+        @proxy_port = find_available_port
         @timestamp  = Time.now.to_i
         @token      = make_token(@timestamp)
       end
 
       def path
-        if self.POST? 
-          URI.parse(url).path
-        else
-          "/heroku/resources/#{id}"
-        end
-      end
-
-      def POST?
-        @use_post
+        URI.parse(url).path
       end
 
       def sso_url
-        if self.POST?
-          "http://localhost:#{@proxy_port}/"
-        else
-          full_url
-        end
+        "http://localhost:#{@proxy_port}/"
       end
 
       def full_url
-        [ url, path, querystring ].join
+        sso_url
       end
-      alias get_url full_url
 
       def post_url
         url
@@ -53,15 +35,10 @@ module Heroku
       def timestamp=(other)
         @timestamp = other
         @token = make_token(@timestamp)
-      end 
+      end
 
       def make_token(t)
         Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
-      end
-
-      def querystring
-        return '' unless @salt
-        '?' + query_data 
       end
 
       def query_data
@@ -69,13 +46,11 @@ module Heroku
       end
 
       def query_params
-        { 'token'     => @token,  
+        { 'token'     => @token,
           'timestamp' => @timestamp.to_s,
           'nav-data'  => sample_nav_data,
-          'email'     => 'username@example.com' 
-        }.tap do |params|
-          params.merge!('id' => @id) if self.POST?
-        end
+          'email'     => 'username@example.com',
+          'id'        => @id }
       end
 
       def sample_nav_data
@@ -97,11 +72,7 @@ module Heroku
       end
 
       def message
-        if self.POST?
-          "POSTing #{query_data} to #{post_url} via proxy on port #{@proxy_port}"
-        else
-          "Opening #{full_url}"
-        end
+        "POSTing #{query_data} to #{post_url} via proxy on port #{@proxy_port}"
       end
 
       def start
@@ -117,13 +88,12 @@ module Heroku
       end
 
       def run_proxy
-        return unless self.POST?
         server = PostProxy.new self
         @proxy = server
 
         trap("INT") { server.stop }
         pid = fork do
-          server.start 
+          server.start
         end
         at_exit { server.stop; Process.waitpid pid }
       end

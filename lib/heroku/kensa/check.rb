@@ -360,11 +360,7 @@ module Heroku
       end
 
       def mechanize_get
-        if @sso.POST?
-          page = agent.post(@sso.post_url, @sso.query_params)
-        else
-          page = agent.get(@sso.get_url)
-        end
+        page = agent.post(@sso.post_url, @sso.query_params)
         return page, 200
       rescue Mechanize::ResponseCodeError => error
         return nil, error.response_code.to_i
