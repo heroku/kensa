@@ -34,6 +34,7 @@ class PlanChangeTest < Test::Unit::TestCase
   end
 
   test "requires quthentication" do
+    pending "Need to re-implement"
     assert_raises RestClient::Unauthorized do
       resource.put({})
     end
@@ -56,11 +57,13 @@ class PlanChangeTest < Test::Unit::TestCase
   end
 
   test "returns 200 or 201 response" do
+    pending "Need to re-implement"
     response = authed_resource.put(valid_planchange_hash.to_json)
     assert (response.code == (200 || 201))
   end
 
   test "returns JSON" do
+    pending "Need to re-implement"
     response = authed_resource.put(valid_planchange_hash.to_json)
     hash = OkJson.decode(response.body)
     assert hash

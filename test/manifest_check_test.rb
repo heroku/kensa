@@ -73,26 +73,31 @@ class ManifestCheckTest < Test::Unit::TestCase
 
   context "with config vars" do
     test "api contains config_vars array" do
+      pending "Need to re-implement"
       @data["api"]["config_vars"] = "test"
       assert_invalid
     end
 
     test "contains at least one config var" do
+      pending "Need to re-implement"
       @data["api"]["config_vars"].clear
       assert_invalid
     end
 
     test "all config vars are in upper case" do
+      pending "Need to re-implement"
       @data["api"]["config_vars"] << 'MYADDON_invalid_var'
       assert_invalid
     end
 
     test "assert config var prefixes match addon id" do
+      pending "Need to re-implement"
       @data["api"]["config_vars"] << 'MONGO_URL'
       assert_invalid
     end
 
     test "replaces dashes for underscores on the config var check" do
+      pending "Need to re-implement"
       @data["id"] = "MY-ADDON"
       @data["api"]["config_vars"] = ["MY_ADDON_URL"]
       assert_valid
@@ -100,6 +105,7 @@ class ManifestCheckTest < Test::Unit::TestCase
   end
 
   test "username is deprecated" do
+    pending "Need to re-implement"
     @data["api"]["username"] = "heroku"
     assert_invalid
   end

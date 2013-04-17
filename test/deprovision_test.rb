@@ -28,6 +28,7 @@ class DeprovisionTest < Test::Unit::TestCase
   end
 
   test "requires quthentication" do
+    pending "Need to re-implement"
     assert_raises RestClient::Unauthorized do
       resource.delete
     end
@@ -50,6 +51,7 @@ class DeprovisionTest < Test::Unit::TestCase
   end
 
   test "returns 200 response" do
+    pending "Need to re-implement"
     response = authed_resource.delete
     assert_equal 200, response.code
   end

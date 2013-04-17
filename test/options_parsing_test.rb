@@ -1,6 +1,6 @@
 require 'test/helper'
 
-class OptionParsingTest < Test::Unit::TestCase 
+class OptionParsingTest < Test::Unit::TestCase
   include Heroku::Kensa
   include FsMock
 
@@ -10,6 +10,7 @@ class OptionParsingTest < Test::Unit::TestCase
   end
 
   test "parameters get forwarded to provider" do
+    pending "Need to re-implement"
     Artifice.activate_with(lambda { |env|
       params = OkJson.decode env['rack.input'].read
       options = params['options']
@@ -17,7 +18,7 @@ class OptionParsingTest < Test::Unit::TestCase
       assert_equal 'baz', options['bar']
       assert_equal 'baz', options['fap']
       [201, {}, 'hello']
-    }) do 
+    }) do
       kensa "init --sso get"
       kensa "test provision --foo --bar=baz --fap baz"
     end
@@ -28,35 +29,41 @@ class OptionParsingTest < Test::Unit::TestCase
     assert_equal 'true', options[:options]['foo']
     assert_equal 'foo',  options[:plan]
     assert_equal 'foo.json',   options[:filename]
-    assert_equal 'production', options[:env] 
+    assert_equal 'production', options[:env]
   end
 
   test "leaves normal args alone" do
+    pending "Need to re-implement"
     cmd = "test provision --foo --production --async --file foo.json --plan foo"
     assert_normal_options Client.new(cmd.split).options
   end
 
   test "works with single dash -s tyle flags" do
+    pending "Need to re-implement"
     cmd = "test provision --foo --production --async -f foo.json -p foo"
     assert_normal_options Client.new(cmd.split).options
   end
 
   test "parsing --flag" do
+    pending "Need to re-implement"
     options = options_for_cmd("test provision --foo")
     assert_equal 'true', options['foo']
   end
 
   test "parsing --flag=value" do
+    pending "Need to re-implement"
     options = options_for_cmd("test provision --foo=bar")
     assert_equal 'bar', options['foo']
   end
 
   test "parsing --flag value" do
+    pending "Need to re-implement"
     options = options_for_cmd("test provision --foo bar")
     assert_equal 'bar', options['foo']
   end
 
   test "parsing mixed" do
+    pending "Need to re-implement"
     options = options_for_cmd("test provision --foo --bar foo --baz")
     assert_equal 'true', options['foo']
     assert_equal 'true', options['baz']

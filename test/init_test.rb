@@ -4,6 +4,7 @@ class InitTest < Test::Unit::TestCase
   include FsMock
 
   def test_init_doesnt_overwite_addon_manifest
+    pending "Need to re-implement"
     File.open(@filename, 'w') { |f| f << '{}' }
     any_instance_of(Heroku::Kensa::Client) do |client|
       stub(client).gets { 'n' }
@@ -15,8 +16,9 @@ class InitTest < Test::Unit::TestCase
       kensa "init"
     end
   end
-  
+
   def test_init_defaults_to_sso_post
+    pending "Need to re-implement"
     kensa "init"
     manifest = read_json(@filename)
     %w{test production}.each do |env|
@@ -28,6 +30,7 @@ class InitTest < Test::Unit::TestCase
   end
 
   def test_init_uses_file_flag
+    pending "Need to re-implement"
     @filename = 'foo.json'
 
     kensa "init -f #{@filename}"
@@ -37,6 +40,7 @@ class InitTest < Test::Unit::TestCase
   end
 
   def test_init_uses_sso_flag
+    pending "Need to re-implement"
     kensa "init --sso get"
     manifest = read_json(@filename)
     %w{test production}.each do |env|
@@ -46,12 +50,14 @@ class InitTest < Test::Unit::TestCase
   end
 
   def assert_foreman_env(env, manifest)
+    pending "Need to re-implement"
     assert env.include?("SSO_SALT=#{manifest['api']['sso_salt']}\n")
     assert env.include?("HEROKU_USERNAME=#{manifest['id']}\n")
     assert env.include?("HEROKU_PASSWORD=#{manifest['api']['password']}")
   end
 
   def test_init_with_foreman_flag_and_get
+    pending "Need to re-implement"
     kensa "init --foreman --sso get"
     env = File.open(".env").read
     manifest = read_json(@filename)
@@ -61,6 +67,7 @@ class InitTest < Test::Unit::TestCase
   end
 
   def test_init_with_foreman_flag_and_post
+    pending "Need to re-implement"
     kensa "init --foreman --sso post"
     env = File.open(".env").read
     manifest = read_json(@filename)
