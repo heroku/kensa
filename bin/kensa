@@ -23,7 +23,7 @@ end
 __END__
 Usage: kensa [OPTIONS] command
        kensa init
-       kensa create <app_name> --template
+       kensa boostrap <app_name> --template
        kensa test   <type> [arg1 arg2 ...]
        kensa run    <command> [arg1 arg1 ...]
 
@@ -54,7 +54,7 @@ COMMANDS
 
   init            Creates a skeleton manifest
 
-  create <app>    Clone a git repo that contains a template add-on
+  boostrap <app>    Clone a git repo that contains a template add-on
 
   test <type>     Simulate call from Heroku (provision or deprovision)
 
@@ -68,7 +68,7 @@ COMMANDS
 
 TEST TYPES
 
-  provision [optional params] 
+  provision [optional params]
     Simulate a provision call from Heroku.
     [optional params]
       accepts extra command options and passes them on to the provision request
@@ -87,6 +87,6 @@ TEST TYPES
     Confirm that the manifest is valid.  Automatically runs before all tests.
 
   all
-    runs provision, planchange, and deprovision tests.  
+    runs provision, planchange, and deprovision tests.
     defaults to using 'foo' for planchange plan.
 
