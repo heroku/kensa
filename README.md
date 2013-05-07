@@ -25,6 +25,6 @@ how to build your Heroku add-on:
 
 ## Meta #######################################################################
 
-Maintained by Glenn Gillen and csquared.
+Maintained by Glenn Gillen and @mattonrails.
 
 Released under the MIT license. <http://github.com/heroku/kensa>
