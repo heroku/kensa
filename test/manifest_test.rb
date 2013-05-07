@@ -26,6 +26,10 @@ class ManifestTest < Test::Unit::TestCase
       assert_equal @manifest.skeleton['api']['test'], 'http://localhost:4567/'
       assert_equal @manifest.skeleton['api']['production'], 'https://yourapp.com/'
     end
+
+    test 'specifies the US region by default' do
+      assert_equal @manifest.skeleton['api']['regions'], ['us']
+    end
   end
 
   context "POST manifest" do
@@ -39,6 +43,10 @@ class ManifestTest < Test::Unit::TestCase
     test 'uses post format for test url' do
       assert_equal @manifest.skeleton['api']['production']['base_url'], 'https://yourapp.com/heroku/resources'
       assert_equal @manifest.skeleton['api']['production']['sso_url'], 'https://yourapp.com/sso/login'
+    end
+
+    test 'specifies the US region by default' do
+      assert_equal @manifest.skeleton['api']['regions'], ['us']
     end
   end
 
