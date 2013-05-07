@@ -64,6 +64,8 @@ module Heroku
             run_check ManifestCheck, SsoCheck, :id => id
           when "all"
             run_check AllCheck
+          when nil
+            run_check AllCheck
           else
             abort "! Unknown test '#{check}'; see usage"
         end
