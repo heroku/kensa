@@ -71,7 +71,7 @@ ENV
       private
 
         def sso_key
-          @sso_salt = generate_password(16) 
+          @sso_salt = generate_password(16)
           unless @options[:sso] === false
             %{\n    "sso_salt": "#{@sso_salt}",}
           end
