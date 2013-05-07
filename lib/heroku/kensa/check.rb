@@ -454,7 +454,10 @@ module Heroku
         end
 
         check "displays the heroku layout" do
-          error("could not find Heroku layout") if page_logged_in.search('div#heroku-header').empty?
+            if page_logged_in.search('div#heroku-header').empty? &&
+              page_logged_in.search('script[src*=boomerang]').empty?
+              error("could not find Heroku layout")
+            end
           true
         end
       end
