@@ -9,6 +9,3 @@ notifications:
   email:
     - csquared@heroku.com
     - glenn@heroku.com
-  hipchat:
-    rooms:
-      - secure: "yA6CwTfqBTVeqmVjoawC4+Yq/3wCuexdhHXF6w3ddAMNEyPuUPZvsteio1HW\n0jUl9mJv5PWkNhrAfcfUUiBNThM86B4+RVk5sn0ybpBAKjdKge0K/iLLftg5\nPHtplDBaj9Vi8R08sWI6RNpy0Ig5v9Dn8naOBmSw5CFKneGU1VY="
