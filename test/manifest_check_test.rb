@@ -35,6 +35,21 @@ class ManifestCheckTest < Test::Unit::TestCase
         assert_invalid
       end
 
+      test "api has a list of regions" do
+        @data["api"].delete("regions")
+        assert_invalid
+      end
+
+      test "api has a list of regions including US" do
+        @data["api"]["regions"] = ["eu"]
+        assert_invalid
+      end
+
+      test "api only allows valid region names" do
+        @data["api"]["regions"] = ["us", "ap"]
+        assert_invalid
+      end
+
       test "api has a password" do
         @data["api"].delete("password")
         assert_invalid

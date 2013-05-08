@@ -92,6 +92,16 @@ module Heroku
         check "is a hash" do
           data["api"].is_a?(Hash)
         end
+        check "has a list of regions" do
+          data["api"].has_key?("regions")
+          data["api"]["regions"].is_a?(Array)
+        end
+        check "contains at least the US region" do
+          data["api"]["regions"].include? "us"
+        end
+        check "contains only valid region names" do
+          data["api"]["regions"].all? { |reg| Manifest::REGIONS.include? reg }
+        end
         check "contains password" do
           data["api"].has_key?("password") && data["api"]["password"] != ""
         end
