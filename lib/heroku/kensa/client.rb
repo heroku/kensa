@@ -2,6 +2,7 @@ require 'restclient'
 require 'term/ansicolor'
 require 'launchy'
 require 'optparse'
+require_relative '../../../test/manifest_test.rb'
 
 module Heroku
   module Kensa
@@ -49,7 +50,13 @@ module Heroku
       def test
         case check = @args.shift
           when "manifest"
-            run_check ManifestCheck
+            begin
+              ManifestTest.load_manifest_file(@args.shift)
+              test = ManifestTest.new
+              test.run
+            ensure
+              ManifestTest.manifest = nil
+            end
           when "provision"
             run_check ManifestCheck, ProvisionCheck
           when "deprovision"

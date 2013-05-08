@@ -1,6 +1,6 @@
 require 'test/helper'
 
-class SsoCheckTest < Test::Unit::TestCase
+class SsoCheckTest < MiniTest::Unit::TestCase
   include Heroku::Kensa
   include ProviderMock
 

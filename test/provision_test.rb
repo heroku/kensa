@@ -1,6 +1,6 @@
 require_relative 'helper'
 
-class ProvisionTest < Test::Unit::TestCase
+class ProvisionTest < MiniTest::Unit::TestCase
   include Heroku::Kensa
 
   def setup
@@ -33,7 +33,7 @@ class ProvisionTest < Test::Unit::TestCase
      "callback_url" => "https://api.heroku.com/vendor/apps/app123%40heroku.com" }
   end
 
-  test "requires quthentication" do
+  def test_requires_authentication
     assert_raises RestClient::Unauthorized do
       resource.post({})
     end
@@ -55,7 +55,7 @@ class ProvisionTest < Test::Unit::TestCase
     end
   end
 
-  test "detects missing Heroku ID" do
+  def test_detects_missing_heroku_id
     assert_raises RestClient::UnprocessableEntity do
       params = valid_provision_hash.dup
       params.delete("heroku_id")
@@ -63,7 +63,7 @@ class ProvisionTest < Test::Unit::TestCase
     end
   end
 
-  test "detects missing plan" do
+  def test_detects_missing_plan
     assert_raises RestClient::UnprocessableEntity do
       params = valid_provision_hash.dup
       params.delete("plan")
@@ -71,7 +71,7 @@ class ProvisionTest < Test::Unit::TestCase
     end
   end
 
-  test "detects callback URL" do
+  def test_detects_callback_url
     assert_raises RestClient::UnprocessableEntity do
       params = valid_provision_hash.dup
       params.delete("callback_url")
@@ -79,30 +79,30 @@ class ProvisionTest < Test::Unit::TestCase
     end
   end
 
-  test "detects invalid JSON" do
+  def test_detects_invalid_json
     assert_raises RestClient::UnprocessableEntity do
       authed_resource.post(valid_provision_hash.to_json[0..-3])
     end
   end
 
-  test "returns 200 or 201 response" do
+  def test_returns_200_or_201_response
     response = authed_resource.post(valid_provision_hash.to_json)
     assert (response.code == (200 || 201))
   end
 
-  test "returns JSON response" do
+  def test_returns_json_response
     response = authed_resource.post(valid_provision_hash.to_json)
     hash = OkJson.decode(response.body)
     assert hash
   end
 
-  test "returns Provider ID" do
+  def test_returns_provider_id
     response = authed_resource.post(valid_provision_hash.to_json)
     hash = OkJson.decode(response.body)
     assert hash.has_key?("id")
   end
 
-  test "returns app config" do
+  def test_returns_app_config
     pending "Need to re-implement"
   end
 

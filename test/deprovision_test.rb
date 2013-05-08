@@ -1,6 +1,6 @@
 require_relative 'helper'
 
-class DeprovisionTest < Test::Unit::TestCase
+class DeprovisionTest < MiniTest::Unit::TestCase
   include Heroku::Kensa
 
   def setup
@@ -27,7 +27,7 @@ class DeprovisionTest < Test::Unit::TestCase
     resource(@manifest['id'], @manifest['api']['password'])
   end
 
-  test "requires quthentication" do
+  def test_requires_quthentication
     assert_raises RestClient::Unauthorized do
       resource.delete
     end
@@ -49,7 +49,7 @@ class DeprovisionTest < Test::Unit::TestCase
     end
   end
 
-  test "returns 200 response" do
+  def test_returns_200_response
     response = authed_resource.delete
     assert_equal 200, response.code
   end

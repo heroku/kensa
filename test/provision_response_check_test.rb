@@ -1,11 +1,11 @@
 require 'test/helper'
 
-class ProvisionResponseCheckTest < Test::Unit::TestCase
+class ProvisionResponseCheckTest < MiniTest::Unit::TestCase
   include Heroku::Kensa
 
   def check ; ProvisionResponseCheck ; end
 
-  setup do
+  def setup
     @response = { "id" => "123",
                   "config" => {
                     "MYADDON_URL" => "http://example.com/resource",
@@ -15,12 +15,12 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
     @data['api']['config_vars'] << "MYADDON_CONFIG"
   end
 
-  test "is valid if no errors" do
+  def test_is_valid_if_no_errors
     pending "Need to re-implement"
     assert_valid
   end
 
-  test "has an id" do
+  def test_has_an_id
     pending "Need to re-implement"
     @response.delete("id")
     assert_invalid
@@ -28,62 +28,62 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
 
   describe "when config is present" do
 
-    test "is a hash" do
+    def test_is_a_hash
       pending "Need to re-implement"
       @response["config"] = ""
       assert_invalid
     end
 
-    test "each key is previously set in the manifest" do
+    def test_each_key_is_previously_set_in_the_manifest
       pending "Need to re-implement"
       @response["config"]["MYSQL_URL"] = "http://..."
       assert_invalid
     end
 
-    test "each value is a string" do
+    def test_each_value_is_a_string
       pending "Need to re-implement"
       @response["config"]["MYADDON_URL"] = {}
       assert_invalid
     end
 
-    test "asserts _URL vars are valid URIs" do
+    def test_asserts__url_vars_are_valid_uris
       pending "Need to re-implement"
       @response["config"]["MYADDON_URL"] = "abc:"
       assert_invalid
     end
 
-    test "asserts _URL vars have a host" do
+    def test_asserts__url_vars_have_a_host
       pending "Need to re-implement"
       @response["config"]["MYADDON_URL"] = "path"
       assert_invalid
     end
 
-    test "asserts _URL vars have a scheme" do
+    def test_asserts__url_vars_have_a_scheme
       pending "Need to re-implement"
       @response["config"]["MYADDON_URL"] = "//host/path"
       assert_invalid
     end
 
-    test "doesn't run URI test against other vars" do
+    def test_doesnt_run_uri_test_against_other_vars
       pending "Need to re-implement"
       @response["config"]['MYADDON_CONFIG'] = "abc:"
       assert_valid
     end
 
-    test "doesn't allow localhost URIs on production" do
+    def test_doesnt_allow_localhost_uris_on_production
       pending "Need to re-implement"
       @data[:env] = 'production'
       @response["config"]["MYADDON_URL"] = "http://localhost/abc"
       assert_invalid
     end
 
-    test "asserts all vars in manifest are in response" do
+    def test_asserts_all_vars_in_manifest_are_in_response
       pending "Need to re-implement"
       @response["config"].delete('MYADDON_CONFIG')
       assert_invalid
     end
 
-    test "is valid otherwise" do
+    def test_is_valid_otherwise
       pending "Need to re-implement"
       @response["config"]["MYADDON_URL"] = "http://localhost/abc"
       assert_valid

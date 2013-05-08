@@ -1,5 +1,5 @@
 require_relative 'helper'
-class PlanChangeTest < Test::Unit::TestCase
+class PlanChangeTest < MiniTest::Unit::TestCase
   include Heroku::Kensa
 
   def setup
@@ -33,7 +33,7 @@ class PlanChangeTest < Test::Unit::TestCase
      "callback_url" => "https://api.heroku.com/vendor/apps/app123%40heroku.com" }
   end
 
-  test "requires quthentication" do
+  def test_requires_quthentication
     assert_raises RestClient::Unauthorized do
       resource.put({})
     end
@@ -55,12 +55,12 @@ class PlanChangeTest < Test::Unit::TestCase
     end
   end
 
-  test "returns 200 or 201 response" do
+  def test_returns_200_or_201_response
     response = authed_resource.put(valid_planchange_hash.to_json)
     assert (response.code == (200 || 201))
   end
 
-  test "returns JSON" do
+  def test_returns_json
     response = authed_resource.put(valid_planchange_hash.to_json)
     hash = OkJson.decode(response.body)
     assert hash

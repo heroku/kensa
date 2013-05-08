@@ -1,110 +1,108 @@
 require_relative 'helper'
 
-class ManifestCheckTest < Test::Unit::TestCase
+class ManifestCheckTest < MiniTest::Unit::TestCase
   include Heroku::Kensa
 
   def check ; ManifestCheck ; end
 
-  setup do
+  def setup
     @data = Manifest.new(:method => "post").skeleton
   end
 
-  test "doesn't barf on OkJson errors" do
+  def test_doesnt_barf_on_okjson_errors
     File.open("addon-manifest.json", 'w') { |f| f << "{,a" }
     assert_raises Client::CommandInvalid, "addon-manifest.json includes invalid JSON" do
       kensa "test provision"
     end
   end
 
-  test "is valid if no errors" do
+  def test_is_valid_if_no_errors
     assert_valid
   end
 
-  test "has an id" do
+  def test_has_an_id
     refute_nil @data["id"]
   end
 
-  test "id is a string" do
+  def test_id_is_a_string
     assert_kind_of String, @data["id"]
   end
 
-  test "id is not blank" do
+  def test_id_is_not_blank
     refute_empty @data["id"]
   end
 
-  test "api key exists" do
+  def test_api_key_exists
     refute_empty @data["api"]
   end
 
-  test "api is a Hash" do
+  def test_api_is_a_hash
     assert_kind_of Hash, @data["api"]
   end
 
-  test "api has a password" do
+  def test_api_has_a_password
     refute_nil @data["api"]["password"]
     refute_empty @data["api"]["password"]
   end
 
-  test "api contains test" do
+  def test_api_contains_test
     refute_nil @data["api"]["test"]
     refute_empty @data["api"]["test"]
     assert_kind_of Hash, @data["api"]["test"]
   end
 
-  test "api contains production" do
+  def test_api_contains_production
     refute_nil @data["api"]["production"]
     refute_empty @data["api"]["production"]
     assert_kind_of Hash, @data["api"]["production"]
   end
 
-  test "api contains production of https" do
+  def test_api_contains_production_of_https
     assert_match %r{\Ahttps://}, @data["api"]["production"]["base_url"]
   end
 
-  test "sso contains production of https" do
+  def test_sso_contains_production_of_https
     assert_match %r{\Ahttps://}, @data["api"]["production"]["sso_url"]
   end
 
-  test "api does not require config_vars" do
+  def test_api_does_not_require_config_vars
     pending "Need to re-implement"
     @data["api"].delete "config_vars"
     assert_valid
   end
 
-  context "with config vars" do
-    test "api contains config_vars array" do
-      pending "Need to re-implement"
-      @data["api"]["config_vars"] = "test"
-      assert_invalid
-    end
-
-    test "contains at least one config var" do
-      pending "Need to re-implement"
-      @data["api"]["config_vars"].clear
-      assert_invalid
-    end
-
-    test "all config vars are in upper case" do
-      pending "Need to re-implement"
-      @data["api"]["config_vars"] << 'MYADDON_invalid_var'
-      assert_invalid
-    end
-
-    test "assert config var prefixes match addon id" do
-      pending "Need to re-implement"
-      @data["api"]["config_vars"] << 'MONGO_URL'
-      assert_invalid
-    end
-
-    test "replaces dashes for underscores on the config var check" do
-      pending "Need to re-implement"
-      @data["id"] = "MY-ADDON"
-      @data["api"]["config_vars"] = ["MY_ADDON_URL"]
-      assert_valid
-    end
+  def test_api_contains_config_vars_array
+    pending "Need to re-implement"
+    @data["api"]["config_vars"] = "test"
+    assert_invalid
   end
 
-  test "username is deprecated" do
+  def test_contains_at_least_one_config_var
+    pending "Need to re-implement"
+    @data["api"]["config_vars"].clear
+    assert_invalid
+  end
+
+  def test_all_config_vars_are_in_upper_case
+    pending "Need to re-implement"
+    @data["api"]["config_vars"] << 'MYADDON_invalid_var'
+    assert_invalid
+  end
+
+  def test_assert_config_var_prefixes_match_addon_id
+    pending "Need to re-implement"
+    @data["api"]["config_vars"] << 'MONGO_URL'
+    assert_invalid
+  end
+
+  def test_replaces_dashes_for_underscores_on_the_config_var_check
+    pending "Need to re-implement"
+    @data["id"] = "MY-ADDON"
+    @data["api"]["config_vars"] = ["MY_ADDON_URL"]
+    assert_valid
+  end
+
+  def test_username_is_deprecated
     pending "Need to re-implement"
     @data["api"]["username"] = "heroku"
     assert_invalid

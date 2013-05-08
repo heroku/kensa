@@ -1,3 +1,5 @@
+require 'minitest/autorun'
+require 'minitest/spec'
 require 'heroku/kensa'
 require 'heroku/kensa/client'
 require 'contest'
@@ -7,11 +9,11 @@ require 'artifice'
 require_relative 'resources/server'
 require 'fakefs/safe'
 
-class Test::Unit::TestCase
+class MiniTest::Unit::TestCase
   include RR::Adapters::TestUnit
 
   def pending(msg = nil)
-    assert false, (msg || "not yet implemented")
+    skip (msg || "not yet implemented")
   end
 
   module ProviderMock

@@ -1,6 +1,6 @@
 require_relative 'helper'
 
-class OptionParsingTest < Test::Unit::TestCase
+class OptionParsingTest < MiniTest::Unit::TestCase
   include Heroku::Kensa
   include FsMock
 
@@ -9,7 +9,7 @@ class OptionParsingTest < Test::Unit::TestCase
     options = client.options[:options]
   end
 
-  test "parameters get forwarded to provider" do
+  def test_parameters_get_forwarded_to_provider
     Artifice.activate_with(lambda { |env|
       params = OkJson.decode env['rack.input'].read
       options = params['options']
@@ -31,32 +31,32 @@ class OptionParsingTest < Test::Unit::TestCase
     assert_equal 'production', options[:env]
   end
 
-  test "leaves normal args alone" do
+  def test_leaves_normal_args_alone
     cmd = "test provision --foo --production --async --file foo.json --plan foo"
     assert_normal_options Client.new(cmd.split).options
   end
 
-  test "works with single dash -s tyle flags" do
+  def test_works_with_single_dash_style_flags
     cmd = "test provision --foo --production --async -f foo.json -p foo"
     assert_normal_options Client.new(cmd.split).options
   end
 
-  test "parsing --flag" do
+  def test_parsing_flag
     options = options_for_cmd("test provision --foo")
     assert_equal 'true', options['foo']
   end
 
-  test "parsing --flag=value" do
+  def test_parsing_flag_equal_value
     options = options_for_cmd("test provision --foo=bar")
     assert_equal 'bar', options['foo']
   end
 
-  test "parsing --flag value" do
+  def test_parsing_flag_value
     options = options_for_cmd("test provision --foo bar")
     assert_equal 'bar', options['foo']
   end
 
-  test "parsing mixed" do
+  def test_parsing_mixed
     options = options_for_cmd("test provision --foo --bar foo --baz")
     assert_equal 'true', options['foo']
     assert_equal 'true', options['baz']

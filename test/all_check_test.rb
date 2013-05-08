@@ -1,11 +1,12 @@
 require 'test/helper'
 
-class AllCheckTest < Test::Unit::TestCase
+class AllCheckTest < MiniTest::Unit::TestCase
   include Heroku::Kensa
   include ProviderMock
   include FsMock
 
-  setup do
+  def setup
+    super
     @data = Manifest.new(:method => :get).skeleton
     @data['api']['password'] = 'secret'
     @data['api']['test'] += "working"
@@ -14,19 +15,19 @@ class AllCheckTest < Test::Unit::TestCase
 
   def check; AllCheck; end
 
-  test "valid on script exit 0" do
+  def test_valid_on_script_exit_0
     pending "Need to re-implement"
     @data[:args] = ["ruby #{@file}"]
     assert_valid
   end
 
-  test "invalid on script exit non 0" do
+  def test_invalid_on_script_exit_non_0
     pending "Need to re-implement"
     @data[:args] = ["ruby #{@file} fail"]
     assert_invalid
   end
 
-  test "all runs" do
+  def test_all_runs
     assert_nothing_raised do
       pending "Need to re-implement"
       kensa "init"
