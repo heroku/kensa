@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency(%q<artifice>, [">= 0"])
   s.add_development_dependency(%q<contest>, [">= 0"])
   s.add_development_dependency(%q<contest>, [">= 0"])
+  s.add_development_dependency(%q<coveralls>)
   s.add_development_dependency(%q<fakefs>, [">= 0"])
   s.add_development_dependency(%q<haml>, [">= 0"])
   s.add_development_dependency(%q<rr>, [">= 0"])

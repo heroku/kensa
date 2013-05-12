@@ -1,4 +1,5 @@
 addon-manifest.json
+coverage/
 pkg/
 .rvmrc
 tags
