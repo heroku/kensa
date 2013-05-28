@@ -72,7 +72,8 @@ module Heroku
         { 'token'     => @token,  
           'timestamp' => @timestamp.to_s,
           'nav-data'  => sample_nav_data,
-          'email'     => 'username@example.com' 
+          'email'     => 'username@example.com',
+          'app'       => 'myapp'
         }.tap do |params|
           params.merge!('id' => @id) if self.POST?
         end
