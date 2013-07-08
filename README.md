@@ -20,11 +20,11 @@ Install it like any Ruby Gem:
 Refer to the Heroku Add-ons Resource Center for more information on usage, and
 how to build your Heroku add-on:
 
-<http://provider.heroku.com/resources/technical/build/provisioning>
+<https://devcenter.heroku.com/articles/building-a-heroku-add-on>
 
 
 ## Meta #######################################################################
 
 Maintained by Glenn Gillen and @mattonrails.
 
-Released under the MIT license. <http://github.com/heroku/kensa>
+Released under the MIT license. <https://github.com/heroku/kensa>
