@@ -22,6 +22,7 @@ class SsoTest < Test::Unit::TestCase
       assert_equal 'b6010f6fbb850887a396c2bc0ab23974003008f6', data['token'].first
       assert_equal '1262304000', data['timestamp'].first
       assert_equal 'username@example.com', data['email'].first
+      assert_equal 'myapp', data['app'].first
     end
 
     context 'sso' do
