@@ -236,8 +236,16 @@ module Heroku
         end
       end
 
-      def heroku_id
-        "app#{rand(10000)}@kensa.heroku.com"
+      def upstream_id
+        "app#{rand(10000)}@kensa.#{upstream}.com"
+      end
+
+      def upstream_id_key
+        :"#{upstream}_id"
+      end
+
+      def upstream
+        data[:upstream] || "heroku"
       end
 
       def credentials
@@ -260,7 +268,7 @@ module Heroku
         reader, writer = nil
 
         payload = {
-          :heroku_id => heroku_id,
+          upstream_id_key => upstream_id,
           :plan => data[:plan] || 'test',
           :callback_url => callback, 
           :logplex_token => nil,
@@ -379,7 +387,7 @@ module Heroku
         raise ArgumentError, "No plan specified" if new_plan.nil?
 
         path = "#{base_path}/#{CGI::escape(id.to_s)}"
-        payload = {:plan => new_plan, :heroku_id => heroku_id}
+        payload = {:plan => new_plan, upstream_id_key => upstream_id}
 
         test "PUT #{path}"
         check "response" do

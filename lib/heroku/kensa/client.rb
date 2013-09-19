@@ -139,7 +139,11 @@ module Heroku
         end
 
         def heroku_host
-          ENV['ADDONS_URL'] || 'https://addons.heroku.com'
+          ENV['ADDONS_URL'] || {
+            :heroku => 'https://addons.heroku.com',
+            :broadstack => 'https://broadstack.com',
+            :cloudcontrol => 'https://api.cloudcontrol.com'
+          }[@options[:upstream] || :heroku]
         end
 
         def resolve_manifest
@@ -173,6 +177,10 @@ module Heroku
           end
         end
 
+        def upstream_name
+          @options[:upstream] ? @options[:upstream].capitalize : "Heroku"
+        end
+
         def running_on_windows?
           RUBY_PLATFORM =~ /mswin32|mingw32/
         end
@@ -186,7 +194,7 @@ module Heroku
         end
 
         def ask_for_credentials
-          puts "Enter your Heroku Provider credentials."
+          puts "Enter your #{upstream_name} Provider credentials."
 
           print "Email: "
           user = gets.strip
@@ -307,6 +315,9 @@ module Heroku
               o.on("--foreman")         { options[:foreman] = true }
               o.on("-t name", "--template") do |template|
                 options[:template] = template
+              end
+              o.on("-u upstream", "--provider", [:heroku, :broadstack, :cloudcontrol]) do |upstream|
+                options[:upstream] = upstream
               end
               #note: have to add these to KNOWN_ARGS
 
