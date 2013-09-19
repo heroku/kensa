@@ -327,6 +327,26 @@ module Heroku
         data[:provision_response] = response
 
         run ProvisionResponseCheck, data
+
+        if data[:callback]
+          check "callback called" do
+            server = TCPServer.open(7779)
+            client = server.accept
+            body = OkJson.encode(
+              id: "999",
+              name: "kensa-test-app",
+              config: data[:provision_response]["config"],
+              callback_url: "http://localhost:7779/vendor/apps/999",
+              owner_email: "kensa-test-app@example.com",
+              region: "amazon-web-services::us-east-1",
+              logplex_token: "example",
+              domains: ["example.com"]
+            )
+            puts body
+            client.write(%(HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: #{body.size}\r\n\r\n#{body}))
+            true
+          end
+        end
       end
 
     ensure
