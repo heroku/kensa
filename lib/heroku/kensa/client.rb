@@ -8,6 +8,12 @@ module Heroku
     class Client
       attr_accessor :options
 
+      UPSTREAMS = {
+        :heroku => "https://addons.heroku.com",
+        :broadstack => "https://broadstack.com",
+        :cloudcontrol => "https://api.cloudcontrol.com",
+      }
+
       def initialize(args, options = {})
         @args    = args
         @options = OptParser.parse(args).merge(options)
@@ -139,11 +145,7 @@ module Heroku
         end
 
         def heroku_host
-          ENV['ADDONS_URL'] || {
-            :heroku => 'https://addons.heroku.com',
-            :broadstack => 'https://broadstack.com',
-            :cloudcontrol => 'https://api.cloudcontrol.com'
-          }[@options[:upstream] || :heroku]
+          ENV['ADDONS_URL'] || UPSTREAMS.fetch(@options[:upstream] || :heroku)
         end
 
         def resolve_manifest
@@ -316,7 +318,7 @@ module Heroku
               o.on("-t name", "--template") do |template|
                 options[:template] = template
               end
-              o.on("-u upstream", "--upstream", [:heroku, :broadstack, :cloudcontrol]) do |upstream|
+              o.on("-u upstream", "--upstream", UPSTREAMS.keys) do |upstream|
                 options[:upstream] = upstream
               end
               #note: have to add these to KNOWN_ARGS
