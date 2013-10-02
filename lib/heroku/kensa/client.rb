@@ -316,7 +316,7 @@ module Heroku
               o.on("-t name", "--template") do |template|
                 options[:template] = template
               end
-              o.on("-u upstream", "--provider", [:heroku, :broadstack, :cloudcontrol]) do |upstream|
+              o.on("-u upstream", "--upstream", [:heroku, :broadstack, :cloudcontrol]) do |upstream|
                 options[:upstream] = upstream
               end
               #note: have to add these to KNOWN_ARGS
