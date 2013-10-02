@@ -59,6 +59,12 @@ class ProvisionCheckTest < Test::Unit::TestCase
         use_provider_endpoint "invalid-missing-auth"
         assert_invalid
       end
+
+      test "alternate upstream" do
+        @data[:upstream] = "broadstack"
+        use_provider_endpoint "alternate-upstream"
+        assert_valid
+      end
     end
   end
 end

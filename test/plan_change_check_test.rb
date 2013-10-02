@@ -27,6 +27,12 @@ class PlanChangeCheckTest < Test::Unit::TestCase
         use_provider_endpoint "invalid-missing-auth"
         assert_invalid
       end
+
+      test "alternate upstream" do
+        use_provider_endpoint "alternate-upstream"
+        @data[:upstream] = "broadstack"
+        assert_valid
+      end
     end
   end
 end
