@@ -296,7 +296,7 @@ module Heroku
         def self.parse_command_line(args)
           {}.tap do |options|
             OptionParser.new do |o|
-              o.on("-f file", "--file") { |filename| options[:filename] = filename }
+              o.on("-f file", "--filename") { |filename| options[:filename] = filename }
               o.on("--async")           { options[:async] = true }
               o.on("--production")      { options[:env] = "production" }
               o.on("--without-sso")     { options[:sso] = false }
