@@ -76,6 +76,27 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
       @response["config"]["MYADDON_URL"] = "http://localhost/abc" 
       assert_valid
     end
+
+    describe "when syslog drain is required" do
+      setup do
+        @data["requires"] = ["syslog_drain"]
+      end
+
+      test "response is invalid without a syslog_drain_url" do
+        @response['syslog_drain_url'] = ''
+        assert_invalid
+      end
+
+      test "response is invalid if syslog_drain_url is invalid" do
+        @response['syslog_drain_url'] = 'ftp://host.example.com'
+        assert_invalid
+      end
+
+      test "response is valid with a syslog_drain_url" do
+        @response['syslog_drain_url'] = 'syslog://log.example.com:9999'
+        assert_valid
+      end
+    end
   end
 
 end

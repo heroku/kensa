@@ -221,6 +221,24 @@ module Heroku
             end
           end
 
+          check "syslog_drain_url is returned if required" do
+            return true unless data.has_key?("requires") && data["requires"].include?("syslog_drain")
+
+            drain_url = response['syslog_drain_url']
+
+            if !drain_url || drain_url.empty?
+              error "must return a syslog_drain_url"
+            else
+              true
+            end
+
+            unless drain_url =~ /\A(https|syslog):\/\/[\S]+\Z/
+              error "must return a syslog_drain_url like syslog://log.example.com:9999"
+            else
+              true
+            end
+          end
+
         end
       end
 
