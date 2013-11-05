@@ -503,6 +503,7 @@ module Heroku
 
       def call!
         args = data[:args]
+        run ManifestCheck, data
         run ProvisionCheck, data
 
         response = data[:provision_response]
@@ -523,6 +524,7 @@ module Heroku
 
         data[:plan] ||= 'foo'
         run PlanChangeCheck, data
+        run SsoCheck, data
         run DeprovisionCheck, data
       end
 
