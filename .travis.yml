@@ -9,5 +9,4 @@ rvm:
   - 2.1.0
 notifications:
   email:
-    - csquared@heroku.com
-    - glenn@heroku.com
+    - addons@heroku.com
