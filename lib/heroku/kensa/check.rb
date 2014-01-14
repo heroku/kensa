@@ -2,6 +2,7 @@ require 'mechanize'
 require 'socket'
 require 'timeout'
 require 'uri'
+require 'term/ansicolor'
 
 module Heroku
   module Kensa
@@ -164,6 +165,7 @@ module Heroku
 
 
     class ProvisionResponseCheck < Check
+      include Term::ANSIColor
 
       def call!
         response = data[:provision_response]
@@ -192,7 +194,7 @@ module Heroku
             difference = data['api']['config_vars'] - response['config'].keys 
             unless difference.empty?
               verb = (difference.size == 1) ? "is" : "are"
-              error "#{difference.join(', ')} #{verb} missing from the manifest"
+              print "\n\t", yellow( "#{difference.join(', ')} #{verb} missing from the manifest")
             end
             true
           end

@@ -67,11 +67,6 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
       assert_invalid
     end
 
-    test "asserts all vars in manifest are in response" do
-      @response["config"].delete('MYADDON_CONFIG')
-      assert_invalid
-    end
-
     test "is valid otherwise" do
       @response["config"]["MYADDON_URL"] = "http://localhost/abc" 
       assert_valid
