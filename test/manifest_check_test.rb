@@ -92,11 +92,6 @@ class ManifestCheckTest < Test::Unit::TestCase
           assert_invalid
         end
 
-        test "contains at least one config var" do
-          @data["api"]["config_vars"].clear
-          assert_invalid
-        end
-
         test "all config vars are in upper case" do
           @data["api"]["config_vars"] << 'MYADDON_invalid_var'
           assert_invalid

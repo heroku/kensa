@@ -131,9 +131,6 @@ module Heroku
           check "contains config_vars array" do
             data["api"]["config_vars"].is_a?(Array)
           end
-          check "contains at least one config var" do
-            !data["api"]["config_vars"].empty?
-          end
           check "all config vars are uppercase strings" do
             data["api"]["config_vars"].each do |k, v|
               if k =~ /^[A-Z][0-9A-Z_]+$/
