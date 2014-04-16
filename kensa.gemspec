@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.homepage = %q{http://provider.heroku.com/resources}
+  s.required_ruby_version = '~> 1.9'
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{Tool to help Heroku add-on providers integrating their services}
 
