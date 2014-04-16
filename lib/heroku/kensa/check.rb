@@ -503,6 +503,7 @@ module Heroku
 
       def call!
         args = data[:args]
+        run ManifestCheck, data
         run ProvisionCheck, data
 
         response = data[:provision_response]

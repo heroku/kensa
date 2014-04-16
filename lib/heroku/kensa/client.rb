@@ -73,7 +73,6 @@ module Heroku
 
       def run
         abort "! missing command to run; see usage" if @args.empty?
-        run_check ManifestCheck
         run_check AllCheck, :args => @args
       end
 
