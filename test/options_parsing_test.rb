@@ -46,12 +46,12 @@ class OptionParsingTest < Test::Unit::TestCase
     assert_equal 'true', options['foo']
   end
 
-  test "parsing --flag=value" do
+  test "parsing --flag=value (with equals)" do
     options = options_for_cmd("test provision --foo=bar")
     assert_equal 'bar', options['foo']
   end
 
-  test "parsing --flag value" do
+  test "parsing --flag value (without equals)" do
     options = options_for_cmd("test provision --foo bar")
     assert_equal 'bar', options['foo']
   end
