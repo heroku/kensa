@@ -38,14 +38,18 @@ helpers do
   
   def login(heroku_user=true)
   @header = heroku_user
-  haml <<-HAML
-%html
-%body
-  - if @header
-    #heroku-header
-      %h1 Heroku
-  %h1 Sample Addon
-HAML
+  erb <<-ERB
+<html>
+  <body>
+    <% if @header %>
+      <div id="heroku-header">
+        <h1>Heroku</h1>
+      </div>
+    <% end %>
+    <h1>Sample Add-on</h1>
+  </body>
+</html>
+ERB
   end
 end
 

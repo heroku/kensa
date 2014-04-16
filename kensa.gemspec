@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency(%q<artifice>, "~> 0.6")
   s.add_development_dependency(%q<contest>, "~> 0.1.3")
   s.add_development_dependency(%q<fakefs>, "~> 0.4.2")
-  s.add_development_dependency(%q<haml>, "~> 4.0.1")
   s.add_development_dependency(%q<rake>)
   s.add_development_dependency(%q<rr>, "~> 1.0.4")
   s.add_development_dependency(%q<sinatra>, "~> 1.4.2")
