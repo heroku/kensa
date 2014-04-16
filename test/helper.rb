@@ -1,14 +1,11 @@
 require 'heroku/kensa'
 require 'heroku/kensa/client'
 require 'contest'
-require 'coveralls'
 require 'timecop'
 require 'rr'
 require 'artifice'
 require 'test/resources/server'
 require 'fakefs/safe'
-
-Coveralls.wear!
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
