@@ -289,7 +289,7 @@ module Heroku
           reader, writer = IO.pipe
         end
 
-        test "POST /heroku/resources"
+        test "POST #{base_path}"
         check "response" do
           if data[:async]
             child = fork do
