@@ -31,7 +31,7 @@ module Heroku
             name = heroku_prefix + name
           end
 
-          "git://github.com/#{name}"
+          "https://github.com/#{name}"
         end
       end
     end
