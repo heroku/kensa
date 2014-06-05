@@ -26,14 +26,14 @@ class CreateTest < Test::Unit::TestCase
   def test_assumes_heroku_template
     kensa "create my_addon --template sinatra"
     assert_received Git do |git|
-      git.run("git clone git://github.com/heroku/kensa-create-sinatra my_addon")
+      git.run("git clone https://github.com/heroku/kensa-create-sinatra my_addon")
     end
   end
 
   def test_assumes_github
     kensa "create my_addon --template heroku/sinatra"
     assert_received Git do |git|
-      git.run("git clone git://github.com/heroku/sinatra my_addon")
+      git.run("git clone https://github.com/heroku/sinatra my_addon")
     end
   end
 
