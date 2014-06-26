@@ -50,6 +50,9 @@ OPTIONS
   --template
     Name of git template on github or full url of git repo.
 
+  -u, --upstream [heroku,broadstack,cloudcontrol]
+    Use the specified upstream addon api (default heroku)
+
 COMMANDS
 
   init            Creates a skeleton manifest

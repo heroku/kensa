@@ -101,6 +101,17 @@ post '/invalid-missing-auth/heroku/resources' do
   { :id => 123 }.to_json
 end
 
+post '/alternate-upstream/heroku/resources' do
+  json_must_include(%w{broadstack_id plan callback_url logplex_token options})
+  heroku_only!
+  { :id => 123 }.to_json
+end
+
+put '/alternate-upstream/heroku/resources/:id' do
+  json_must_include(%w{broadstack_id plan})
+  heroku_only!
+  {}.to_json
+end
 
 put '/working/heroku/resources/:id' do
   json_must_include(%w{heroku_id plan})

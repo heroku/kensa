@@ -8,6 +8,12 @@ module Heroku
     class Client
       attr_accessor :options
 
+      UPSTREAMS = {
+        :heroku => "https://addons.heroku.com",
+        :broadstack => "https://broadstack.com",
+        :cloudcontrol => "https://api.cloudcontrol.com",
+      }
+
       def initialize(args, options = {})
         @args    = args
         @options = OptParser.parse(args).merge(options)
@@ -86,12 +92,12 @@ module Heroku
 
       def push
         user, password = ask_for_credentials
-        host     = heroku_host
+        host     = upstream_host
         data     = decoded_manifest
         resource = RestClient::Resource.new(host, user, password)
         resource['provider/addons'].post(resolve_manifest, headers)
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
-        puts "       Continue at #{(heroku_host)}/provider/addons/#{data['id']}"
+        puts "       Continue at #{(upstream_host)}/provider/addons/#{data['id']}"
       rescue RestClient::UnprocessableEntity, RestClient::BadRequest => e
         abort("FAILED: #{e.response}")
       rescue RestClient::Unauthorized
@@ -105,7 +111,7 @@ module Heroku
         protect_current_manifest!
 
         user, password = ask_for_credentials
-        host     = heroku_host
+        host     = upstream_host
         resource = RestClient::Resource.new(host, user, password)
         manifest = resource["provider/addons/#{addon}"].get(headers)
         File.open(filename, 'w') { |f| f.puts manifest }
@@ -137,8 +143,8 @@ module Heroku
           { :accept => :json, "X-Kensa-Version" => "1", "User-Agent" => "kensa/#{VERSION}" }
         end
 
-        def heroku_host
-          ENV['ADDONS_URL'] || 'https://addons.heroku.com'
+        def upstream_host
+          ENV['ADDONS_URL'] || UPSTREAMS.fetch(@options[:upstream] || :heroku)
         end
 
         def resolve_manifest
@@ -172,6 +178,10 @@ module Heroku
           end
         end
 
+        def upstream_name
+          @options[:upstream] ? @options[:upstream].capitalize : "Heroku"
+        end
+
         def running_on_windows?
           RUBY_PLATFORM =~ /mswin32|mingw32/
         end
@@ -185,7 +195,7 @@ module Heroku
         end
 
         def ask_for_credentials
-          puts "Enter your Heroku Provider credentials."
+          puts "Enter your #{upstream_name} Provider credentials."
 
           print "Email: "
           user = gets.strip
@@ -306,6 +316,9 @@ module Heroku
               o.on("--foreman")         { options[:foreman] = true }
               o.on("-t name", "--template") do |template|
                 options[:template] = template
+              end
+              o.on("-u upstream", "--upstream", UPSTREAMS.keys) do |upstream|
+                options[:upstream] = upstream
               end
               #note: have to add these to KNOWN_ARGS
 
