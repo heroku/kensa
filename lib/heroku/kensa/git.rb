@@ -27,7 +27,7 @@ module Heroku
         def clone_url(name)
           if name.include? "://" #its a full url not on github
             return name
-          elsif !name.include? "/" #its one of ours 
+          elsif !name.include? "/" #its one of ours
             name = heroku_prefix + name
           end
 

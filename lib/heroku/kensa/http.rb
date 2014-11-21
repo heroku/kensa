@@ -29,7 +29,7 @@ module Heroku
           args = [
             { :accept => "application/json" }
           ]
-          
+
           if payload
             args.first[:content_type] = "application/json"
             args.unshift OkJson.encode(payload)

@@ -21,7 +21,7 @@ class Heroku::Kensa::PostProxy < WEBrick::HTTPServer
           <form action="#{@sso.post_url}" method="POST">
             #{ @params.map do |key, value|
                 %|<input type="hidden" name="#{key}" value="#{value}" />|
-               end.join("\n")  
+               end.join("\n")
              }
           </form>
         </body>

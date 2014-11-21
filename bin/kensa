@@ -68,7 +68,7 @@ COMMANDS
 
 TEST TYPES
 
-  provision [optional params] 
+  provision [optional params]
     Simulate a provision call from Heroku.
     [optional params]
       accepts extra command options and passes them on to the provision request
@@ -87,6 +87,6 @@ TEST TYPES
     Confirm that the manifest is valid.  Automatically runs before all tests.
 
   all
-    runs provision, planchange, and deprovision tests.  
+    runs provision, planchange, and deprovision tests.
     defaults to using 'foo' for planchange plan.
 

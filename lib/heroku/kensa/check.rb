@@ -127,7 +127,7 @@ module Heroku
           end
         end
 
-        if data["api"].has_key?("config_vars") 
+        if data["api"].has_key?("config_vars")
           check "contains config_vars array" do
             data["api"]["config_vars"].is_a?(Array)
           end
@@ -189,7 +189,7 @@ module Heroku
           end
 
           check "all keys in the manifest are present" do
-            difference = data['api']['config_vars'] - response['config'].keys 
+            difference = data['api']['config_vars'] - response['config'].keys
             unless difference.empty?
               verb = (difference.size == 1) ? "is" : "are"
               print "\n\t", yellow( "#{difference.join(', ')} #{verb} missing from the manifest")
@@ -280,7 +280,7 @@ module Heroku
         payload = {
           :heroku_id => heroku_id,
           :plan => data[:plan] || 'test',
-          :callback_url => callback, 
+          :callback_url => callback,
           :logplex_token => nil,
           :region => "amazon-web-services::us-east-1",
           :options => data[:options] || {}
@@ -456,7 +456,7 @@ module Heroku
 
         check "validates token" do
           @sso.token = 'invalid'
-          page, respcode = mechanize_get 
+          page, respcode = mechanize_get
           error("expected 403, got #{respcode}") unless respcode == 403
           true
         end
@@ -470,7 +470,7 @@ module Heroku
 
         page_logged_in = nil
         check "logs in" do
-          page_logged_in, respcode = mechanize_get 
+          page_logged_in, respcode = mechanize_get
           error("expected 200, got #{respcode}") unless respcode == 200
           true
         end
