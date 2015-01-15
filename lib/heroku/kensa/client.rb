@@ -186,11 +186,12 @@ module Heroku
 
         def ask_for_credentials
           puts "Enter your Heroku Provider credentials."
+          puts "Note: You must create an OAuth token with https://github.com/heroku/heroku-oauth"
 
           print "Email: "
           user = gets.strip
 
-          print "Password: "
+          print "OAuth Token: "
           password = running_on_windows? ? ask_for_password_on_windows : ask_for_password
 
           [ user, password ]
