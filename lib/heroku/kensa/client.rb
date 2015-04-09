@@ -2,6 +2,7 @@ require 'restclient'
 require 'term/ansicolor'
 require 'launchy'
 require 'optparse'
+require 'netrc'
 
 module Heroku
   module Kensa
@@ -185,6 +186,14 @@ module Heroku
         end
 
         def ask_for_credentials
+          netrc_creds = Netrc.read['api.heroku.com']
+          if netrc_creds
+            print "Found credentials for #{netrc_creds.login}, proceed? (y/N) "
+            if gets.chomp.downcase == "y"
+              return [ netrc_creds.login, netrc_creds.password]
+            end
+          end
+
           puts "Enter your Heroku Provider credentials."
 
           print "Email: "
