@@ -38,5 +38,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency(%q<sinatra>, "~> 1.4.2")
   s.add_development_dependency(%q<timecop>, "~> 0.6.1")
   s.add_development_dependency(%q<pry>)
+  s.add_development_dependency(%q<test-unit>)
+  s.add_development_dependency(%q<pry>)
 end
 
