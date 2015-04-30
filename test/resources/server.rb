@@ -53,6 +53,37 @@ ERB
   end
 end
 
+class ProvisionRecord
+  def self.provisions
+    @provisions ||= 0
+  end
+
+  def self.incr
+    @provisions += 1
+  end
+
+  def self.reset
+    @provisions = 0
+  end
+
+  def self.count
+    @provisions
+  end
+end
+
+post '/duplicate/heroku/resources' do
+  heroku_only!
+  ProvisionRecord.incr
+
+  if ProvisionRecord.count > 1
+    status 422
+    {}.to_json
+  else
+    status 201
+    { id: 123 }.to_json
+  end
+end
+
 post '/heroku/resources' do
   heroku_only!
   { :id => 123 }.to_json
