@@ -173,6 +173,14 @@ module Heroku
           response.is_a?(Hash) && response.has_key?("id")
         end
 
+        check "id does not contain heroku_id" do
+          if response["id"] && response["id"].respond_to?(:include?) && response["id"].include?(data["heroku_id"])
+            error "id cannot include heroku_id"
+          else
+            true
+          end
+        end
+
         screen.message " (id #{response['id']})"
 
         if response.has_key?("config")
@@ -397,7 +405,7 @@ module Heroku
 
         data[:provision_response] = response
 
-        run ProvisionResponseCheck, data
+        run ProvisionResponseCheck, data.merge("heroku_id" => heroku_id)
 
         if !data["api"].fetch("requires", []).include?("many_per_app")
           run DuplicateProvisionCheck, data
