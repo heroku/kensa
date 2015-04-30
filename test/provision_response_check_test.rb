@@ -13,6 +13,7 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
                 }}
     @data = Manifest.new.skeleton.merge(:provision_response => @response)
     @data['api']['config_vars'] << "MYADDON_CONFIG"
+    @data["heroku_id"] = "app123@kensa.heroku.com"
   end
 
   test "is valid if no errors" do
@@ -21,6 +22,11 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
 
   test "has an id" do
     @response.delete("id")
+    assert_invalid
+  end
+
+  test "id does not contain the heroku_id" do
+    @response["id"] = @data["heroku_id"]
     assert_invalid
   end
 
