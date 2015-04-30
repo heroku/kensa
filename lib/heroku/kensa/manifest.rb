@@ -26,7 +26,8 @@ module Heroku
     "regions": [ "us" ],
     "password": "#{@password}",#{ sso_key }
     "production": "https://yourapp.com/",
-    "test": "http://localhost:#{@port}/"
+    "test": "http://localhost:#{@port}/",
+    "requires": []
   }
 }
 JSON
@@ -38,6 +39,7 @@ JSON
   "id": "myaddon",
   "api": {
     "config_vars": [ "MYADDON_URL" ],
+    "requires": [],
     "regions": [ "us" ],
     "password": "#{@password}",#{ sso_key }
     "production": {

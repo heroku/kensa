@@ -244,7 +244,6 @@ module Heroku
 
     end
 
-
     class ApiCheck < Check
       def base_path
         if data['api'][env].is_a? Hash
@@ -260,6 +259,59 @@ module Heroku
 
       def credentials
         [ data['id'], data['api']['password'] ]
+      end
+    end
+
+    class DuplicateProvisionCheck < ApiCheck
+      include HTTP
+
+      READLEN = 1024 * 10
+
+      def call!
+        return true if data["api"].fetch("requires", []).include?("many_per_app")
+
+        json = nil
+        response = nil
+
+        code = nil
+        json = nil
+        callback = "http://localhost:7779/callback/999"
+        reader, writer = nil
+
+        payload = {
+          :heroku_id => heroku_id,
+          :plan => data[:plan] || 'test',
+          :callback_url => callback,
+          :logplex_token => nil,
+          :region => "amazon-web-services::us-east-1",
+          :options => data[:options] || {}
+        }
+
+        if data[:async]
+          reader, writer = IO.pipe
+        end
+
+        if data[:async]
+          child = fork do
+            reader.close
+            server = TCPServer.open(7779)
+            client = server.accept
+            writer.write(client.readpartial(READLEN))
+            client.write("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n")
+            client.close
+            writer.close
+          end
+          sleep(1)
+        end
+
+        post(credentials, base_path, payload)
+        code, json = post(credentials, base_path, payload)
+
+        check "disallows duplicate provisions" do
+          if code == 200
+            error("should not allow duplicate provisions")
+          end
+        end
       end
     end
 
@@ -345,6 +397,10 @@ module Heroku
         data[:provision_response] = response
 
         run ProvisionResponseCheck, data
+
+        if !data["api"].fetch("requires", []).include?("many_per_app")
+          run DuplicateProvisionCheck, data
+        end
       end
 
     ensure

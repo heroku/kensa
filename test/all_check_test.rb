@@ -7,6 +7,7 @@ class AllCheckTest < Test::Unit::TestCase
 
   setup do
     @data = Manifest.new(:method => :get).skeleton
+    @data["api"]["requires"] << "many_per_app"
     @data['api']['password'] = 'secret'
     @data['api']['test'] += "working"
     @file = File.dirname(__FILE__) + "/resources/runner.rb"
