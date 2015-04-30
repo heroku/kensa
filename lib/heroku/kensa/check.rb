@@ -142,11 +142,11 @@ module Heroku
           end
           check "all config vars are prefixed with the addon id" do
             data["api"]["config_vars"].each do |k|
-              addon_key = data['id'].upcase.gsub('-', '_')
-              if k =~ /^#{addon_key}_/
+              prefix = data["api"]["config_vars_prefix"] || data['id'].upcase.gsub('-', '_')
+              if k =~ /^#{prefix}_/
                 true
               else
-                error "#{k} is not a valid ENV key - must be prefixed with #{addon_key}_"
+                error "#{k} is not a valid ENV key - must be prefixed with #{prefix}_"
               end
             end
           end
