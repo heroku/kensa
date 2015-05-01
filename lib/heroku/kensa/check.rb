@@ -170,11 +170,11 @@ module Heroku
         test "response"
 
         check "contains an id" do
-          response.is_a?(Hash) && response.has_key?("id")
+          response.is_a?(Hash) && response["id"]
         end
 
         check "id does not contain heroku_id" do
-          if response["id"] && response["id"].respond_to?(:include?) && response["id"].include?(data["heroku_id"])
+          if response["id"].to_s.include? data["heroku_id"].scan(/app(\d+)@/).flatten.first
             error "id cannot include heroku_id"
           else
             true
@@ -276,7 +276,6 @@ module Heroku
       READLEN = 1024 * 10
 
       def call!
-        return true if data["api"].fetch("requires", []).include?("many_per_app")
 
         json = nil
         response = nil
@@ -312,12 +311,27 @@ module Heroku
           sleep(1)
         end
 
-        post(credentials, base_path, payload)
-        code, json = post(credentials, base_path, payload)
+        code1, json1 = post(credentials, base_path, payload)
+        code2, json2 = post(credentials, base_path, payload)
 
-        check "disallows duplicate provisions" do
-          if code == 200
-            error("should not allow duplicate provisions")
+        json1 = OkJson.decode(json1)
+        json2 = OkJson.decode(json2)
+
+        if data["api"].fetch("requires", []).include?("many_per_app")
+          check "returns different ids" do
+            if json1["id"] == json2["id"]
+              error "multiple provisions cannot return the same id"
+            else
+              true
+            end
+          end
+        else
+          check "disallows duplicate provisions" do
+            if code2 == 200
+              error("should not allow duplicate provisions")
+            else
+              true
+            end
           end
         end
       end
