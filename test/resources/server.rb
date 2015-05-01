@@ -71,6 +71,12 @@ class ProvisionRecord
   end
 end
 
+post '/working_duplicate/heroku/resources' do
+  heroku_only!
+  ProvisionRecord.incr
+  { id: ProvisionRecord.count }.to_json
+end
+
 post '/duplicate/heroku/resources' do
   heroku_only!
   ProvisionRecord.incr
