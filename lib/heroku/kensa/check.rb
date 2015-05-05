@@ -3,6 +3,7 @@ require 'socket'
 require 'timeout'
 require 'uri'
 require 'term/ansicolor'
+require 'uuidtools'
 
 module Heroku
   module Kensa
@@ -281,9 +282,11 @@ module Heroku
           :heroku_id => heroku_id,
           :plan => data[:plan] || 'test',
           :callback_url => callback,
+	  :log_input_url => "https://token:t.01234567-89ab-cdef-0123-456789abcdef@1.us.logplex.io/logs",
           :logplex_token => nil,
           :region => "amazon-web-services::us-east-1",
-          :options => data[:options] || {}
+          :options => data[:options] || {},
+	  :uuid => UUIDTools::UUID.random_create.to_s
         }
 
         if data[:async]

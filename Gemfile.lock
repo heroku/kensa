@@ -66,6 +66,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.6)
+    uuidtools (2.1.5)
     webrobots (0.1.1)
 
 PLATFORMS
@@ -81,3 +82,4 @@ DEPENDENCIES
   rr (~> 1.0.4)
   sinatra (~> 1.4.2)
   timecop (~> 0.6.1)
+  uuidtools (~> 2.1.5)
