@@ -311,23 +311,6 @@ module Heroku
 
         payload = create_provision_payload
 
-        if data[:async]
-          reader, writer = IO.pipe
-        end
-
-        if data[:async]
-          child = fork do
-            reader.close
-            server = TCPServer.open(7779)
-            client = server.accept
-            writer.write(client.readpartial(READLEN))
-            client.write("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n")
-            client.close
-            writer.close
-          end
-          sleep(1)
-        end
-
         code1, json1 = post(credentials, base_path, payload)
         code2, json2 = post(credentials, base_path, payload)
 
@@ -338,14 +321,6 @@ module Heroku
           check "returns different ids" do
             if json1["id"] == json2["id"]
               error "multiple provisions cannot return the same id"
-            else
-              true
-            end
-          end
-        else
-          check "disallows duplicate provisions" do
-            if code2 == 200
-              error("should not allow duplicate provisions")
             else
               true
             end

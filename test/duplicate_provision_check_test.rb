@@ -12,15 +12,6 @@ class DuplicateProvisionCheckTest < Test::Unit::TestCase
     ProviderServer::ProvisionRecord.reset
   end
 
-  context "when the provider does not support many_per_app" do
-    setup { @data["api"]["requires"] = [] }
-
-    test "fails when the provider allows duplicate provisions" do
-      use_provider_endpoint "working"
-      assert_invalid
-    end
-  end
-
   context "when the provider supports many_per_app" do
     setup { @data["api"]["requires"] = ["many_per_app"] }
 

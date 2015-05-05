@@ -37,13 +37,6 @@ class ProvisionCheckTest < Test::Unit::TestCase
         end
       end
 
-      context "when not supporting many_per_app" do
-        test "fails duplicate provision check" do
-          @data["api"]["requires"] = []
-          assert_invalid
-        end
-      end
-
       test "provision call with extra params" do
         use_provider_endpoint "cmd-line-options"
         @data[:options] = {:foo => 'bar', :bar => 'baz'}
