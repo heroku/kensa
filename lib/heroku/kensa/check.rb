@@ -268,6 +268,27 @@ module Heroku
       def credentials
         [ data['id'], data['api']['password'] ]
       end
+
+      def callback
+        "http://localhost:7779/callback/999"
+      end
+
+      def create_provision_payload
+        payload = {
+          :heroku_id => heroku_id,
+          :plan => data[:plan] || 'test',
+          :callback_url => callback,
+          :logplex_token => nil,
+          :region => "amazon-web-services::us-east-1",
+          :options => data[:options] || {},
+          :uuid => SecureRandom.uuid
+        }
+
+        if data["api"].has_key?("requires") && data["api"]["requires"].include?("syslog_drain")
+          payload[:log_drain_token] = SecureRandom.hex
+        end
+        payload
+      end
     end
 
     class DuplicateProvisionCheck < ApiCheck
@@ -282,17 +303,10 @@ module Heroku
 
         code = nil
         json = nil
-        callback = "http://localhost:7779/callback/999"
         reader, writer = nil
 
-        payload = {
-          :heroku_id => heroku_id,
-          :plan => data[:plan] || 'test',
-          :callback_url => callback,
-          :logplex_token => nil,
-          :region => "amazon-web-services::us-east-1",
-          :options => data[:options] || {}
-        }
+        payload = create_provision_payload
+
 
         if data[:async]
           reader, writer = IO.pipe
@@ -348,18 +362,9 @@ module Heroku
 
         code = nil
         json = nil
-        callback = "http://localhost:7779/callback/999"
         reader, writer = nil
 
-        payload = {
-          :heroku_id => heroku_id,
-          :plan => data[:plan] || 'test',
-          :callback_url => callback,
-          :logplex_token => nil,
-          :region => "amazon-web-services::us-east-1",
-          :options => data[:options] || {},
-          :uuid => SecureRandom.uuid
-        }
+        payload = create_provision_payload
 
         if data[:async]
           reader, writer = IO.pipe
