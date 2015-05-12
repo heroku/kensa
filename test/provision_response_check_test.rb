@@ -80,7 +80,7 @@ class ProvisionResponseCheckTest < Test::Unit::TestCase
 
     describe "when syslog drain is required" do
       setup do
-        @data["requires"] = ["syslog_drain"]
+        @data["api"]["requires"] = ["syslog_drain"]
       end
 
       test "response is invalid without a syslog_drain_url" do

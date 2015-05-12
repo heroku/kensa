@@ -68,6 +68,10 @@ module Heroku
           data['api'][env].chomp("/")
         end
       end
+
+      def api_requires?(feature)
+        data["api"].fetch("requires", []).include?(feature)
+      end
     end
 
 
@@ -230,7 +234,7 @@ module Heroku
           end
 
           check "syslog_drain_url is returned if required" do
-            return true unless data.has_key?("requires") && data["requires"].include?("syslog_drain")
+            return true unless api_requires?("syslog_drain")
 
             drain_url = response['syslog_drain_url']
 
@@ -284,7 +288,7 @@ module Heroku
           :uuid => SecureRandom.uuid
         }
 
-        if data["api"].has_key?("requires") && data["api"]["requires"].include?("syslog_drain")
+        if api_requires?("syslog_drain")
           payload[:log_drain_token] = SecureRandom.hex
         end
         payload
@@ -330,7 +334,7 @@ module Heroku
         json1 = OkJson.decode(json1)
         json2 = OkJson.decode(json2)
 
-        if data["api"].fetch("requires", []).include?("many_per_app")
+        if api_requires?("many_per_app")
           check "returns different ids" do
             if json1["id"] == json2["id"]
               error "multiple provisions cannot return the same id"
@@ -426,7 +430,7 @@ module Heroku
 
         run ProvisionResponseCheck, data.merge("heroku_id" => heroku_id)
 
-        if !data["api"].fetch("requires", []).include?("many_per_app")
+        if !api_requires?("many_per_app")
           run DuplicateProvisionCheck, data
         end
       end
