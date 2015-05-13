@@ -281,7 +281,6 @@ module Heroku
           :heroku_id => heroku_id,
           :plan => data[:plan] || 'test',
           :callback_url => callback,
-          :logplex_token => nil,
           :region => "amazon-web-services::us-east-1",
           :options => data[:options] || {}
         }
