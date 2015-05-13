@@ -10,6 +10,24 @@ require 'fakefs/safe'
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit
 
+  class ProvisionRecord
+    def self.provisions
+      @provisions ||= 0
+    end
+
+    def self.incr
+      @provisions += 1
+    end
+
+    def self.reset
+      @provisions = 0
+    end
+
+    def self.count
+      @provisions
+    end
+  end
+
   module ProviderMock
     def setup
       Artifice.activate_with(ProviderServer)

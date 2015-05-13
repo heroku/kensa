@@ -10,6 +10,7 @@ class ProvisionCheckTest < Test::Unit::TestCase
     context "with sso #{method}" do
       setup do
         @data = Manifest.new(:method => method).skeleton
+        @data["api"]["requires"] = ["many_per_app"]
         @data['api']['password'] = 'secret'
       end
 
@@ -27,6 +28,13 @@ class ProvisionCheckTest < Test::Unit::TestCase
       test "working provision call" do
         use_provider_endpoint "working"
         assert_valid
+      end
+
+      context "when supporting many_per_app" do
+        test "passes duplicate provision check" do
+          @data["api"]["requires"] = ["many_per_app"]
+          assert_valid
+        end
       end
 
       test "provision call with extra params" do
