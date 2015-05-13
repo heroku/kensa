@@ -59,7 +59,7 @@ post '/heroku/resources' do
 end
 
 post '/working/heroku/resources' do
-  json_must_include(%w{heroku_id plan callback_url logplex_token options})
+  json_must_include(%w{heroku_id plan callback_url options})
   heroku_only!
   { :id => 123 }.to_json
 end
