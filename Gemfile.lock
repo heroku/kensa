@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kensa (2.3.0)
+    kensa (2.4.0)
       launchy (~> 2.2.0)
       mechanize (~> 2.6.0)
       netrc (~> 0.10.3)
