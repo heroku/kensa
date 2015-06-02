@@ -90,9 +90,13 @@ module Heroku
         host     = heroku_host
         data     = decoded_manifest
         resource = RestClient::Resource.new(host, user, password)
-        resource['provider/addons'].post(resolve_manifest, headers)
+        manifest = resource['provider/addons'].post(resolve_manifest, headers)
+
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
         puts "       Continue at #{(heroku_host)}/provider/addons/#{data['id']}"
+
+        # Update local manifest with response from addons.heroku.com
+        File.open(filename, 'w') { |f| f.puts manifest } unless manifest.strip.empty?
       rescue RestClient::UnprocessableEntity, RestClient::BadRequest => e
         abort("FAILED: #{e.response}")
       rescue RestClient::Unauthorized
