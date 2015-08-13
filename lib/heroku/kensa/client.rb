@@ -28,7 +28,7 @@ module Heroku
         manifest.write
         screen.message "Initialized new addon manifest in #{filename}\n"
         if @options[:foreman]
-          screen.message "Initialized new .env file for foreman\n"
+          screen.message "Initialized new .env file\n"
         end
       end
 
