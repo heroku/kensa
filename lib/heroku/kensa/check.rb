@@ -99,8 +99,8 @@ module Heroku
           data["api"].is_a?(Hash)
         end
         check "has a list of regions" do
-          data["api"].has_key?("regions")
-          data["api"]["regions"].is_a?(Array)
+          data["api"].has_key?("regions") &&
+            data["api"]["regions"].is_a?(Array)
         end
         check "contains at least the US region" do
           data["api"]["regions"].include? "us"
