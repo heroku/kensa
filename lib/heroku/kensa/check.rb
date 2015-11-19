@@ -234,13 +234,13 @@ module Heroku
             end
           end
 
-          check "syslog_drain_url is returned if required" do
+          check "log_drain_url is returned if required" do
             return true unless api_requires?("syslog_drain")
 
-            drain_url = response['syslog_drain_url']
+            drain_url = response['log_drain_url']
 
             if !drain_url || drain_url.empty?
-              error "must return a syslog_drain_url"
+              error "must return a log_drain_url"
             else
               true
             end
