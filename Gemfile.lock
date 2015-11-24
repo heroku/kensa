@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kensa (2.4.2)
+    kensa (2.4.3)
       colored (~> 1.2)
       launchy (~> 2.2.0)
       mechanize (~> 2.6.0)
@@ -87,4 +87,4 @@ DEPENDENCIES
   timecop (~> 0.6.1)
 
 BUNDLED WITH
-   1.10.5
+   1.10.6
