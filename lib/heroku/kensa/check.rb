@@ -2,7 +2,7 @@ require 'mechanize'
 require 'socket'
 require 'timeout'
 require 'uri'
-require 'term/ansicolor'
+require 'colored'
 
 module Heroku
   module Kensa
@@ -168,8 +168,6 @@ module Heroku
 
 
     class ProvisionResponseCheck < Check
-      include Term::ANSIColor
-
       def call!
         response = data[:provision_response]
         test "response"

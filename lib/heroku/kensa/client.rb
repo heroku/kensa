@@ -1,8 +1,8 @@
 require 'restclient'
-require 'term/ansicolor'
 require 'launchy'
 require 'optparse'
 require 'netrc'
+require 'colored'
 
 module Heroku
   module Kensa
@@ -236,8 +236,6 @@ module Heroku
 
 
       class Screen
-        include Term::ANSIColor
-
         def test(msg)
           $stdout.puts
           $stdout.puts
@@ -250,11 +248,11 @@ module Heroku
         end
 
         def error(msg)
-          $stdout.print "\n", red("    #{msg}")
+          $stdout.print "\n", "    #{msg}".red
         end
 
         def result(status)
-          msg = status ? green("[PASS]") : red(bold("[FAIL]"))
+          msg = status ? "[PASS]".green : "[FAIL]".red.bold
           $stdout.print " #{msg}"
         end
 

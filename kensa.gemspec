@@ -27,8 +27,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency(%q<launchy>, "~> 2.2.0")
   s.add_runtime_dependency(%q<mechanize>, "~> 2.6.0")
   s.add_runtime_dependency(%q<netrc>, "~> 0.10.3")
-  s.add_runtime_dependency(%q<rest-client>, ["< 1.7.0", "~> 1.4"])
-  s.add_runtime_dependency(%q<term-ansicolor>, "~> 1.3")
+  s.add_runtime_dependency(%q<rest-client>, "~> 1.8")
+  s.add_runtime_dependency(%q<colored>, "~> 1.2")
 
   s.add_development_dependency(%q<artifice>, "~> 0.6")
   s.add_development_dependency(%q<contest>, "~> 0.1.3")
