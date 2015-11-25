@@ -203,7 +203,7 @@ module Heroku
             difference = data['api']['config_vars'] - response['config'].keys
             unless difference.empty?
               verb = (difference.size == 1) ? "is" : "are"
-              print "\n\t", yellow( "#{difference.join(', ')} #{verb} missing from the manifest")
+              warning "#{difference.join(', ')} #{verb} missing from the manifest"
             end
             true
           end
