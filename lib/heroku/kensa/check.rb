@@ -42,6 +42,10 @@ module Heroku
         raise CheckError, msg
       end
 
+      def warning(msg)
+        screen.warning msg
+      end
+
       def call
         call!
         true
