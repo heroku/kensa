@@ -42,6 +42,10 @@ module Heroku
         raise CheckError, msg
       end
 
+      def warning(msg)
+        screen.warning msg
+      end
+
       def call
         call!
         true
@@ -203,7 +207,7 @@ module Heroku
             difference = data['api']['config_vars'] - response['config'].keys
             unless difference.empty?
               verb = (difference.size == 1) ? "is" : "are"
-              print "\n\t", yellow( "#{difference.join(', ')} #{verb} missing from the manifest")
+              warning "#{difference.join(', ')} #{verb} missing from the provision response"
             end
             true
           end

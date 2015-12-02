@@ -11,6 +11,9 @@ module Heroku
       def error(msg)
       end
 
+      def warning(msg)
+      end
+
       def result(status)
       end
 

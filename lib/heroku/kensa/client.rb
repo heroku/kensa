@@ -251,6 +251,10 @@ module Heroku
           $stdout.print "\n", "    #{msg}".red
         end
 
+        def warning(msg)
+          $stdout.print "\n", "    #{msg}".yellow
+        end
+
         def result(status)
           msg = status ? "[PASS]".green : "[FAIL]".red.bold
           $stdout.print " #{msg}"
