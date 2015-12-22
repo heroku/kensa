@@ -54,8 +54,6 @@ COMMANDS
 
   init            Creates a skeleton manifest
 
-  create <app>    Clone a git repo that contains a template add-on
-
   test <type>     Simulate call from Heroku (provision or deprovision)
 
   run <command>   Provisions a resource and runs command in returned ENV

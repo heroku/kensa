@@ -32,21 +32,6 @@ module Heroku
         end
       end
 
-      def create
-        app_name = @args.shift
-        template = @options[:template]
-        raise CommandInvalid.new("Need to supply an application name") unless app_name
-        raise CommandInvalid.new("Need to supply a template") unless template
-        begin
-          Git.clone(app_name, template) and screen.message "Created #{app_name} from #{template} template\n"
-          Dir.chdir(app_name)
-          @options[:foreman] = true
-          init
-        rescue Exception => e
-          raise CommandInvalid.new("error cloning #{Git.clone_url(template)} into #{app_name}")
-        end
-      end
-
       def test
         case check = @args.shift
           when "manifest"
