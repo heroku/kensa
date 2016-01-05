@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kensa (2.4.4)
+    kensa (3.0.0)
       colored (~> 1.2)
       launchy (~> 2.2.0)
       mechanize (~> 2.6.0)
