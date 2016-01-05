@@ -3,7 +3,7 @@ require 'securerandom'
 module Heroku
   module Kensa
     class Manifest
-      REGIONS = %w(us eu *)
+      REGIONS = %w(us eu frankfurt oregon tokyo virginia *)
 
       def initialize(options = {})
         @method   = options.fetch(:method, 'post').to_sym
