@@ -71,10 +71,7 @@ module Heroku
       end
 
       def push
-        user, password = ask_for_credentials
-        host     = heroku_host
         data     = decoded_manifest
-        resource = RestClient::Resource.new(host, user, password)
         manifest = resource['provider/addons'].post(resolve_manifest, headers)
 
         puts "-----> Manifest for \"#{data['id']}\" was pushed successfully"
@@ -94,9 +91,6 @@ module Heroku
         addon = @args.first || abort('usage: kensa pull <add-on name>')
         protect_current_manifest!
 
-        user, password = ask_for_credentials
-        host     = heroku_host
-        resource = RestClient::Resource.new(host, user, password)
         manifest = resource["provider/addons/#{addon}"].get(headers)
         File.open(filename, 'w') { |f| f.puts manifest }
         puts "-----> Manifest for \"#{addon}\" received successfully"
@@ -107,6 +101,15 @@ module Heroku
       end
 
       private
+        def resource
+          user, password = ask_for_credentials
+          @resource ||= RestClient::Resource.new(heroku_host, user: user, password: password, verify_ssl: verify_ssl?)
+        end
+
+        def verify_ssl?
+          ENV.fetch('HEROKU_CLOUD', 'production') == 'production' && ENV['SSL_VERIFY_PEER'] != 'false'
+        end
+
         def protect_current_manifest!
           if manifest_exists?
             print "Manifest already exists. Replace it? (y/n) "
@@ -128,7 +131,13 @@ module Heroku
         end
 
         def heroku_host
-          ENV['ADDONS_URL'] || 'https://addons.heroku.com'
+          ENV.fetch('ADDONS_URL') do
+            cloud = ENV.key?('HEROKU_CLOUD') ?
+              "#{ENV['HEROKU_CLOUD']}.herokuappdev.com" :
+              "heroku.com"
+
+            "https://addons.#{cloud}"
+          end
         end
 
         def resolve_manifest
@@ -175,7 +184,8 @@ module Heroku
         end
 
         def ask_for_credentials
-          netrc_creds = Netrc.read['api.heroku.com']
+          api = ENV.fetch('HEROKU_API_URL', 'https://api.heroku.com').sub(%r'^https://','')
+          netrc_creds = Netrc.read[api]
           if netrc_creds
             print "Found credentials for #{netrc_creds.login}, proceed? (y/N) "
             if gets.chomp.downcase == "y"
