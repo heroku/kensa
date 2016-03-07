@@ -315,6 +315,8 @@ module Heroku
         payload = create_provision_payload
 
         code1, json1 = post(credentials, base_path, payload)
+
+        payload[:uuid] = SecureRandom.uuid
         code2, json2 = post(credentials, base_path, payload)
 
         json1 = OkJson.decode(json1)
@@ -366,6 +368,7 @@ module Heroku
             sleep(1)
           end
 
+          payload[:uuid] = SecureRandom.uuid
           code, json = post(credentials, base_path, payload)
 
           if code == 200
@@ -399,6 +402,7 @@ module Heroku
 
         check "authentication" do
           wrong_credentials = ['wrong', 'secret']
+          payload[:uuid] = SecureRandom.uuid
           code, _ = post(wrong_credentials, base_path, payload)
           error("expected 401, got #{code}") if code != 401
           true
@@ -467,6 +471,7 @@ module Heroku
 
         test "PUT #{path}"
         check "response" do
+          payload[:uuid] = SecureRandom.uuid
           code, _ = put(credentials, path, payload)
           if code == 200
             true
@@ -479,6 +484,7 @@ module Heroku
 
         check "authentication" do
           wrong_credentials = ['wrong', 'secret']
+          payload[:uuid] = SecureRandom.uuid
           code, _ = put(wrong_credentials, path, payload)
           error("expected 401, got #{code}") if code != 401
           true
