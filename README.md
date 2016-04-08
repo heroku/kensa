@@ -25,6 +25,6 @@ how to build your Heroku add-on:
 
 ## Meta #######################################################################
 
-Maintained by the Heroku Add-ons Team (and you!).
+Maintained by the Heroku Ecosystem Team (and you!).
 
 Released under the MIT license. <https://github.com/heroku/kensa>
