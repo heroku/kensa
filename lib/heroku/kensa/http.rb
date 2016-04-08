@@ -36,7 +36,7 @@ module Heroku
           end
 
           user, pass = credentials
-          body = RestClient::Resource.new(url, user, pass)[path].send(
+          body = RestClient::Resource.new(url, user, pass, verify_ssl: false)[path].send(
             meth,
             *args
           ).to_s
