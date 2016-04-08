@@ -2,7 +2,7 @@ require 'restclient'
 
 module Heroku
   module Kensa
-    module HTTP
+    module HTTPForChecks
 
       def get(path, params={})
         path = "#{path}?" + params.map { |k, v| "#{k}=#{v}" }.join("&") unless params.empty?
