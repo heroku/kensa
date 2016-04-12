@@ -299,7 +299,7 @@ module Heroku
     end
 
     class DuplicateProvisionCheck < ApiCheck
-      include HTTP
+      include HTTPForChecks
 
       READLEN = 1024 * 10
 
@@ -335,7 +335,7 @@ module Heroku
     end
 
     class ProvisionCheck < ApiCheck
-      include HTTP
+      include HTTPForChecks
 
       READLEN = 1024 * 10
 
@@ -424,7 +424,7 @@ module Heroku
 
 
     class DeprovisionCheck < ApiCheck
-      include HTTP
+      include HTTPForChecks
 
       def call!
         id = data[:id]
@@ -457,7 +457,7 @@ module Heroku
 
 
     class PlanChangeCheck < ApiCheck
-      include HTTP
+      include HTTPForChecks
 
       def call!
         id = data[:id]
@@ -494,7 +494,7 @@ module Heroku
 
 
     class SsoCheck < ApiCheck
-      include HTTP
+      include HTTPForChecks
 
       def agent
         @agent ||= Mechanize.new
