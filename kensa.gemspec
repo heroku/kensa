@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.summary = %q{Tool to help Heroku add-on providers integrating their services}
 
   s.add_runtime_dependency(%q<launchy>, "~> 2.2.0")
-  s.add_runtime_dependency(%q<mechanize>, "~> 2.6.0")
+  s.add_runtime_dependency(%q<mechanize>, "~> 2.7.5")
   s.add_runtime_dependency(%q<netrc>, "~> 0.10.3")
   s.add_runtime_dependency(%q<rest-client>, "~> 1.8")
   s.add_runtime_dependency(%q<colored>, "~> 1.2")
@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency(%q<fakefs>, "~> 0.4.2")
   s.add_development_dependency(%q<rake>)
   s.add_development_dependency(%q<rr>, "~> 1.0.4")
-  s.add_development_dependency(%q<sinatra>, "~> 1.4.2")
+  s.add_development_dependency(%q<sinatra>, "~> 1.4.7")
   s.add_development_dependency(%q<timecop>, "~> 0.6.1")
   s.add_development_dependency(%q<pry>)
   s.add_development_dependency(%q<test-unit>)
