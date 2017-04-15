@@ -596,6 +596,7 @@ module Heroku
 
         data[:plan] ||= 'foo'
         run PlanChangeCheck, data
+        run SsoCheck, data
         run DeprovisionCheck, data
       end
 
