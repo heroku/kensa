@@ -50,6 +50,11 @@ class ManifestCheckTest < Test::Unit::TestCase
         assert_invalid
       end
 
+      test "api allows sydney" do
+        @data["api"]["regions"] = ["us", "sydney"]
+        assert_valid
+      end
+
       test "api allows just wildcard region name" do
         @data["api"]["regions"] = ["*"]
         assert_valid
