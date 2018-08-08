@@ -15,6 +15,8 @@ begin
   args = ARGV.dup
   ARGV.clear
   Client.new(args).run!
+  puts 'WARNING: Kensa is in the process of being deprecated. Please install the new addons-admin plugin for the heroku CLI:'
+  puts '"heroku plugins:install addons-admin"'
 rescue Client::CommandInvalid => e
   puts e.message unless e.message.empty?
   abort File.read(__FILE__).split('__END__').last
@@ -87,4 +89,3 @@ TEST TYPES
   all
     runs provision, planchange, and deprovision tests.
     defaults to using 'foo' for planchange plan.
-
